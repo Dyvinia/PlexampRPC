@@ -1,25 +1,18 @@
-﻿using DiscordRPC;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
+using DiscordRPC;
 using DiscordRPC.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Plex.ServerApi;
 using Plex.ServerApi.Api;
 using Plex.ServerApi.Clients;
 using Plex.ServerApi.Clients.Interfaces;
 using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Policy;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media.TextFormatting;
-using System.Windows.Threading;
 
 namespace PlexampRPC {
     /// <summary>
@@ -51,6 +44,7 @@ namespace PlexampRPC {
 
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
             DispatcherUnhandledException += Application_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.ProcessExit += (_, _) => DiscordClient.Dispose();
         }
 
         protected override async void OnStartup(StartupEventArgs e) {
@@ -64,8 +58,6 @@ namespace PlexampRPC {
             window.Activate();
             window.GetAccountInfo();
             window.StartPolling();
-
-            
         }
 
         private async Task PlexSignIn(bool resignIn = false) {

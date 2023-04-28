@@ -1,40 +1,18 @@
-﻿using DiscordRPC;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Plex.Api.Factories;
-using Plex.Library.Factories;
-using Plex.ServerApi.Clients;
-using Plex.ServerApi.Clients.Interfaces;
-using Plex.ServerApi.PlexModels.Account;
-using Plex.ServerApi.PlexModels.Audio;
-using Plex.ServerApi.PlexModels.Server.Activities;
-using Plex.ServerApi.PlexModels.Server.Sessions;
-using System;
-using System.Buffers.Text;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Media;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Principal;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
+using DiscordRPC;
+using Newtonsoft.Json;
+using Plex.ServerApi.PlexModels.Account;
+using Plex.ServerApi.PlexModels.Server.Sessions;
 
 namespace PlexampRPC {
     /// <summary>
@@ -69,19 +47,17 @@ namespace PlexampRPC {
         }
 
         public async Task StartPolling() {
+            double pollingTime = 2.5;
             while (true) {
                 SessionMetadata? currentSession = await GetCurrentSession();
                 if (currentSession != null) {
                     if (JsonConvert.SerializeObject(currentSession) != JsonConvert.SerializeObject(Session)) {
-                        if (currentSession != null) {
-                            SystemSounds.Exclamation.Play();
-                            SetPresence(await BuildPresence(currentSession));
-                        }
+                        SetPresence(await BuildPresence(currentSession));
                         Session = currentSession;
                     }
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    await Task.Delay(TimeSpan.FromSeconds(pollingTime));
                 }
-                else await Task.Delay(TimeSpan.FromSeconds(5));
+                else await Task.Delay(TimeSpan.FromSeconds(pollingTime*2));
             }
         }
 
@@ -187,6 +163,11 @@ namespace PlexampRPC {
             StreamReader responseReader = new StreamReader(responseStream);
 
             return JsonConvert.DeserializeObject<dynamic>(responseReader.ReadToEnd()).image.url;
+        }
+
+        protected override void OnClosed(EventArgs e) {
+            base.OnClosed(e);
+            App.DiscordClient.Dispose();
         }
     }
 }
