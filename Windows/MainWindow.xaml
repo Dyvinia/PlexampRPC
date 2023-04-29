@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlexampRPC"
         mc:Ignorable="d"
-        Title="PlexampRPC" Width="600" SizeToContent="Height" UseLayoutRounding="True"
+        Title="PlexampRPC" Width="320" SizeToContent="Height" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
         Style="{DynamicResource CustomWindowStyle}" ResizeMode="CanMinimize">
     <Window.Resources>
@@ -85,11 +85,6 @@
             <Separator Grid.Row="2" Background="#FF323232" VerticalAlignment="Bottom"/>
 
             <Grid Grid.Row="3" Margin="25 15 25 25">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                
                 <StackPanel Orientation="Vertical">
                     <TextBlock TextWrapping="Wrap" Text="Preview" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
 
@@ -118,9 +113,25 @@
                     </DockPanel>
 
                     <Grid Height="8"/>
-                    <TextBlock TextWrapping="Wrap" Text="Template" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
-                    <TextBox x:Name="TemplateL1" Margin="0 4 0 0" Width="150" HorizontalAlignment="Left" Text="{Binding Path=(local:Config.TemplateL1), Mode=TwoWay}" LostFocus="Template_LostFocus" ToolTip="{}{title}, {artist}, {album}"/>
-                    <TextBox x:Name="TemplateL2" Margin="0 2 0 0" Width="150" HorizontalAlignment="Left" Text="{Binding Path=(local:Config.TemplateL2), Mode=TwoWay}" LostFocus="Template_LostFocus" ToolTip="{}{title}, {artist}, {album}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel>
+                            <TextBlock TextWrapping="Wrap" Text="Template" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
+                            <TextBox x:Name="TemplateL1" Margin="0 4 0 0" Width="120" HorizontalAlignment="Left" Text="{Binding Path=(local:Config.TemplateL1), Mode=TwoWay}" LostFocus="Template_LostFocus" ToolTip="{}{title}, {artist}, {album}"/>
+                            <TextBox x:Name="TemplateL2" Margin="0 2 0 0" Width="120" HorizontalAlignment="Left" Text="{Binding Path=(local:Config.TemplateL2), Mode=TwoWay}" LostFocus="Template_LostFocus" ToolTip="{}{title}, {artist}, {album}"/>
+                        </StackPanel>
+                        
+                        <!--<Grid Width="10"/>
+                        <StackPanel>
+                            <TextBlock TextWrapping="Wrap" Text="Refresh Rate" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
+                            <TextBox Margin="0 4 0 0" Width="100" HorizontalAlignment="Left" Text="{Binding Path=(local:Config.RefreshInterval), Mode=TwoWay}" LostFocus="Template_LostFocus" ToolTip="Seconds between each refresh"/>
+                        </StackPanel>
+                        <Grid Width="10"/>
+                        <StackPanel>
+                            <TextBlock TextWrapping="Wrap" Text="Art Resolution" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
+                            <TextBox Margin="0 4 0 0" Width="100" HorizontalAlignment="Left" Text="{Binding Path=(local:Config.ArtResolution), Mode=TwoWay}" LostFocus="Template_LostFocus" ToolTip="Album Art Resolution in Pixels"/>
+                        </StackPanel>-->
+                    </StackPanel>
+                    
                 </StackPanel>
             </Grid>
         </Grid>
