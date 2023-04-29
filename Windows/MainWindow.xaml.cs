@@ -25,9 +25,9 @@ namespace PlexampRPC {
         public static SessionMetadata? Session { get; set; }
 
         public class PresenceData {
-            public string? Title { get; set; }
-            public string? Artist { get; set; }
-            public string? Album { get; set; }
+            public string? Line1 { get; set; }
+            public string? Line2 { get; set; }
+            public string? ImageTooltip { get; set; }
             public string? ArtLink { get; set; }
             public string? State { get; set; }
             public int TimeOffset { get; set; }
@@ -81,49 +81,56 @@ namespace PlexampRPC {
                 .Replace("{album}", session.ParentTitle);
 
             return new PresenceData() {
-                Title = L1,
-                Artist = L2,
-                Album = session.ParentTitle,
+                Line1 = L1,
+                Line2 = L2,
+                ImageTooltip = session.ParentTitle,
                 ArtLink = await GetThumbnail(session),
                 State = session.Player.State,
                 TimeOffset = (int)session.ViewOffset
             };
         }
 
-        private void SetPresence(PresenceData data) {
-            if (data.State == "playing") {
+        private void SetPresence(PresenceData presence) {
+            if (presence.State == "playing") {
                 App.DiscordClient.SetPresence(new RichPresence() {
-                    Details = data.Title,
-                    State = data.Artist,
-                    Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)data.TimeOffset)),
+                    Details = presence.Line1,
+                    State = presence.Line2,
+                    Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)presence.TimeOffset)),
                     Assets = new() {
-                        LargeImageKey = data.ArtLink,
-                        LargeImageText = data.Album
+                        LargeImageKey = presence.ArtLink,
+                        LargeImageText = presence.ImageTooltip
                     }
                 });
 
-                PreviewArt.Source = new BitmapImage(new Uri(data.ArtLink));
-                PreviewL1.Text = data.Title;
-                PreviewL2.Text = data.Artist;
-                PreviewL3.Text = "XX:XX Elapsed";
+                PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
+                PreviewL1.Text = presence.Line1;
+                PreviewL2.Text = presence.Line2;
+
+                TimeSpan t = TimeSpan.FromMilliseconds(presence.TimeOffset);
+                PreviewL3.Text = $"{String.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds)} Elapsed";
+                PreviewL3.Visibility = Visibility.Visible;
+
                 PreviewPaused.Visibility = Visibility.Collapsed;
             }
             else {
                 App.DiscordClient.SetPresence(new RichPresence() {
-                    Details = data.Title,
-                    State = data.Artist,
+                    Details = presence.Line1,
+                    State = presence.Line2,
                     Assets = new() {
-                        LargeImageKey = data.ArtLink,
-                        LargeImageText = data.Album,
+                        LargeImageKey = presence.ArtLink,
+                        LargeImageText = presence.ImageTooltip,
                         SmallImageKey = "paused2",
                         SmallImageText = "Paused",
                     }
                 });
 
-                PreviewArt.Source = new BitmapImage(new Uri(data.ArtLink));
-                PreviewL1.Text = data.Title;
-                PreviewL2.Text = data.Artist;
+                PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
+                PreviewL1.Text = presence.Line1;
+                PreviewL2.Text = presence.Line2;
+
                 PreviewL3.Text = "";
+                PreviewL3.Visibility = Visibility.Collapsed;
+
                 PreviewPaused.Visibility = Visibility.Visible;
             }
         }
