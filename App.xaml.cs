@@ -15,6 +15,7 @@ using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
 using DyviniaUtils;
 using System.Reflection;
+using DyviniaUtils.Dialogs;
 
 namespace PlexampRPC {
 
@@ -62,7 +63,7 @@ namespace PlexampRPC {
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
             AppDomain.CurrentDomain.ProcessExit += (_, _) => DiscordClient.Dispose();
 
-            DispatcherUnhandledException += Application_DispatcherUnhandledException;
+            DispatcherUnhandledException += ExceptionDialog.UnhandledException;
         }
 
         protected override async void OnStartup(StartupEventArgs e) {
@@ -118,12 +119,6 @@ namespace PlexampRPC {
                 Console.WriteLine($"Received Update! {e.Presence}");
             };
             DiscordClient.Initialize();
-        }
-
-        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
-            e.Handled = true;
-            string title = "";
-            //ExceptionDialog.Show(e.Exception, title, true);
         }
     }
 }
