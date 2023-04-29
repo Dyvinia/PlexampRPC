@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using DiscordRPC;
 using DiscordRPC.Logging;
 using Microsoft.Extensions.Logging;
@@ -14,7 +14,6 @@ using Plex.ServerApi.Clients.Interfaces;
 using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
 using DyviniaUtils;
-using System.Reflection;
 using DyviniaUtils.Dialogs;
 
 namespace PlexampRPC {
