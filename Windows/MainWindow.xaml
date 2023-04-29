@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="PlexampRPC" Width="320" SizeToContent="Height" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
+        Icon="/Resources/Icon.ico"
         Style="{DynamicResource CustomWindowStyle}" ResizeMode="CanMinimize">
     <Window.Resources>
         <Storyboard x:Key="ImageRotationStoryboard" Storyboard.TargetName="LoadingImage" Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)">
@@ -90,7 +91,7 @@
 
                     <DockPanel Margin="0 4">
                         <Grid Height="64" Width="64">
-                            <Image x:Name="PreviewArt" Source="https://i.imgur.com/KQtXLCm.png" RenderOptions.BitmapScalingMode="HighQuality" Height="64" Width="64" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Top">
+                            <Image x:Name="PreviewArt" Source="https://i.imgur.com/E7xjYI9.png" RenderOptions.BitmapScalingMode="Fant" Height="64" Width="64" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Top">
                                 <Image.OpacityMask>
                                     <VisualBrush>
                                         <VisualBrush.Visual>
@@ -101,7 +102,7 @@
                                     </VisualBrush>
                                 </Image.OpacityMask>
                             </Image>
-                            <Image x:Name="PreviewPaused" Source="/Resources/PlexPaused.png" Margin="44,44,0,-8" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <Image x:Name="PreviewPaused" Source="/Resources/PlexPaused.png" Margin="46,44,-2,-8" RenderOptions.BitmapScalingMode="Fant"/>
                         </Grid>
                         
                         <StackPanel HorizontalAlignment="Left" DockPanel.Dock="Right" Margin="6 0 0 0">

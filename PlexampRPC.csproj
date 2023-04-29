@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Icon.ico" />
     <None Remove="Resources\PlexIcon.png" />
     <None Remove="Resources\PlexPaused.png" />
   </ItemGroup>
@@ -25,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\Icon.ico" />
     <Resource Include="Resources\PlexIcon.png" />
     <Resource Include="Resources\PlexPaused.png" />
   </ItemGroup>
