@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlexampRPC"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="PlexampRPC" Width="600" SizeToContent="Height" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
         Style="{DynamicResource CustomWindowStyle}" ResizeMode="CanMinimize">
     <Window.Resources>
@@ -83,6 +83,46 @@
                 </StackPanel>
             </Grid>
             <Separator Grid.Row="2" Background="#FF323232" VerticalAlignment="Bottom"/>
+
+            <Grid Grid.Row="3" Margin="25 15 25 25">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Orientation="Vertical">
+                    <TextBlock TextWrapping="Wrap" Text="Preview" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
+
+                    <DockPanel Margin="0 4">
+                        <Grid Height="64" Width="64">
+                            <Image x:Name="PreviewArt" Source="https://i.imgur.com/KQtXLCm.png" RenderOptions.BitmapScalingMode="HighQuality" Height="64" Width="64" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Top">
+                                <Image.OpacityMask>
+                                    <VisualBrush>
+                                        <VisualBrush.Visual>
+                                            <Border Height="{Binding ElementName=PreviewArt, Path=ActualHeight}" 
+                                                Width="{Binding ElementName=PreviewArt, Path=ActualWidth}"
+                                                Background="White" CornerRadius="8" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Image.OpacityMask>
+                            </Image>
+                            <Image x:Name="PreviewPaused" Source="/Resources/PlexPaused.png" Margin="44,44,0,-8" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Grid>
+                        
+                        <StackPanel HorizontalAlignment="Left" DockPanel.Dock="Right" Margin="6 0 0 0">
+                            <TextBlock x:Name="PreviewPlexamp" Text="Plexamp" Foreground="#dddddd" FontSize="14" Height="18" FontWeight="Bold" VerticalAlignment="Top"/>
+                            <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
+                            <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
+                            <TextBlock x:Name="PreviewL3" Text="XX:XX Elapsed" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Grid Height="8"/>
+                    <TextBlock TextWrapping="Wrap" Text="Template" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
+                    <TextBox x:Name="TemplateL1" Margin="0 4 0 0" Width="150" HorizontalAlignment="Left" Text="{Binding Path=(local:Config.TemplateL1), Mode=TwoWay}" LostFocus="Template_LostFocus" ToolTip="{}{title}, {artist}, {album}"/>
+                    <TextBox x:Name="TemplateL2" Margin="0 2 0 0" Width="150" HorizontalAlignment="Left" Text="{Binding Path=(local:Config.TemplateL2), Mode=TwoWay}" LostFocus="Template_LostFocus" ToolTip="{}{title}, {artist}, {album}"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

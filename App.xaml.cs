@@ -22,6 +22,9 @@ namespace PlexampRPC {
         public int ArtResolution { get; set; } = 128;
         public double RefreshInterval { get; set; } = 2.5;
 
+        public string TemplateL1 { get; set; } = "{title}";
+        public string TemplateL2 { get; set; } = "by {artist}";
+
         public string DiscordClientID { get; set; } = "1100233636491563069";
     }
 
@@ -73,7 +76,7 @@ namespace PlexampRPC {
         }
 
         private async Task PlexSignIn(bool resignIn = false) {
-            string authFile = "auth.txt";
+            string authFile = Path.Combine(Path.GetDirectoryName(Config.FilePath), "auth.txt");
             if (File.Exists(authFile) && !resignIn) {
                 Token = File.ReadAllText(authFile);
             }

@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="Resources\PlexIcon.png" />
+    <None Remove="Resources\PlexPaused.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +25,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\PlexIcon.png" />
+    <Resource Include="Resources\PlexPaused.png" />
   </ItemGroup>
 
 </Project>

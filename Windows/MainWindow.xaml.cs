@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -7,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DiscordRPC;
@@ -34,6 +36,7 @@ namespace PlexampRPC {
         public MainWindow() {
             InitializeComponent();
 
+            DataContext = Config.Settings;
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
         }
 
@@ -67,9 +70,19 @@ namespace PlexampRPC {
         }
 
         private async Task<PresenceData> BuildPresence(SessionMetadata session) {
+            string L1 = Config.Settings.TemplateL1
+                .Replace("{title}", session.Title)
+                .Replace("{artist}", session.GrandparentTitle)
+                .Replace("{album}", session.ParentTitle);
+
+            string L2 = Config.Settings.TemplateL2
+                .Replace("{title}", session.Title)
+                .Replace("{artist}", session.GrandparentTitle)
+                .Replace("{album}", session.ParentTitle);
+
             return new PresenceData() {
-                Title = session.Title,
-                Artist = $"by {session.GrandparentTitle}",
+                Title = L1,
+                Artist = L2,
                 Album = session.ParentTitle,
                 ArtLink = await GetThumbnail(session),
                 State = session.Player.State,
@@ -77,7 +90,7 @@ namespace PlexampRPC {
             };
         }
 
-        private static void SetPresence(PresenceData data) {
+        private void SetPresence(PresenceData data) {
             if (data.State == "playing") {
                 App.DiscordClient.SetPresence(new RichPresence() {
                     Details = data.Title,
@@ -88,6 +101,12 @@ namespace PlexampRPC {
                         LargeImageText = data.Album
                     }
                 });
+
+                PreviewArt.Source = new BitmapImage(new Uri(data.ArtLink));
+                PreviewL1.Text = data.Title;
+                PreviewL2.Text = data.Artist;
+                PreviewL3.Text = "XX:XX Elapsed";
+                PreviewPaused.Visibility = Visibility.Collapsed;
             }
             else {
                 App.DiscordClient.SetPresence(new RichPresence() {
@@ -100,15 +119,24 @@ namespace PlexampRPC {
                         SmallImageText = "Paused",
                     }
                 });
+
+                PreviewArt.Source = new BitmapImage(new Uri(data.ArtLink));
+                PreviewL1.Text = data.Title;
+                PreviewL2.Text = data.Artist;
+                PreviewL3.Text = "";
+                PreviewPaused.Visibility = Visibility.Visible;
             }
         }
 
         private async Task<string> GetThumbnail(SessionMetadata session) {
+            string cacheFile = Path.Combine(Path.GetDirectoryName(Config.FilePath), "cache.json");
+
             Dictionary<string, string> thumbnails;
             string thumbnailsJson = "";
-            if (File.Exists("cache.json")) {
-                thumbnailsJson = File.ReadAllText("cache.json");
-                try { thumbnails = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("cache.json")); }
+
+            if (File.Exists(cacheFile)) {
+                thumbnailsJson = File.ReadAllText(cacheFile);
+                try { thumbnails = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(cacheFile)); }
                 catch { thumbnails = new(); }
             }
             else
@@ -126,7 +154,7 @@ namespace PlexampRPC {
 
             string newThumbnailsJson = JsonConvert.SerializeObject(thumbnails);
             if (newThumbnailsJson != thumbnailsJson)
-                File.WriteAllText("cache.json", newThumbnailsJson);
+                File.WriteAllText(cacheFile, newThumbnailsJson);
 
             return thumbnailLink;
         }
@@ -168,9 +196,19 @@ namespace PlexampRPC {
             return JsonConvert.DeserializeObject<dynamic>(responseReader.ReadToEnd()).image.url;
         }
 
+        private void Template_LostFocus(object sender, RoutedEventArgs e) => Config.Save();
+
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);
             App.DiscordClient.Dispose();
+            Config.Save();
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e) {
+            base.OnKeyDown(e);
+
+            if (e.Key == Key.F12)
+                Process.Start("explorer.exe", $"/select, {Config.FilePath}");
         }
     }
 }
