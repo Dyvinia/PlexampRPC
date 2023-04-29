@@ -14,6 +14,7 @@ using Plex.ServerApi.Clients.Interfaces;
 using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
 using DyviniaUtils;
+using System.Reflection;
 
 namespace PlexampRPC {
 
@@ -33,6 +34,8 @@ namespace PlexampRPC {
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
+
+        public static readonly string Version = "v" + Assembly.GetExecutingAssembly().GetName()?.Version?.ToString()[..5];
 
         public static IPlexAccountClient AccountClient = new PlexAccountClient(new() {
             Product = "PlexampRPC",
@@ -75,7 +78,7 @@ namespace PlexampRPC {
             window.StartPolling();
         }
 
-        private async Task PlexSignIn(bool resignIn = false) {
+        private static async Task PlexSignIn(bool resignIn = false) {
             string authFile = Path.Combine(Path.GetDirectoryName(Config.FilePath), "auth");
             if (File.Exists(authFile) && !resignIn) {
                 Token = File.ReadAllText(authFile);
