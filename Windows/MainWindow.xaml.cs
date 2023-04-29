@@ -23,11 +23,11 @@ namespace PlexampRPC {
         public static SessionMetadata? Session { get; set; }
 
         public class PresenceData {
-            public string Title { get; set; }
-            public string Artist { get; set; }
-            public string Album { get; set; }
-            public string ArtLink { get; set; }
-            public string State { get; set; }
+            public string? Title { get; set; }
+            public string? Artist { get; set; }
+            public string? Album { get; set; }
+            public string? ArtLink { get; set; }
+            public string? State { get; set; }
             public int TimeOffset { get; set; }
         }
 
@@ -46,7 +46,7 @@ namespace PlexampRPC {
             LoadingImage.Visibility = Visibility.Collapsed;
         }
 
-        public async Task StartPolling() {
+        public async void StartPolling() {
             double pollingTime = 2.5;
             while (true) {
                 SessionMetadata? currentSession = await GetCurrentSession();
@@ -78,7 +78,7 @@ namespace PlexampRPC {
             };
         }
 
-        private void SetPresence(PresenceData data) {
+        private static void SetPresence(PresenceData data) {
             if (data.State == "playing") {
                 App.DiscordClient.SetPresence(new RichPresence() {
                     Details = data.Title,
@@ -106,14 +106,16 @@ namespace PlexampRPC {
 
         private async Task<string> GetThumbnail(SessionMetadata session) {
             Dictionary<string, string> thumbnails;
-            string thumbnailLink;
-
-            if (File.Exists("cache.json"))
-                thumbnails = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("cache.json"));
+            string thumbnailsJson = "";
+            if (File.Exists("cache.json")) {
+                thumbnailsJson = File.ReadAllText("cache.json");
+                try { thumbnails = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("cache.json")); }
+                catch { thumbnails = new(); }
+            }
             else
                 thumbnails = new();
 
-
+            string thumbnailLink;
             if (thumbnails.TryGetValue(session.Thumb, out string value)) {
                 thumbnailLink = value;
             }
@@ -122,7 +124,9 @@ namespace PlexampRPC {
                 thumbnails.Add(session.Thumb, thumbnailLink);
             }
 
-            File.WriteAllText("cache.json", JsonConvert.SerializeObject(thumbnails));
+            string newThumbnailsJson = JsonConvert.SerializeObject(thumbnails);
+            if (newThumbnailsJson != thumbnailsJson)
+                File.WriteAllText("cache.json", newThumbnailsJson);
 
             return thumbnailLink;
         }
