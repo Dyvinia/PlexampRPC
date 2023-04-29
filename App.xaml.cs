@@ -13,8 +13,19 @@ using Plex.ServerApi.Clients;
 using Plex.ServerApi.Clients.Interfaces;
 using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
+using DyviniaUtils;
 
 namespace PlexampRPC {
+
+    [GlobalConfig]
+    public class Config : SettingsManager<Config> {
+        public int ArtResolution { get; set; } = 128;
+        public double RefreshInterval { get; set; } = 2.5;
+
+        public string DiscordClientID { get; set; } = "1100233636491563069";
+    }
+
+
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
@@ -34,17 +45,18 @@ namespace PlexampRPC {
             Version = "v2"
         }, new ApiService(new PlexRequestsHttpClient(), new Logger<ApiService>(new NullLoggerFactory())));
 
-
-        public static string Token { get; set; }
+        public static string? Token { get; set; }
         public static PlexAccount? Account { get; set; }
         public static AccountServerContainer? ServerContainer { get; set; }
         public static DiscordRpcClient DiscordClient { get; set; }
 
         public App() {
+            Config.Load();
 
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            DispatcherUnhandledException += Application_DispatcherUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += (_, _) => DiscordClient.Dispose();
+
+            DispatcherUnhandledException += Application_DispatcherUnhandledException;
         }
 
         protected override async void OnStartup(StartupEventArgs e) {
@@ -73,7 +85,7 @@ namespace PlexampRPC {
             ServerContainer = await AccountClient.GetAccountServersAsync(Token);
         }
 
-        private async Task<string> PlexOAuth() {
+        private static async Task<string> PlexOAuth() {
             OAuthPin plexPin;
             OAuthPin? oauthUrl = await AccountClient.CreateOAuthPinAsync("");
 
@@ -87,8 +99,8 @@ namespace PlexampRPC {
             return plexPin.AuthToken;
         }
 
-        private void InitRPC() {
-            DiscordClient = new("1100233636491563069") {
+        private static void InitRPC() {
+            DiscordClient = new(Config.Settings.DiscordClientID) {
                 Logger = new ConsoleLogger() { Level = DiscordRPC.Logging.LogLevel.Warning }
             };
 

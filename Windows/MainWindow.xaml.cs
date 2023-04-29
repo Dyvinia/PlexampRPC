@@ -47,7 +47,6 @@ namespace PlexampRPC {
         }
 
         public async void StartPolling() {
-            double pollingTime = 2.5;
             while (true) {
                 SessionMetadata? currentSession = await GetCurrentSession();
                 if (currentSession != null) {
@@ -55,9 +54,9 @@ namespace PlexampRPC {
                         SetPresence(await BuildPresence(currentSession));
                         Session = currentSession;
                     }
-                    await Task.Delay(TimeSpan.FromSeconds(pollingTime));
+                    await Task.Delay(TimeSpan.FromSeconds(Config.Settings.RefreshInterval));
                 }
-                else await Task.Delay(TimeSpan.FromSeconds(pollingTime*2));
+                else await Task.Delay(TimeSpan.FromSeconds(Config.Settings.RefreshInterval * 2));
             }
         }
 
@@ -120,7 +119,8 @@ namespace PlexampRPC {
                 thumbnailLink = value;
             }
             else {
-                thumbnailLink = await UploadImage(session);
+                try { thumbnailLink = await UploadImage(session); }
+                catch { return "https://i.imgur.com/KQtXLCm.png"; }
                 thumbnails.Add(session.Thumb, thumbnailLink);
             }
 
@@ -133,8 +133,7 @@ namespace PlexampRPC {
 
         private async Task<string> UploadImage(SessionMetadata session) {
             AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
-            int artRes = 256;
-            string url = $"{selected?.Uri.ToString()}photo/:/transcode?width={artRes}&height={artRes}&minSize=1&upscale=1&format=png&url={session.Thumb}&X-Plex-Token={App.Token}";
+            string url = $"{selected?.Uri.ToString()}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={session.Thumb}&X-Plex-Token={App.Token}";
 
             var client = new HttpClient();
             var response = await client.GetAsync(url);
