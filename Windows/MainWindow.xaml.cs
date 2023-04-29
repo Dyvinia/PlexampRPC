@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DiscordRPC;
+using Hardcodet.Wpf.TaskbarNotification;
 using Newtonsoft.Json;
 using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.Server.Sessions;
@@ -38,6 +39,38 @@ namespace PlexampRPC {
 
             DataContext = Config.Settings;
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
+
+            StateChanged += (_, _) => {
+                if (WindowState == WindowState.Minimized) {
+                    Hide();
+                    TrayIcon.ShowBalloonTip(null, "Minimized to Tray", BalloonIcon.None);
+                }
+            };
+
+            SetupContextMenu();
+        }
+
+        public TaskbarIcon TrayIcon = new() {
+            ToolTipText = "PlexampRPC",
+            MenuActivation = PopupActivationMode.LeftOrRightClick
+        };
+
+        private void SetupContextMenu() {
+            TrayIcon.IconSource = Icon;
+            ContextMenu contextMenu = new();
+            MenuItem menuShow = new() { Header = "Show PlexampRPC" };
+            MenuItem menuExit = new() { Header = "Exit PlexampRPC" };
+            menuShow.Click += (_, _) => {
+                Show();
+                WindowState = WindowState.Normal;
+            };
+            menuExit.Click += (_, _) => {
+                Application.Current.Shutdown();
+            };
+
+            contextMenu.Items.Add(menuShow);
+            contextMenu.Items.Add(menuExit);
+            TrayIcon.ContextMenu = contextMenu;
         }
 
         public void GetAccountInfo() {
