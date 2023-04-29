@@ -92,14 +92,17 @@ namespace PlexampRPC {
                     }
                     await Task.Delay(TimeSpan.FromSeconds(Config.Settings.RefreshInterval));
                 }
-                else await Task.Delay(TimeSpan.FromSeconds(Config.Settings.RefreshInterval * 2));
+                else {
+                    ResetPresence();
+                    await Task.Delay(TimeSpan.FromSeconds(Config.Settings.RefreshInterval * 2));
+                }
             }
         }
 
         private async Task<SessionMetadata?> GetCurrentSession() {
             AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
             SessionContainer sessions = await App.ServerClient.GetSessionsAsync(App.Token, selected?.Uri.ToString());
-            return sessions.Metadata.FirstOrDefault(session => session.Type == "track" && session.User.Title == App.Account?.Username);
+            return sessions.Metadata?.FirstOrDefault(session => session.Type == "track" && session.User.Title == App.Account?.Username);
         }
 
         private async Task<PresenceData> BuildPresence(SessionMetadata session) {
@@ -166,6 +169,19 @@ namespace PlexampRPC {
 
                 PreviewPaused.Visibility = Visibility.Visible;
             }
+        }
+
+        private void ResetPresence() {
+            PreviewArt.Source = new BitmapImage(new Uri("https://i.imgur.com/E7xjYI9.png"));
+            PreviewL1.Text = "Title";
+            PreviewL2.Text = "Author";
+
+            PreviewL3.Text = "";
+            PreviewL3.Visibility = Visibility.Collapsed;
+
+            PreviewPaused.Visibility = Visibility.Collapsed;
+
+            App.DiscordClient.ClearPresence();
         }
 
         private async Task<string> GetThumbnail(SessionMetadata session) {
