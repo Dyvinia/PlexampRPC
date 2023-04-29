@@ -102,7 +102,7 @@
                                     </VisualBrush>
                                 </Image.OpacityMask>
                             </Image>
-                            <Image x:Name="PreviewPaused" Source="/Resources/PlexPaused.png" Margin="46,44,-2,-8" RenderOptions.BitmapScalingMode="Fant"/>
+                            <Image x:Name="PreviewPaused" Source="/Resources/PlexPaused.png" Margin="46,44,-2,-8" RenderOptions.BitmapScalingMode="Fant" Visibility="Collapsed"/>
                         </Grid>
                         
                         <StackPanel HorizontalAlignment="Left" DockPanel.Dock="Right" Margin="6 0 0 0">
