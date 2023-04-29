@@ -20,6 +20,8 @@ namespace PlexampRPC {
 
     [GlobalConfig]
     public class Config : SettingsManager<Config> {
+        public bool UpdateChecker { get; set; } = true;
+        
         public int ArtResolution { get; set; } = 128;
         public double RefreshInterval { get; set; } = 2.5;
 
@@ -76,6 +78,9 @@ namespace PlexampRPC {
             window.Activate();
             window.GetAccountInfo();
             window.StartPolling();
+
+            if (Config.Settings.UpdateChecker)
+                GitHub.CheckVersion("Dyvinia", "PlexampRPC");
         }
 
         private static async Task PlexSignIn(bool resignIn = false) {
