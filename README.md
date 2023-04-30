@@ -22,7 +22,13 @@ Click the gear icon on the top right to open the Settings window. Here you can c
 The config file, aswell as the thumbnail cache and the stored auth token, are stored in `%AppData%\PlexampRPC\`. Press `F12` in the app to automatically open this folder.
 
 ## FAQ
-> Q: How do I change the Bold "Plexamp" text?
+> **Q:** How do I change the Bold "Plexamp" text?
+> 
+> **A:** You must make a new application [here](https://discord.com/developers/applications) and set the Name you desire. Then open the config.json file in `%AppData%\PlexampRPC\` and paste the Application ID in.
 
-> A: You must make a new application [here](https://discord.com/developers/applications) and set the Name you desire. Then open the config.json file in `%AppData%\PlexampRPC\` and paste the Application ID in.
+> **Q:** I can't run this
+> 
+> **A:** This requires [.NET 7 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and is Windows Only.
 
+## Donate
+[![Donate-Kofi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J63UBHG)
