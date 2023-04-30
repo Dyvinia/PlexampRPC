@@ -117,7 +117,7 @@
             </Grid>
         </Grid>
 
-        <Button HorizontalAlignment="Right" Margin="0 8 8 0" VerticalAlignment="Top" Width="25" Height="25" Click="SettingsButton_Click" >
+        <Button HorizontalAlignment="Right" Margin="0 6 7 0" VerticalAlignment="Top" Width="25" Height="25" Click="SettingsButton_Click" >
 
             <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Name="svg21" Width="20" Height="20" Margin="-1">
                 <Canvas.RenderTransform>
