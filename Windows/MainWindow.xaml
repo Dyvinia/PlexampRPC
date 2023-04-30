@@ -92,7 +92,7 @@
 
                     <DockPanel Margin="0 4">
                         <Grid Height="64" Width="64">
-                            <Image x:Name="PreviewArt" Source="https://i.imgur.com/E7xjYI9.png" RenderOptions.BitmapScalingMode="Fant" Height="64" Width="64" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Top">
+                            <Image x:Name="PreviewArt" Source="https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png" RenderOptions.BitmapScalingMode="Fant" Height="64" Width="64" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Top">
                                 <Image.OpacityMask>
                                     <VisualBrush>
                                         <VisualBrush.Visual>

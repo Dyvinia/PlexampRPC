@@ -179,7 +179,7 @@ namespace PlexampRPC {
         }
 
         private void ResetPresence() {
-            PreviewArt.Source = new BitmapImage(new Uri("https://i.imgur.com/E7xjYI9.png"));
+            PreviewArt.Source = new BitmapImage(new Uri("https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png"));
 
             PreviewL1.Text = Config.Settings.TemplateL1
                 .Replace("{title}", "Title")
@@ -218,7 +218,7 @@ namespace PlexampRPC {
             }
             else {
                 try { thumbnailLink = await UploadImage(session); }
-                catch { return "https://i.imgur.com/KQtXLCm.png"; }
+                catch { return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png"; }
                 thumbnails.Add(session.Thumb, thumbnailLink);
             }
 
