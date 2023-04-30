@@ -15,6 +15,7 @@ using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
 using Newtonsoft.Json;
 using Plex.ServerApi.PlexModels.Account;
+using Plex.ServerApi.PlexModels.Server.Playlists;
 using Plex.ServerApi.PlexModels.Server.Sessions;
 
 namespace PlexampRPC {
@@ -47,6 +48,7 @@ namespace PlexampRPC {
                 }
             };
 
+            ResetPresence();
             SetupContextMenu();
         }
 
@@ -178,15 +180,22 @@ namespace PlexampRPC {
 
         private void ResetPresence() {
             PreviewArt.Source = new BitmapImage(new Uri("https://i.imgur.com/E7xjYI9.png"));
-            PreviewL1.Text = "Title";
-            PreviewL2.Text = "Author";
+
+            PreviewL1.Text = Config.Settings.TemplateL1
+                .Replace("{title}", "Title")
+                .Replace("{artist}", "Artist")
+                .Replace("{album}", "Album");
+            PreviewL2.Text = Config.Settings.TemplateL2
+                .Replace("{title}", "Title")
+                .Replace("{artist}", "Artist")
+                .Replace("{album}", "Album");
 
             PreviewL3.Text = "";
             PreviewL3.Visibility = Visibility.Collapsed;
 
             PreviewPaused.Visibility = Visibility.Collapsed;
 
-            App.DiscordClient.ClearPresence();
+            App.DiscordClient?.ClearPresence();
         }
 
         private async Task<string> GetThumbnail(SessionMetadata session) {
