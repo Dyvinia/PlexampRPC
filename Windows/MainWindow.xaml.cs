@@ -235,10 +235,11 @@ namespace PlexampRPC {
 
             HttpResponseMessage getResponse = await Client.GetAsync($"{selected?.Uri}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={session.Thumb}&X-Plex-Token={App.Token}");
 
+            string dataString = Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()));
             HttpResponseMessage sendResponse = await Client.SendAsync(new() {
                 Method = HttpMethod.Post,
                 RequestUri = new("https://freeimage.host/api/1/upload"),
-                Content = new StringContent($"image={Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()))}&key=6d207e02198a847aa98d0a2a901485a5", Encoding.UTF8, "application/x-www-form-urlencoded")
+                Content = new StringContent($"image={dataString}&key=6d207e02198a847aa98d0a2a901485a5", Encoding.UTF8, "application/x-www-form-urlencoded")
             });
             sendResponse.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<dynamic>(await sendResponse.Content.ReadAsStringAsync())!.image.url;
