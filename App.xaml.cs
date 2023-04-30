@@ -84,7 +84,7 @@ namespace PlexampRPC {
         }
 
         private static async Task PlexSignIn(bool resignIn = false) {
-            string authFile = Path.Combine(Path.GetDirectoryName(Config.FilePath), "auth");
+            string authFile = Path.Combine(Path.GetDirectoryName(Config.FilePath), "auth.token");
             if (File.Exists(authFile) && !resignIn) {
                 Token = File.ReadAllText(authFile);
             }
@@ -92,8 +92,12 @@ namespace PlexampRPC {
                 Token = await PlexOAuth();
                 File.WriteAllText(authFile, Token);
             }
-            Account = await AccountClient.GetPlexAccountAsync(Token);
-            ServerContainer = await AccountClient.GetAccountServersAsync(Token);
+
+            try {
+                Account = await AccountClient.GetPlexAccountAsync(Token);
+                ServerContainer = await AccountClient.GetAccountServersAsync(Token);
+            }
+            catch { PlexSignIn(true); }
         }
 
         private static async Task<string> PlexOAuth() {
