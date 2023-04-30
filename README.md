@@ -20,3 +20,9 @@ Click the gear icon on the top right to open the Settings window. Here you can c
 ![image](https://user-images.githubusercontent.com/13797470/235368406-df0c2ec7-39ac-40fb-970a-33936cbaf2bb.png)
 
 The config file, aswell as the thumbnail cache and the stored auth token, are stored in `%AppData%\PlexampRPC\`. Press `F12` in the app to automatically open this folder.
+
+## FAQ
+> Q: How do I change the Bold "Plexamp" text?
+
+> A: You must make a new application [here](https://discord.com/developers/applications) and set the same you desire. You must also upload [this](https://github.com/Dyvinia/PlexampRPC/blob/master/Resources/PlexPaused.png) with the name `paused2.png` in the Rich Presence section. Then open the config.json file in `%AppData%\PlexampRPC\` and paste the Application ID in.
+
