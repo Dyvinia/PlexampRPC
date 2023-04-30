@@ -10,17 +10,20 @@ namespace DyviniaUtils {
 
         public static string FilePath {
             get {
+                string filePath;
                 if (typeof(T).GetCustomAttribute<GlobalConfigAttribute>() != null) {
-                    return Path.Combine(
+                    filePath = Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        Assembly.GetEntryAssembly().GetName().Name,
+                        Assembly.GetEntryAssembly()!.GetName().Name!,
                         "config.json");
                 }
                 else {
-                    return Path.Combine(
+                    filePath = Path.Combine(
                         AppDomain.CurrentDomain.BaseDirectory,
                         "config.json");
                 }
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+                return filePath;
             }
         }
 
