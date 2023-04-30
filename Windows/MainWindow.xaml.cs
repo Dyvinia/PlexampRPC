@@ -233,22 +233,21 @@ namespace PlexampRPC {
         private async Task<string> UploadImage(SessionMetadata session) {
             AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
 
-            HttpResponseMessage response = await Client.GetAsync($"{selected?.Uri}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={session.Thumb}&X-Plex-Token={App.Token}");
-            System.IO.Stream stream = await response.Content.ReadAsStreamAsync();
+            HttpResponseMessage getResponse = await Client.GetAsync($"{selected?.Uri}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={session.Thumb}&X-Plex-Token={App.Token}");
+            System.IO.Stream stream = await getResponse.Content.ReadAsStreamAsync();
 
             byte[] imageData = new byte[stream.Length];
             await stream.ReadAsync(imageData);
             stream.Close();
 
-            HttpRequestMessage httpRequest = new() {
+            HttpRequestMessage sendRequest = new() {
                 Method = HttpMethod.Post,
                 RequestUri = new("https://freeimage.host/api/1/upload"),
                 Content = new StringContent($"image={Uri.EscapeDataString(Convert.ToBase64String(imageData))}&key=6d207e02198a847aa98d0a2a901485a5", Encoding.UTF8, "application/x-www-form-urlencoded")
             };
-
-            HttpResponseMessage webRequest = await Client.SendAsync(httpRequest);
-            webRequest.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<dynamic>(await webRequest.Content.ReadAsStringAsync())!.image.url;
+            HttpResponseMessage sendResponse = await Client.SendAsync(sendRequest);
+            sendResponse.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<dynamic>(await getResponse.Content.ReadAsStringAsync())!.image.url;
         }
 
         private void Template_LostFocus(object sender, RoutedEventArgs e) => Config.Save();
