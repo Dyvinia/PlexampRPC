@@ -79,6 +79,8 @@ namespace PlexampRPC {
             UserServerComboBox.ItemsSource = App.ServerContainer?.Servers;
             UserServerComboBox.SelectedIndex = 0;
 
+            UserInfoPanel.Visibility = Visibility.Visible;
+
             LoadingImage.Visibility = Visibility.Collapsed;
         }
 
