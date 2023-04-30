@@ -84,7 +84,7 @@ namespace PlexampRPC {
         }
 
         private static async Task PlexSignIn(bool resignIn = false) {
-            string authFile = Path.Combine(Path.GetDirectoryName(Config.FilePath), "auth.token");
+            string authFile = Path.Combine(Path.GetDirectoryName(Config.FilePath)!, "auth.token");
             if (File.Exists(authFile) && !resignIn) {
                 Token = File.ReadAllText(authFile);
             }

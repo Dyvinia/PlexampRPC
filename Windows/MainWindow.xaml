@@ -109,7 +109,7 @@
                             <TextBlock x:Name="PreviewPlexamp" Text="Plexamp" Foreground="#dddddd" FontSize="14" Height="18" FontWeight="Bold" VerticalAlignment="Top"/>
                             <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
                             <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
-                            <TextBlock x:Name="PreviewL3" Visibility="Collapsed" Text="00:00 Elapsed" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
+                            <TextBlock x:Name="PreviewL3" Visibility="Collapsed" Text="00:00 elapsed" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
                         </StackPanel>
                     </DockPanel>
 

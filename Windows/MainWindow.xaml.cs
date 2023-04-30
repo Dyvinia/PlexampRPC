@@ -143,7 +143,7 @@ namespace PlexampRPC {
                 PreviewL2.Text = presence.Line2;
 
                 TimeSpan t = TimeSpan.FromMilliseconds(presence.TimeOffset);
-                PreviewL3.Text = $"{String.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds)} Elapsed";
+                PreviewL3.Text = $"{String.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds)} elapsed";
                 PreviewL3.Visibility = Visibility.Visible;
 
                 PreviewPaused.Visibility = Visibility.Collapsed;
