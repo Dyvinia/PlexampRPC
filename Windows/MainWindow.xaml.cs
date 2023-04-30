@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,13 +23,15 @@ namespace PlexampRPC {
     /// </summary>
     public partial class MainWindow : Window {
 
+        static readonly HttpClient Client = new();
+
         public static SessionMetadata? Session { get; set; }
 
         public class PresenceData {
             public string? Line1 { get; set; }
             public string? Line2 { get; set; }
             public string? ImageTooltip { get; set; }
-            public string? ArtLink { get; set; }
+            public string ArtLink { get; set; } = "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png";
             public string? State { get; set; }
             public int TimeOffset { get; set; }
         }
@@ -195,25 +196,25 @@ namespace PlexampRPC {
 
             PreviewPaused.Visibility = Visibility.Collapsed;
 
-            App.DiscordClient?.ClearPresence();
+            App.DiscordClient.ClearPresence();
         }
 
         private async Task<string> GetThumbnail(SessionMetadata session) {
-            string cacheFile = Path.Combine(Path.GetDirectoryName(Config.FilePath), "cache.json");
+            string cacheFile = Path.Combine(Path.GetDirectoryName(Config.FilePath)!, "cache.json");
 
             Dictionary<string, string> thumbnails;
             string thumbnailsJson = "";
 
             if (File.Exists(cacheFile)) {
                 thumbnailsJson = File.ReadAllText(cacheFile);
-                try { thumbnails = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(cacheFile)); }
+                try { thumbnails = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(cacheFile))!; }
                 catch { thumbnails = new(); }
             }
             else
                 thumbnails = new();
 
             string thumbnailLink;
-            if (thumbnails.TryGetValue(session.Thumb, out string value)) {
+            if (thumbnails.TryGetValue(session.Thumb, out string? value)) {
                 thumbnailLink = value;
             }
             else {
@@ -231,39 +232,23 @@ namespace PlexampRPC {
 
         private async Task<string> UploadImage(SessionMetadata session) {
             AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
-            string url = $"{selected?.Uri.ToString()}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={session.Thumb}&X-Plex-Token={App.Token}";
 
-            var client = new HttpClient();
-            var response = await client.GetAsync(url);
-            var stream = await response.Content.ReadAsStreamAsync();
+            HttpResponseMessage response = await Client.GetAsync($"{selected?.Uri}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={session.Thumb}&X-Plex-Token={App.Token}");
+            System.IO.Stream stream = await response.Content.ReadAsStreamAsync();
 
             byte[] imageData = new byte[stream.Length];
-            stream.Read(imageData, 0, imageData.Length);
+            await stream.ReadAsync(imageData);
             stream.Close();
 
-            const int MAX_URI_LENGTH = 32766;
-            string base64img = System.Convert.ToBase64String(imageData);
-            StringBuilder sb = new StringBuilder();
+            HttpRequestMessage httpRequest = new() {
+                Method = HttpMethod.Post,
+                RequestUri = new("https://freeimage.host/api/1/upload"),
+                Content = new StringContent($"image={Uri.EscapeDataString(Convert.ToBase64String(imageData))}&key=6d207e02198a847aa98d0a2a901485a5", Encoding.UTF8, "application/x-www-form-urlencoded")
+            };
 
-            for (int i = 0; i < base64img.Length; i += MAX_URI_LENGTH) {
-                sb.Append(Uri.EscapeDataString(base64img.Substring(i, Math.Min(MAX_URI_LENGTH, base64img.Length - i))));
-            }
-
-            string uploadRequestString = "image=" + sb.ToString() + "&key=6d207e02198a847aa98d0a2a901485a5";
-
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("https://freeimage.host/api/1/upload");
-            webRequest.Method = "POST";
-            webRequest.ContentType = "application/x-www-form-urlencoded";
-
-            StreamWriter streamWriter = new StreamWriter(webRequest.GetRequestStream());
-            streamWriter.Write(uploadRequestString);
-            streamWriter.Close();
-
-            WebResponse response2 = webRequest.GetResponse();
-            System.IO.Stream responseStream = response2.GetResponseStream();
-            StreamReader responseReader = new StreamReader(responseStream);
-
-            return JsonConvert.DeserializeObject<dynamic>(responseReader.ReadToEnd()).image.url;
+            HttpResponseMessage webRequest = await Client.SendAsync(httpRequest);
+            webRequest.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<dynamic>(await webRequest.Content.ReadAsStringAsync())!.image.url;
         }
 
         private void Template_LostFocus(object sender, RoutedEventArgs e) => Config.Save();

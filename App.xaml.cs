@@ -39,14 +39,16 @@ namespace PlexampRPC {
 
         public static readonly string Version = "v" + Assembly.GetExecutingAssembly().GetName()?.Version?.ToString()[..5];
 
-        public static IPlexAccountClient AccountClient = new PlexAccountClient(new() {
+        public static DiscordRpcClient DiscordClient { get; } = new(Config.Settings.DiscordClientID);
+
+        public static IPlexAccountClient AccountClient { get; } = new PlexAccountClient(new() {
             Product = "PlexampRPC",
             DeviceName = Environment.MachineName,
             Platform = "Desktop",
             Version = "v2"
         }, new ApiService(new PlexRequestsHttpClient(), new Logger<ApiService>(new NullLoggerFactory())));
 
-        public static IPlexServerClient ServerClient = new PlexServerClient(new() {
+        public static IPlexServerClient ServerClient { get; } = new PlexServerClient(new() {
             Product = "PlexampRPC",
             DeviceName = Environment.MachineName,
             Platform = "Desktop",
@@ -56,10 +58,11 @@ namespace PlexampRPC {
         public static string? Token { get; set; }
         public static PlexAccount? Account { get; set; }
         public static AccountServerContainer? ServerContainer { get; set; }
-        public static DiscordRpcClient DiscordClient { get; set; }
 
         public App() {
             Config.Load();
+
+            DiscordClient.Initialize();
 
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
             AppDomain.CurrentDomain.ProcessExit += (_, _) => DiscordClient.Dispose();
@@ -71,7 +74,6 @@ namespace PlexampRPC {
             MainWindow window = new();
             window.Show();
 
-            InitRPC();
             await PlexSignIn();
 
             window.WindowState = WindowState.Normal;
@@ -112,21 +114,6 @@ namespace PlexampRPC {
                 await Task.Delay(1000);
             }
             return plexPin.AuthToken;
-        }
-
-        private static void InitRPC() {
-            DiscordClient = new(Config.Settings.DiscordClientID) {
-                Logger = new ConsoleLogger() { Level = DiscordRPC.Logging.LogLevel.Warning }
-            };
-
-            DiscordClient.OnReady += (sender, e) => {
-                Console.WriteLine($"Received Ready from user {e.User.Username}");
-            };
-
-            DiscordClient.OnPresenceUpdate += (sender, e) => {
-                Console.WriteLine($"Received Update! {e.Presence}");
-            };
-            DiscordClient.Initialize();
         }
     }
 }
