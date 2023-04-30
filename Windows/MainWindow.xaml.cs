@@ -162,7 +162,7 @@ namespace PlexampRPC {
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip,
-                        SmallImageKey = "paused2",
+                        SmallImageKey = "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexPaused.png",
                         SmallImageText = "Paused",
                     }
                 });
