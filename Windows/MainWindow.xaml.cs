@@ -254,6 +254,12 @@ namespace PlexampRPC {
 
         private void Template_LostFocus(object sender, RoutedEventArgs e) => Config.Save();
 
+        private void SettingsButton_Click(object sender, RoutedEventArgs e) {
+            SettingsWindow settingsWindow = new() { Owner = this };
+            settingsWindow.ShowDialog();
+            Config.Save();
+        }
+
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);
             App.DiscordClient.Dispose();

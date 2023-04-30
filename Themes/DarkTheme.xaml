@@ -4065,7 +4065,7 @@
                                 <Grid Height="30" x:Name="titlebar"
                                       Background="{StaticResource WindowTitleColour}"
                                       VerticalAlignment="Top" Margin="0">
-                                    <DockPanel Margin="0,0,130,0">
+                                    <DockPanel>
 
 
                                         <!-- CUSTOM ICON -->
