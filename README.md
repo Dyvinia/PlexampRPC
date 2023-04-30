@@ -9,6 +9,7 @@ PlexampRPC displays currently playing Plex music as Discord Rich Presence, while
 
 ## Features
 - Proper Album Art for your Music
+- Start PlexampRPC on Windows startup
 - Customize Template
 - Minimize to tray
 - Self contained single .exe
