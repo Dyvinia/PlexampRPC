@@ -25,6 +25,8 @@
                         <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="50" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.ArtResolution), Mode=TwoWay}"/>
                     </DockPanel>
 
+                    <CheckBox x:Name="CheckUpdatesCheckBox" Margin="0 5 0 0" Content="Check for Updates" IsChecked="{Binding Path=(local:Config.UpdateChecker), Mode=TwoWay}" ToolTip="Checks Github for Updates"/>
+                    
                     <CheckBox x:Name="StartupCheckBox" Margin="0 5 0 0" Content="Start on Startup" IsChecked="False" ToolTip="Start PlexampRPC when Windows starts"/>
                     
                 </StackPanel>
