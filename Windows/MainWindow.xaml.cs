@@ -100,9 +100,12 @@ namespace PlexampRPC {
         }
 
         private async Task<SessionMetadata?> GetCurrentSession() {
-            AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
-            SessionContainer sessions = await App.ServerClient.GetSessionsAsync(App.Token, selected?.Uri.ToString());
-            return sessions?.Metadata?.FirstOrDefault(session => session.Type == "track" && session.User.Title == App.Account?.Username);
+            try {
+                AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
+                SessionContainer sessions = await App.ServerClient.GetSessionsAsync(App.Token, selected?.Uri.ToString());
+                return sessions?.Metadata?.FirstOrDefault(session => session.Type == "track" && session.User.Title == App.Account?.Username);
+            }
+            catch { return null; }
         }
 
         private async Task<PresenceData> BuildPresence(SessionMetadata session) {
