@@ -21,6 +21,8 @@ namespace PlexampRPC {
         public SettingsWindow() {
             InitializeComponent();
 
+            Title += $" {App.Version}";
+
             CheckForStartup();
             StartupCheckBox.Checked += (_, _) => StartOnStartup();
             StartupCheckBox.Unchecked += (_, _) => File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
