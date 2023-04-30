@@ -247,7 +247,7 @@ namespace PlexampRPC {
             };
             HttpResponseMessage sendResponse = await Client.SendAsync(sendRequest);
             sendResponse.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<dynamic>(await getResponse.Content.ReadAsStringAsync())!.image.url;
+            return JsonConvert.DeserializeObject<dynamic>(await sendResponse.Content.ReadAsStringAsync())!.image.url;
         }
 
         private void Template_LostFocus(object sender, RoutedEventArgs e) => Config.Save();
