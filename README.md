@@ -9,6 +9,7 @@ PlexampRPC displays currently playing Plex music as Discord Rich Presence, while
 
 ## Features
 - Proper Album Art for your Music
+- Uses Track Artist instead of Album Artist if available 
 - Start PlexampRPC on Windows startup
 - Customize Template
 - Minimize to tray
@@ -25,6 +26,10 @@ The config file, aswell as the thumbnail cache and the stored auth token, are st
 > **Q:** How do I change the Bold "Plexamp" text?
 > 
 > **A:** You must make a new application [here](https://discord.com/developers/applications) and set the Name you desire. Then open the config.json file in `%AppData%\PlexampRPC\` and paste the Application ID in.
+
+> **Q:** How do I see a debug log?
+> 
+> **A:** In the `config.json` file, set `ShowConsole` to `true`.
 
 > **Q:** I can't run this
 > 
