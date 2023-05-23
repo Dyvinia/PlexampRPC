@@ -113,11 +113,17 @@ namespace PlexampRPC {
                 HttpResponseMessage sendResponse = await Client.SendAsync(requestMessage);
                 sendResponse.EnsureSuccessStatusCode();
 
-                dynamic[] metadata = ((JArray)JsonConvert.DeserializeObject<dynamic>(await sendResponse.Content.ReadAsStringAsync())!.MediaContainer.Metadata).ToArray();
-
-                return metadata.FirstOrDefault(session => session.type == "track" && session.User.title == App.Account?.Username);
+                dynamic? metadata = JsonConvert.DeserializeObject<dynamic>(await sendResponse.Content.ReadAsStringAsync())?.MediaContainer.Metadata;
+                if (metadata != null) {
+                    dynamic[] sessions = ((JArray)metadata).ToArray();
+                    return sessions.FirstOrDefault(session => session.type == "track" && session.User.title == App.Account?.Username);
+                }
+                else return null;
             }
-            catch { return null; }
+            catch (Exception e) {
+                Console.WriteLine($"WARN: Unable to get current session: {e.Message} {e.InnerException}");
+                return null;
+            }
         }
 
         private async Task<PresenceData> BuildPresence(dynamic session) {
