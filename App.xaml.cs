@@ -81,8 +81,17 @@ namespace PlexampRPC {
             window.GetAccountInfo();
             window.StartPolling();
 
-            if (Config.Settings.UpdateChecker)
-                GitHub.CheckVersion("Dyvinia", "PlexampRPC");
+            if (Config.Settings.UpdateChecker) {
+                GitHub.CleanupUpdate();
+
+                string repoAuthor = "Dyvinia";
+                string repoName = "PlexampRPC";
+                if (await GitHub.CheckVersion(repoAuthor, repoName)) {
+                    string message = $"{repoName} is outdated.\nWould you like to download the latest version?";
+                    if (MessageBoxDialog.Show(message, repoName, MessageBoxButton.YesNo, DialogSound.Notify) == MessageBoxResult.Yes)
+                        await GitHub.InstallUpdate(repoAuthor, repoName);
+                }
+            }
         }
 
         protected override void OnExit(ExitEventArgs e) {
