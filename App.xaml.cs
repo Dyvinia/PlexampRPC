@@ -81,6 +81,10 @@ namespace PlexampRPC {
             window.GetAccountInfo();
             window.StartPolling();
 
+            foreach (Process existingProcess in Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName))
+                if (existingProcess.Id != Environment.ProcessId)
+                    existingProcess.Kill();
+
             if (Config.Settings.UpdateChecker) {
                 GitHub.CleanupUpdate();
 
