@@ -30,6 +30,17 @@ namespace DyviniaUtils {
             }
         }
 
+        /// <summary>
+        /// Checks Github if there is a newer version and asks the user if they want to update
+        /// </summary>
+        public static async Task CheckAndInstall(string repoAuthor, string repoName) {
+            CleanupUpdate();
+            if (await CheckVersion(repoAuthor, repoName)) {
+                if (UpdateDialog.Show(repoAuthor, repoName))
+                    await InstallUpdate(repoAuthor, repoName);
+            }
+        }
+
 
         /// <summary>
         /// Checks Github if there is a newer version

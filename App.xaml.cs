@@ -85,17 +85,8 @@ namespace PlexampRPC {
                 if (existingProcess.Id != Environment.ProcessId)
                     existingProcess.Kill();
 
-            if (Config.Settings.UpdateChecker) {
-                GitHub.CleanupUpdate();
-
-                string repoAuthor = "Dyvinia";
-                string repoName = "PlexampRPC";
-                if (await GitHub.CheckVersion(repoAuthor, repoName)) {
-                    string message = $"{repoName} is outdated.\nWould you like to download the latest version?";
-                    if (MessageBoxDialog.Show(message, repoName, MessageBoxButton.YesNo, DialogSound.Notify) == MessageBoxResult.Yes)
-                        await GitHub.InstallUpdate(repoAuthor, repoName);
-                }
-            }
+            if (Config.Settings.UpdateChecker)
+                await GitHub.CheckAndInstall("Dyvinia", "PlexampRPC");
         }
 
         protected override void OnExit(ExitEventArgs e) {
