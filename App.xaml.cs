@@ -7,7 +7,6 @@ using System.Windows;
 using DiscordRPC;
 using DiscordRPC.Logging;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Plex.ServerApi.Api;
 using Plex.ServerApi.Clients;
 using Plex.ServerApi.Clients.Interfaces;
@@ -15,12 +14,14 @@ using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
 using DyviniaUtils;
 using DyviniaUtils.Dialogs;
+using System.Runtime.InteropServices;
 
 namespace PlexampRPC {
 
     [GlobalConfig]
     public class Config : SettingsManager<Config> {
         public bool UpdateChecker { get; set; } = true;
+        public bool ShowConsole { get; set; } = false;
         
         public int ArtResolution { get; set; } = 128;
         public double RefreshInterval { get; set; } = 2.5;
@@ -46,14 +47,7 @@ namespace PlexampRPC {
             DeviceName = Environment.MachineName,
             Platform = "Desktop",
             Version = "v2"
-        }, new ApiService(new PlexRequestsHttpClient(), new Logger<ApiService>(new NullLoggerFactory())));
-
-        public static IPlexServerClient ServerClient { get; } = new PlexServerClient(new() {
-            Product = "PlexampRPC",
-            DeviceName = Environment.MachineName,
-            Platform = "Desktop",
-            Version = "v2"
-        }, new ApiService(new PlexRequestsHttpClient(), new Logger<ApiService>(new NullLoggerFactory())));
+        }, new ApiService(new PlexRequestsHttpClient(), new Logger<ApiService>(LoggerFactory.Create(builder => { builder.AddConsole(); }))));
 
         public static string? Token { get; set; }
         public static PlexAccount? Account { get; set; }
@@ -61,6 +55,12 @@ namespace PlexampRPC {
 
         public App() {
             Config.Load();
+
+            if (Config.Settings.ShowConsole) {
+                [DllImport("Kernel32.dll")]
+                static extern bool AllocConsole();
+                AllocConsole();
+            }
 
             DiscordClient.Initialize();
 
@@ -83,6 +83,11 @@ namespace PlexampRPC {
 
             if (Config.Settings.UpdateChecker)
                 GitHub.CheckVersion("Dyvinia", "PlexampRPC");
+        }
+
+        protected override void OnExit(ExitEventArgs e) {
+            DiscordClient.Dispose();
+            Config.Save();
         }
 
         private static async Task PlexSignIn(bool resignIn = false) {
