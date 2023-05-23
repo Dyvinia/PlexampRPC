@@ -13,9 +13,8 @@ using System.Windows.Media.Imaging;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Plex.ServerApi.PlexModels.Account;
-using Plex.ServerApi.PlexModels.Server.Playlists;
-using Plex.ServerApi.PlexModels.Server.Sessions;
 
 namespace PlexampRPC {
     /// <summary>
@@ -25,7 +24,7 @@ namespace PlexampRPC {
 
         static readonly HttpClient Client = new();
 
-        public static SessionMetadata? Session { get; set; }
+        public static dynamic? Session { get; set; }
 
         public class PresenceData {
             public string? Line1 { get; set; }
@@ -89,7 +88,7 @@ namespace PlexampRPC {
 
         public async void StartPolling() {
             while (true) {
-                SessionMetadata? currentSession = await GetCurrentSession();
+                dynamic? currentSession = await GetCurrentSession();
                 if (currentSession != null) {
                     if (JsonConvert.SerializeObject(currentSession) != JsonConvert.SerializeObject(Session)) {
                         SetPresence(await BuildPresence(currentSession));
@@ -104,33 +103,45 @@ namespace PlexampRPC {
             }
         }
 
-        private async Task<SessionMetadata?> GetCurrentSession() {
+        private async Task<dynamic?> GetCurrentSession() {
             try {
                 AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
-                SessionContainer sessions = await App.ServerClient.GetSessionsAsync(App.Token, selected?.Uri.ToString());
-                return sessions?.Metadata?.FirstOrDefault(session => session.Type == "track" && session.User.Title == App.Account?.Username);
+
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{selected?.Uri}status/sessions?X-Plex-Token={App.Token}");
+                requestMessage.Headers.Add("Accept", "application/json");
+
+                HttpResponseMessage sendResponse = await Client.SendAsync(requestMessage);
+                sendResponse.EnsureSuccessStatusCode();
+
+                dynamic[] metadata = ((JArray)JsonConvert.DeserializeObject<dynamic>(await sendResponse.Content.ReadAsStringAsync())!.MediaContainer.Metadata).ToArray();
+
+                return metadata.FirstOrDefault(session => session.type == "track" && session.User.title == App.Account?.Username);
             }
             catch { return null; }
         }
 
-        private async Task<PresenceData> BuildPresence(SessionMetadata session) {
+        private async Task<PresenceData> BuildPresence(dynamic session) {
+            string title = session.title;
+            string artist = session.originalTitle ?? session.grandparentTitle;
+            string album = session.parentTitle;
+
             string L1 = Config.Settings.TemplateL1
-                .Replace("{title}", session.Title)
-                .Replace("{artist}", session.GrandparentTitle)
-                .Replace("{album}", session.ParentTitle);
+                .Replace("{title}", title)
+                .Replace("{artist}", artist)
+                .Replace("{album}", album);
 
             string L2 = Config.Settings.TemplateL2
-                .Replace("{title}", session.Title)
-                .Replace("{artist}", session.GrandparentTitle)
-                .Replace("{album}", session.ParentTitle);
+                .Replace("{title}", title)
+                .Replace("{artist}", artist)
+                .Replace("{album}", album);
 
             return new PresenceData() {
                 Line1 = L1,
                 Line2 = L2,
-                ImageTooltip = session.ParentTitle,
-                ArtLink = await GetThumbnail(session),
-                State = session.Player.State,
-                TimeOffset = (int)session.ViewOffset
+                ImageTooltip = album,
+                ArtLink = await GetThumbnail((string)session.thumb),
+                State = session.Player.state,
+                TimeOffset = session.viewOffset
             };
         }
 
@@ -199,7 +210,7 @@ namespace PlexampRPC {
             App.DiscordClient.ClearPresence();
         }
 
-        private async Task<string> GetThumbnail(SessionMetadata session) {
+        private async Task<string> GetThumbnail(string thumb) {
             string cacheFile = Path.Combine(Path.GetDirectoryName(Config.FilePath)!, "cache.json");
 
             Dictionary<string, string> thumbnails;
@@ -214,13 +225,13 @@ namespace PlexampRPC {
                 thumbnails = new();
 
             string thumbnailLink;
-            if (thumbnails.TryGetValue(session.Thumb, out string? value)) {
+            if (thumbnails.TryGetValue(thumb, out string? value)) {
                 thumbnailLink = value;
             }
             else {
-                try { thumbnailLink = await UploadImage(session); }
+                try { thumbnailLink = await UploadImage(thumb); }
                 catch { return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png"; }
-                thumbnails.Add(session.Thumb, thumbnailLink);
+                thumbnails.Add(thumb, thumbnailLink);
             }
 
             string newThumbnailsJson = JsonConvert.SerializeObject(thumbnails);
@@ -230,10 +241,10 @@ namespace PlexampRPC {
             return thumbnailLink;
         }
 
-        private async Task<string> UploadImage(SessionMetadata session) {
+        private async Task<string> UploadImage(string thumb) {
             AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
 
-            HttpResponseMessage getResponse = await Client.GetAsync($"{selected?.Uri}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={session.Thumb}&X-Plex-Token={App.Token}");
+            HttpResponseMessage getResponse = await Client.GetAsync($"{selected?.Uri}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={App.Token}");
 
             string dataString = Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()));
             HttpResponseMessage sendResponse = await Client.SendAsync(new() {
