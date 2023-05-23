@@ -62,7 +62,7 @@ namespace PlexampRPC {
                 AllocConsole();
             }
 
-            DiscordClient.Initialize();
+            DiscordInit();
 
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
             AppDomain.CurrentDomain.ProcessExit += (_, _) => DiscordClient.Dispose();
@@ -88,6 +88,15 @@ namespace PlexampRPC {
         protected override void OnExit(ExitEventArgs e) {
             DiscordClient.Dispose();
             Config.Save();
+        }
+
+        private static void DiscordInit() {
+            DiscordClient.Logger = new ConsoleLogger() { Level = DiscordRPC.Logging.LogLevel.Warning };
+
+            DiscordClient.OnReady += (_, e) => Console.WriteLine($"INFO: Connected to {e.User.Username}'s Discord Client");
+            DiscordClient.OnPresenceUpdate += (_, e) => Console.WriteLine($"INFO: Updated Presence to [{e.Presence.Details} | {e.Presence.State}]");
+
+            DiscordClient.Initialize();
         }
 
         private static async Task PlexSignIn(bool resignIn = false) {

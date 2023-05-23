@@ -230,7 +230,10 @@ namespace PlexampRPC {
             }
             else {
                 try { thumbnailLink = await UploadImage(thumb); }
-                catch { return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png"; }
+                catch {
+                    Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead");
+                    return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png"; 
+                }
                 thumbnails.Add(thumb, thumbnailLink);
             }
 
