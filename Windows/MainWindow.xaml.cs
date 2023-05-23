@@ -131,6 +131,13 @@ namespace PlexampRPC {
             string artist = session.originalTitle ?? session.grandparentTitle;
             string album = session.parentTitle;
 
+            if (artist.Contains(';')) {
+                string[] artists = artist.Split(';', StringSplitOptions.TrimEntries);
+                if (artists.Length > 2)
+                    artist = String.Join(", ", artists);
+                else artist = String.Join(" & ", artists);
+            }
+
             string L1 = Config.Settings.TemplateL1
                 .Replace("{title}", title)
                 .Replace("{artist}", artist)
