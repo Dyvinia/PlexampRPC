@@ -14,14 +14,12 @@ using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
 using DyviniaUtils;
 using DyviniaUtils.Dialogs;
-using System.Runtime.InteropServices;
 
 namespace PlexampRPC {
 
     [GlobalConfig]
     public class Config : SettingsManager<Config> {
         public bool UpdateChecker { get; set; } = true;
-        public bool ShowConsole { get; set; } = false;
         
         public int ArtResolution { get; set; } = 128;
         public double RefreshInterval { get; set; } = 2.5;
@@ -53,14 +51,12 @@ namespace PlexampRPC {
         public static PlexAccount? Account { get; set; }
         public static AccountServerContainer? ServerContainer { get; set; }
 
+        public static LogWindow.LogWriter? Log { get; set; } 
+
         public App() {
             Config.Load();
 
-            if (Config.Settings.ShowConsole) {
-                [DllImport("Kernel32.dll")]
-                static extern bool AllocConsole();
-                AllocConsole();
-            }
+            Log = new LogWindow.LogWriter();
 
             DiscordInit();
 
@@ -97,8 +93,8 @@ namespace PlexampRPC {
         private static void DiscordInit() {
             DiscordClient.Logger = new ConsoleLogger() { Level = DiscordRPC.Logging.LogLevel.Warning };
 
-            DiscordClient.OnReady += (_, e) => Console.WriteLine($"INFO: Connected to {e.User.Username}'s Discord Client");
-            DiscordClient.OnPresenceUpdate += (_, e) => Console.WriteLine($"INFO: Updated Presence to [{e.Presence.Details} | {e.Presence.State}]");
+            DiscordClient.OnReady += (_, e) => Console.WriteLine($"Connected to {e.User.Username}'s Discord Client");
+            DiscordClient.OnPresenceUpdate += (_, e) => Console.WriteLine($"Updated Presence to [{e.Presence.Details} | {e.Presence.State}]");
 
             DiscordClient.Initialize();
         }

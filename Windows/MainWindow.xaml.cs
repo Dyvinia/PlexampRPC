@@ -12,9 +12,11 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
+using Microsoft.VisualBasic.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Plex.ServerApi.PlexModels.Account;
+using static PlexampRPC.LogWindow.LogWriter;
 
 namespace PlexampRPC {
     /// <summary>
@@ -291,6 +293,9 @@ namespace PlexampRPC {
 
             if (e.Key == Key.F12)
                 Process.Start("explorer.exe", $"/select, {Config.FilePath}");
+
+            if (e.Key == Key.F5)
+                new LogWindow(App.Log!).Show();
         }
     }
 }
