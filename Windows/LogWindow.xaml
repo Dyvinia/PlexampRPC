@@ -8,12 +8,12 @@
         Title="Log" Height="500" Width="750"
         Style="{DynamicResource CustomWindowStyle}" ResizeMode="CanResize">
     <Grid>
-        <ListBox x:Name="LogBox" Background="#FF141414" Margin="5" VirtualizingStackPanel.IsVirtualizing="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+        <ListBox x:Name="LogBox" Background="#FF141414" Margin="5" VirtualizingStackPanel.IsVirtualizing="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AlternationCount="2">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Timestamp, StringFormat='{}{0: [hh:mm:ss] }'}" TextWrapping="Wrap"/>
-                        <TextBlock Text="{Binding Message}" TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="{Binding Timestamp, StringFormat='{}{0: [hh:mm:ss] }'}" TextWrapping="Wrap" FontFamily="Consolas"/>
+                        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" FontFamily="Consolas" Width="1500"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -21,6 +21,12 @@
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                     <Setter Property="Focusable" Value="False"/>
+
+                    <Style.Triggers>
+                        <Trigger Property="ItemsControl.AlternationIndex"  Value="0">
+                            <Setter Property="Background" Value="#09FFFFFF" />
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
