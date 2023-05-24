@@ -10,7 +10,6 @@ namespace PlexampRPC {
     /// Interaction logic for LogWindow.xaml
     /// </summary>
     public partial class LogWindow : Window {
-
         public LogWindow(LogWriter logWriter) {
             InitializeComponent();
             LogBox.ItemsSource = logWriter.Log;
