@@ -51,12 +51,12 @@ namespace PlexampRPC {
         public static PlexAccount? Account { get; set; }
         public static AccountServerContainer? ServerContainer { get; set; }
 
-        public static LogWindow.LogWriter? Log { get; set; } 
+        public static LogWriter? Log { get; set; } 
 
         public App() {
             Config.Load();
 
-            Log = new LogWindow.LogWriter();
+            Log = new LogWriter();
 
             DiscordInit();
 
