@@ -22,8 +22,9 @@ namespace PlexampRPC {
 
             if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control) {
                 StringBuilder sb = new();
-                foreach (LogWriter.LogItem item in LogBox.ItemsSource) {
-                    if (item.Message.Contains("token") || item.Message.Contains("address") || item.Message.Contains("identifier")) continue;
+                foreach (LogWriter.LogItem item in LogBox.Items) {
+                    if (item.Message.Contains("token") || item.Message.Contains("address") || item.Message.Contains("identifier")) 
+                        continue;
                     sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
                 }
                 Clipboard.SetDataObject(sb.ToString());
