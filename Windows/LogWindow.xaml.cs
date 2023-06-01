@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace PlexampRPC {
             if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control) {
                 StringBuilder sb = new();
                 foreach (LogWriter.LogItem item in LogBox.Items) {
-                    if (item.Message.Contains("token") || item.Message.Contains("address") || item.Message.Contains("identifier")) 
+                    if (item.Message.StartsWith("{"))
                         continue;
                     sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
                 }
@@ -39,7 +40,7 @@ namespace PlexampRPC {
 
             public LogItem(string message) {
                 Timestamp = DateTime.Now;
-                Message = message;
+                Message = RemoveTags(message).Trim();
             }
         }
 
@@ -52,7 +53,7 @@ namespace PlexampRPC {
         public override void WriteLine(string? value) {
             Application.Current.Dispatcher.Invoke(new Action(() => {
                 if (Log.Count > 200) Log.RemoveAt(0);
-                Log.Add(new LogItem(value!.Trim()));
+                Log.Add(new LogItem(value!));
             }));
         }
 
@@ -71,8 +72,11 @@ namespace PlexampRPC {
                     return;
                 }
                 Application.Current.Dispatcher.Invoke(new Action(() => {
-                    if (Log.Count > 200) Log.RemoveAt(0);
-                    Log.Add(new LogItem(line.Trim()));
+                    if (Log.Count > 200) 
+                        Log.RemoveAt(0);
+
+                    if (!String.IsNullOrWhiteSpace(line))
+                        Log.Add(new LogItem(line));
                 }));
                 line = String.Empty;
             }
@@ -80,6 +84,24 @@ namespace PlexampRPC {
 
         public override Encoding Encoding {
             get { return Encoding.UTF8; }
+        }
+
+        private static string RemoveTags(string text) {
+            string[] hiddenTags = { "\"id\"", "uuid", "token", "identifier", "secret", "address", "host", "port" };
+
+            if (hiddenTags.Any(c => text.Contains(c, StringComparison.OrdinalIgnoreCase))) {
+                if (text.Trim().StartsWith('{')) {
+                    List<string> splitText = text.Replace("{", "{,").Split(',').ToList();
+                    splitText.RemoveAll(u => hiddenTags.Any(c => u.Contains(c, StringComparison.OrdinalIgnoreCase)));
+                    text = String.Join(',', splitText).Replace("{,", "{");
+                }
+                else if (text.Trim().StartsWith('<')) {
+                    List<string> splitText = text.Split().ToList();
+                    splitText.RemoveAll(u => hiddenTags.Any(c => u.Contains(c, StringComparison.OrdinalIgnoreCase)));
+                    text = String.Join(' ', splitText);
+                }
+            }
+            return text;
         }
     }
 }
