@@ -61,7 +61,7 @@ namespace DyviniaUtils.Dialogs {
         private void Browser_Navigating(object sender, NavigatingCancelEventArgs e) {
             if (e.Uri is null) return;
 
-            if (e.Uri.ToString().Contains("http")) {
+            if (e.Uri.ToString().StartsWith("http")) {
                 e.Cancel = true;
                 Process.Start(new ProcessStartInfo(e.Uri.ToString()) { UseShellExecute = true });
             }
