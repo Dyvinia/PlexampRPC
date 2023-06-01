@@ -29,7 +29,7 @@ The config file, aswell as the thumbnail cache and the stored auth token, are st
 
 > **Q:** How do I see a debug log?
 > 
-> **A:** In the `config.json` file, set `ShowConsole` to `true`.
+> **A:** Press `F5`, you can also press `Ctrl+C` to copy the log into the clipboard.
 
 > **Q:** I can't run this
 > 
