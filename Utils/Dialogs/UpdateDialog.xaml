@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DyviniaUtils.Dialogs"
         mc:Ignorable="d"
-        Title="Update" Height="300" Width="500"
+        Title="Update" Width="400" SizeToContent="Height" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Style="{DynamicResource CustomWindowStyle}">
@@ -15,14 +15,19 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="32"/>
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Padding="5" Margin="0 -5 0 0">
-                <WebBrowser x:Name="Browser" RenderOptions.BitmapScalingMode="Fant" Navigating="Browser_Navigating"/>
+            <Border Grid.Row="0" Padding="5" Margin="5">
+                <StackPanel>
+                    <TextBlock x:Name="Header" Text="Update" FontSize="20" FontWeight="DemiBold" Margin="0 -4 0 2"/>
+                    <Border BorderThickness="1"  BorderBrush="{StaticResource ContainerBorder}">
+                        <WebBrowser x:Name="Browser" Visibility="Hidden" RenderOptions.BitmapScalingMode="Fant" TextOptions.TextRenderingMode="ClearType" Navigating="Browser_Navigating" LoadCompleted="Browser_LoadCompleted" Height="200"/>
+                    </Border>
+                </StackPanel>
             </Border>
             <Separator Height="1" Margin="0" VerticalAlignment="Bottom"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="1">
-                <Button x:Name="InstallButton" Content="Update &amp; Install" Width="110" HorizontalAlignment="Right" Margin="0,5,5,5" />
-                <Button x:Name="WebpageButton" Content="Open GitHub" Width="90" HorizontalAlignment="Right" Margin="0,5,5,5" />
+                <Button x:Name="InstallButton" Content="Install Update" Width="100" HorizontalAlignment="Right" Margin="0,5,5,5" />
+                <Button x:Name="WebpageButton" Content="Open GitHub" Width="95" HorizontalAlignment="Right" Margin="0,5,5,5" />
                 <Button x:Name="IgnoreButton" Content="Ignore" Width="60" HorizontalAlignment="Right" Margin="0,5,5,5" />
             </StackPanel>
         </Grid>

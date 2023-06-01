@@ -15,13 +15,6 @@ namespace DyviniaUtils.Dialogs {
         public UpdateDialog(string repoAuthor, string repoName) {
             InitializeComponent();
 
-            using HttpClient client = new();
-            client.DefaultRequestHeaders.Add("User-Agent", "request");
-            client.DefaultRequestHeaders.Add("Accept", "application/vnd.github.html");
-            dynamic github = JsonConvert.DeserializeObject<dynamic>(client.GetStringAsync($"https://api.github.com/repos/{repoAuthor}/{repoName}/releases/latest").Result)!;
-            string htmlString = $"<head><style>body{{overflow:hidden; background-color: #141414; color: rgb(230, 237, 243); font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"}} a{{color: rgb(220, 220, 220);}}</style></head><body><h1>{github.name}</h1> {github.body_html} </body>";
-            
-            Browser.NavigateToString(htmlString);
             Title += $" {repoName}";
             Owner = Application.Current.MainWindow;
 
@@ -30,7 +23,21 @@ namespace DyviniaUtils.Dialogs {
 
             WebpageButton.Click += (_, _) => Process.Start(new ProcessStartInfo($"https://github.com/{repoAuthor}/{repoName}/releases/latest") { UseShellExecute = true });
 
+            GetUpdateInfo(repoAuthor, repoName);
+
             SystemSounds.Exclamation.Play();
+        }
+
+        private void GetUpdateInfo(string repoAuthor, string repoName) {
+            using HttpClient client = new();
+            client.DefaultRequestHeaders.Add("User-Agent", "request");
+            client.DefaultRequestHeaders.Add("Accept", "application/vnd.github.html");
+            dynamic github = JsonConvert.DeserializeObject<dynamic>(client.GetStringAsync($"https://api.github.com/repos/{repoAuthor}/{repoName}/releases/latest").Result)!;
+            string htmlString = $"<head><style>body{{line-height: 1.25; background-color: #141414; color: rgb(230, 237, 243); font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"}} a{{color: rgb(220, 220, 220);}} h1, h2, h3, h4, h5, h6{{line-height: 0.125;}}</style></head><body>{github.body_html}</body>";
+
+            Header.Text = github.name;
+            Browser.NavigateToString(htmlString);
+            Browser.Visibility = Visibility.Visible;
         }
 
         public static bool Show(string repoAuthor, string repoName) {
@@ -57,6 +64,15 @@ namespace DyviniaUtils.Dialogs {
             if (e.Uri.ToString().Contains("http")) {
                 e.Cancel = true;
                 Process.Start(new ProcessStartInfo(e.Uri.ToString()) { UseShellExecute = true });
+            }
+        }
+
+        private void Browser_LoadCompleted(object sender, NavigationEventArgs e) {
+            int height = ((dynamic)Browser.Document).Body.scrollHeight;
+
+            if (height < 300) {
+                Browser.Height = height;
+                Browser.InvokeScript("execScript", new object[] { "document.body.style.overflow ='hidden'", "JavaScript" });
             }
         }
     }
