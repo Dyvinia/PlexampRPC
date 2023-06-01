@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 
 namespace PlexampRPC {
     /// <summary>
@@ -14,6 +15,19 @@ namespace PlexampRPC {
             InitializeComponent();
             LogBox.ItemsSource = logWriter.Log;
             LogBox.ScrollIntoView(logWriter.Log.Last());
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e) {
+            base.OnKeyDown(e);
+
+            if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control) {
+                StringBuilder sb = new();
+                foreach (LogWriter.LogItem item in LogBox.ItemsSource) {
+                    if (item.Message.Contains("token") || item.Message.Contains("address") || item.Message.Contains("identifier")) continue;
+                    sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
+                }
+                Clipboard.SetDataObject(sb.ToString());
+            }
         }
     }
 
@@ -36,7 +50,7 @@ namespace PlexampRPC {
 
         public override void WriteLine(string? value) {
             Application.Current.Dispatcher.Invoke(new Action(() => {
-                if (Log.Count > 50) Log.RemoveAt(0);
+                if (Log.Count > 200) Log.RemoveAt(0);
                 Log.Add(new LogItem(value!.Trim()));
             }));
         }
@@ -56,7 +70,7 @@ namespace PlexampRPC {
                     return;
                 }
                 Application.Current.Dispatcher.Invoke(new Action(() => {
-                    if (Log.Count > 50) Log.RemoveAt(0);
+                    if (Log.Count > 200) Log.RemoveAt(0);
                     Log.Add(new LogItem(line.Trim()));
                 }));
                 line = String.Empty;
