@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -21,14 +22,36 @@ namespace PlexampRPC {
         protected override void OnKeyDown(KeyEventArgs e) {
             base.OnKeyDown(e);
 
-            if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control) {
+            if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control)
+                CopyToClipboard();
+
+            if (e.Key == Key.S && Keyboard.Modifiers == ModifierKeys.Control)
+                SaveToFile();
+        }
+
+        private void CopyToClipboard() {
+            StringBuilder sb = new();
+            foreach (LogWriter.LogItem item in LogBox.Items) {
+                if (item.Message.StartsWith("{"))
+                    continue;
+                sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
+            }
+            Clipboard.SetDataObject(sb.ToString());
+        }
+
+        private void SaveToFile() {
+            SaveFileDialog dlg = new() {
+                FileName = "log",
+                DefaultExt = ".txt",
+                Filter = "Text (.txt)|*.txt"
+            };
+
+            if (dlg.ShowDialog() == true) {
                 StringBuilder sb = new();
                 foreach (LogWriter.LogItem item in LogBox.Items) {
-                    if (item.Message.StartsWith("{"))
-                        continue;
                     sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
                 }
-                Clipboard.SetDataObject(sb.ToString());
+                File.WriteAllText(dlg.FileName, sb.ToString());
             }
         }
     }
