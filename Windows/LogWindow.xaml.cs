@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,8 @@ namespace PlexampRPC {
             InitializeComponent();
             LogBox.ItemsSource = logWriter.Log;
             LogBox.ScrollIntoView(logWriter.Log.Last());
+
+            ((INotifyCollectionChanged)LogBox.ItemsSource).CollectionChanged += (_, _) => LogBox.ScrollIntoView(logWriter.Log.Last());
         }
 
         protected override void OnKeyDown(KeyEventArgs e) {
