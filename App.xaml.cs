@@ -28,6 +28,8 @@ namespace PlexampRPC {
         public string TemplateL2 { get; set; } = "by {artist}";
 
         public string DiscordClientID { get; set; } = "1100233636491563069";
+
+        public string PlexAddress { get; set; } = String.Empty;
     }
 
 

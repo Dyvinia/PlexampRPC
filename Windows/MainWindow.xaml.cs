@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -25,6 +26,15 @@ namespace PlexampRPC {
         static readonly HttpClient Client = new();
 
         public static dynamic? Session { get; set; }
+
+        public Uri Address {  
+            get {
+                if (!String.IsNullOrEmpty(Config.Settings.PlexAddress))
+                    return new UriBuilder(Config.Settings.PlexAddress).Uri;
+                else
+                    return ((AccountServer)UserServerComboBox.SelectedItem).Uri;
+            }
+        }
 
         public class PresenceData {
             public string? Line1 { get; set; }
@@ -83,7 +93,16 @@ namespace PlexampRPC {
         public void GetAccountInfo() {
             UserIcon.Source = new BitmapImage(new Uri(App.Account?.Thumb ?? "/Resources/PlexIcon.png"));
             UserNameText.Text = App.Account?.Title ?? App.Account?.Username ?? "Name";
-            UserServerComboBox.ItemsSource = App.ServerContainer?.Servers;
+
+            if (String.IsNullOrEmpty(Config.Settings.PlexAddress)) {
+                UserServerComboBox.ItemsSource = App.ServerContainer?.Servers;
+            }
+            else {
+                dynamic customItem = new ExpandoObject();
+                customItem.Name = Config.Settings.PlexAddress;
+                UserServerComboBox.ItemsSource = new List<dynamic>() { customItem };
+                UserServerComboBox.IsEnabled = false;
+            }
             UserServerComboBox.SelectedIndex = 0;
 
             UserInfoPanel.Visibility = Visibility.Visible;
@@ -110,9 +129,7 @@ namespace PlexampRPC {
 
         private async Task<dynamic?> GetCurrentSession() {
             try {
-                AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
-
-                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{selected?.Uri}status/sessions?X-Plex-Token={App.Token}");
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={App.Token}");
                 requestMessage.Headers.Add("Accept", "application/json");
 
                 HttpResponseMessage sendResponse = await Client.SendAsync(requestMessage);
@@ -263,9 +280,7 @@ namespace PlexampRPC {
         }
 
         private async Task<string> UploadImage(string thumb) {
-            AccountServer? selected = UserServerComboBox.SelectedItem as AccountServer;
-
-            HttpResponseMessage getResponse = await Client.GetAsync($"{selected?.Uri}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={App.Token}");
+            HttpResponseMessage getResponse = await Client.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={App.Token}");
 
             string dataString = Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()));
             HttpResponseMessage sendResponse = await Client.SendAsync(new() {
