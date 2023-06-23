@@ -62,6 +62,11 @@ namespace PlexampRPC {
             ContextMenu contextMenu = new();
             MenuItem menuShow = new() { Header = "Show PlexampRPC" };
             MenuItem menuExit = new() { Header = "Exit PlexampRPC" };
+
+            TrayIcon.TrayMouseDoubleClick += (_, _) => {
+                Show();
+                WindowState = WindowState.Normal;
+            };
             menuShow.Click += (_, _) => {
                 Show();
                 WindowState = WindowState.Normal;
