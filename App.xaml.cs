@@ -90,7 +90,6 @@ namespace PlexampRPC {
 
         protected override void OnExit(ExitEventArgs e) {
             DiscordClient.Dispose();
-            Config.Save();
         }
 
         private static void DiscordInit() {
