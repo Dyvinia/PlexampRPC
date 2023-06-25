@@ -457,7 +457,7 @@
     <Style x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
         <Setter Property="Background" Value="{StaticResource ControlDefaultBackground}"/>
         <Setter Property="BorderBrush" Value="{StaticResource ControlDefaultBorderBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ControlDefaultForeground}"/>
+        <Setter Property="Foreground" Value="#FFCCCCCC"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="IsTabStop" Value="false"/>
         <Setter Property="Focusable" Value="false"/>
@@ -471,14 +471,14 @@
                             Background="{TemplateBinding Background}" 
                             SnapsToDevicePixels="true">
                         <Border x:Name="splitBorder"
-                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1 0 0 0"  
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0"  
                                 HorizontalAlignment="Right" Margin="0" 
                                 SnapsToDevicePixels="true" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
                             <Path x:Name="arrow" Data="M 0,2.5 C0,2.5 0,0.5 0,0.5 0,0.5 3.5,4 3.5,4 3.5,4 7,0.5 7,0.5 7,0.5 7,2.5 7,2.5 7,2.5 3.5,6 3.5,6 3.5,6 0,2.5 0,2.5 z"
                                   Fill="{StaticResource ControlGlythColour}" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
                                 <Path.RenderTransform>
                                     <TransformGroup>
-                                        <ScaleTransform ScaleY="0.8" ScaleX="0.8"/>
+                                        <ScaleTransform/>
                                         <SkewTransform/>
                                         <RotateTransform/>
                                         <TranslateTransform/>
@@ -522,7 +522,12 @@
                             <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ControlMouseOverBorderBrush}"/>
                         </MultiDataTrigger>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ControlSelectedBorderBrush}"/>
+                            <!--<Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ControlSelectedBorderBrush}"/>-->
+                            <Setter Property="RenderTransform" TargetName="arrow">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleY="-1"/>
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -531,16 +536,16 @@
                             </MultiDataTrigger.Conditions>
                             <!--<Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ControlSelectedBackground}"/>-->
                             <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ControlClearSelectedBorderBrush}"/>
-                            <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ControlSelectedBorderBrush}"/>
+                            <!--<Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ControlSelectedBorderBrush}"/>-->
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="true"/>
                                 <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true"/>
                             </MultiDataTrigger.Conditions>
-                            <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ControlSelectedBackground}"/>
+                            <!--<Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ControlSelectedBackground}"/>-->
                             <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ControlSelectedBorderBrush}"/>
-                            <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ControlSelectedBackground}"/>
+                            <!--<Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ControlSelectedBackground}"/>-->
                             <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ControlSelectedBorderBrush}"/>
                         </MultiDataTrigger>
                         <Trigger Property="IsEnabled" Value="false">
@@ -551,8 +556,7 @@
                                 <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false"/>
                                 <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="false"/>
                             </MultiDataTrigger.Conditions>
-                            <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ControlDisabledBackground}"/>
-                            <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ControlDisabledBorderBrush}"/>
+                            <Setter Property="Opacity" TargetName="templateRoot" Value="0.9"/>
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -742,7 +746,7 @@
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
         <Setter Property="Background" Value="{StaticResource ContainerGridBackground}"/>
         <Setter Property="BorderBrush" Value="{StaticResource ControlDefaultBorderBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ControlDefaultForeground}"/>
+        <Setter Property="Foreground" Value="Aqua"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
