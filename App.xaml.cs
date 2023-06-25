@@ -23,6 +23,7 @@ namespace PlexampRPC {
         
         public int ArtResolution { get; set; } = 128;
         public double RefreshInterval { get; set; } = 2.5;
+        public int SessionTimeout { get; set; } = 30;
 
         public string TemplateL1 { get; set; } = "{title}";
         public string TemplateL2 { get; set; } = "by {artist}";
@@ -96,7 +97,13 @@ namespace PlexampRPC {
             DiscordClient.Logger = new ConsoleLogger() { Level = DiscordRPC.Logging.LogLevel.Warning };
 
             DiscordClient.OnReady += (_, e) => Console.WriteLine($"Connected to {e.User.Username}'s Discord Client");
-            DiscordClient.OnPresenceUpdate += (_, e) => Console.WriteLine($"Updated Presence to [{e.Presence.Details} | {e.Presence.State}]");
+
+            DiscordClient.OnPresenceUpdate += (_, e) => {
+                if (e.Presence != null)
+                    Console.WriteLine($"Updated Presence to [{e.Presence?.Details} | {e.Presence?.State}]");
+                else
+                    Console.WriteLine($"Cleared Presence");
+            };
 
             DiscordClient.Initialize();
         }
@@ -115,7 +122,7 @@ namespace PlexampRPC {
                 Account = await AccountClient.GetPlexAccountAsync(Token);
                 ServerContainer = await AccountClient.GetAccountServersAsync(Token);
             }
-            catch { PlexSignIn(true); }
+            catch { _ = PlexSignIn(true); }
         }
 
         private static async Task<string> PlexOAuth() {

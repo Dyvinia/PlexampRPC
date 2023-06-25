@@ -23,9 +23,7 @@ namespace PlexampRPC {
     /// </summary>
     public partial class MainWindow : Window {
 
-        static readonly HttpClient Client = new();
-
-        public static dynamic? Session { get; set; }
+        private static readonly HttpClient httpClient = new();
 
         public Uri Address {  
             get {
@@ -59,7 +57,7 @@ namespace PlexampRPC {
             };
 
             ResetPresence();
-            SetupContextMenu();
+            SetupTray();
         }
 
         public TaskbarIcon TrayIcon = new() {
@@ -67,7 +65,7 @@ namespace PlexampRPC {
             MenuActivation = PopupActivationMode.LeftOrRightClick
         };
 
-        private void SetupContextMenu() {
+        private void SetupTray() {
             TrayIcon.IconSource = Icon;
             ContextMenu contextMenu = new();
             MenuItem menuShow = new() { Header = "Show PlexampRPC" };
@@ -111,12 +109,19 @@ namespace PlexampRPC {
         }
 
         public async void StartPolling() {
+            dynamic? lastSession = null;
+            DateTime lastUpdated = DateTime.Now;
+
             while (true) {
                 dynamic? currentSession = await GetCurrentSession();
                 if (currentSession != null) {
-                    if (JsonConvert.SerializeObject(currentSession) != JsonConvert.SerializeObject(Session)) {
+                    if (JsonConvert.SerializeObject(currentSession) != JsonConvert.SerializeObject(lastSession)) {
                         SetPresence(await BuildPresence(currentSession));
-                        Session = currentSession;
+                        lastSession = currentSession;
+                        lastUpdated = DateTime.Now;
+                    }
+                    else if (DateTime.Now - lastUpdated > TimeSpan.FromSeconds(Config.Settings.SessionTimeout)) {
+                        ResetPresence();
                     }
                     await Task.Delay(TimeSpan.FromSeconds(Config.Settings.RefreshInterval));
                 }
@@ -132,7 +137,7 @@ namespace PlexampRPC {
                 HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={App.Token}");
                 requestMessage.Headers.Add("Accept", "application/json");
 
-                HttpResponseMessage sendResponse = await Client.SendAsync(requestMessage);
+                HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
                 sendResponse.EnsureSuccessStatusCode();
 
                 dynamic? metadata = JsonConvert.DeserializeObject<dynamic>(await sendResponse.Content.ReadAsStringAsync())?.MediaContainer.Metadata;
@@ -280,10 +285,10 @@ namespace PlexampRPC {
         }
 
         private async Task<string> UploadImage(string thumb) {
-            HttpResponseMessage getResponse = await Client.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={App.Token}");
+            HttpResponseMessage getResponse = await httpClient.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={App.Token}");
 
             string dataString = Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()));
-            HttpResponseMessage sendResponse = await Client.SendAsync(new() {
+            HttpResponseMessage sendResponse = await httpClient.SendAsync(new() {
                 Method = HttpMethod.Post,
                 RequestUri = new("https://freeimage.host/api/1/upload"),
                 Content = new StringContent($"image={dataString}&key=6d207e02198a847aa98d0a2a901485a5", Encoding.UTF8, "application/x-www-form-urlencoded")

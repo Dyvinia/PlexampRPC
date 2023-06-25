@@ -29,7 +29,7 @@ namespace DyviniaUtils {
 
         public static void Load() {
             try {
-                Settings = JsonSerializer.Deserialize<T>(File.ReadAllText(FilePath));
+                Settings = JsonSerializer.Deserialize<T>(File.ReadAllText(FilePath)) ?? new T();
             }
             catch {
                 Settings = new T();
@@ -38,7 +38,7 @@ namespace DyviniaUtils {
 
         public static void Save() {
             string json = JsonSerializer.Serialize(Settings, new JsonSerializerOptions { WriteIndented = true });
-            Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
+            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
             File.WriteAllText(FilePath, json);
         }
 

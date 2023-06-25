@@ -20,6 +20,11 @@
                         <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="50" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.RefreshInterval), Mode=TwoWay}"/>
                     </DockPanel>
 
+                    <DockPanel ToolTip="Clears presence if session has not been updated in this many seconds &#x0a;Fixes Plexamp issue where session does not properly end when music ends">
+                        <TextBlock Text="Session Timeout:" Foreground="#CCCCCC" VerticalAlignment="Center" Margin="0 1 0 0"/>
+                        <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="50" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.SessionTimeout), Mode=TwoWay}"/>
+                    </DockPanel>
+
                     <DockPanel ToolTip="Album Art Resolution in Pixels">
                         <TextBlock Text="Art Resolution:" Foreground="#CCCCCC" VerticalAlignment="Center" Margin="0 1 0 0"/>
                         <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="50" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.ArtResolution), Mode=TwoWay}"/>
