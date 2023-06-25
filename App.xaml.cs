@@ -121,7 +121,9 @@ namespace PlexampRPC {
                 Account = await AccountClient.GetPlexAccountAsync(Token);
                 ServerContainer = await AccountClient.GetAccountServersAsync(Token);
             }
-            catch { _ = PlexSignIn(true); }
+            catch { 
+                _ = PlexSignIn(true); 
+            }
         }
 
         private static async Task<string> PlexOAuth() {
@@ -132,7 +134,7 @@ namespace PlexampRPC {
 
             while (true) {
                 plexPin = await AccountClient.GetAuthTokenFromOAuthPinAsync(oauthUrl.Id.ToString());
-                if (!string.IsNullOrEmpty(plexPin.AuthToken)) break;
+                if (!String.IsNullOrEmpty(plexPin.AuthToken)) break;
                 await Task.Delay(1000);
             }
             return plexPin.AuthToken;
