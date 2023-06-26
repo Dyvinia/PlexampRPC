@@ -2,7 +2,7 @@
 PlexampRPC displays currently playing Plex music as Discord Rich Presence, while using the proper Album Art.<br/> *Despite using the name Plexamp, it works regardless of the client used.*
 
 <p float="left">
-<img src="https://i.imgur.com/kFAu8t9.png" />
+<img src="https://i.imgur.com/7jNWgUk.png" />
 <img src="https://i.imgur.com/2syfqbT.png" height="313" />
 <img src="https://i.imgur.com/decQuxm.png" height="313" />
 </p>
