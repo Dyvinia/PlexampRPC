@@ -162,8 +162,8 @@ namespace PlexampRPC {
                 .Replace("{album}", session.Album);
 
             return new PresenceData() {
-                Line1 = L1,
-                Line2 = L2,
+                Line1 = L1.Length > 2 ? L1 : L1 + "  ",
+                Line2 = L2.Length > 2 ? L2 : L2 + "  ",
                 ImageTooltip = session.Album,
                 ArtLink = await GetThumbnail(session.ArtPath),
                 State = session.Player?.State,
