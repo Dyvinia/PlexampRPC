@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,8 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Plex.ServerApi.PlexModels.Account;
 
 namespace PlexampRPC {
@@ -109,13 +108,13 @@ namespace PlexampRPC {
         }
 
         public async void StartPolling() {
-            dynamic? lastSession = null;
+            SessionData? lastSession = null;
             DateTime lastUpdated = DateTime.Now;
 
             while (true) {
-                dynamic? currentSession = await GetCurrentSession();
+                SessionData? currentSession = await GetCurrentSession();
                 if (currentSession != null) {
-                    if (JsonConvert.SerializeObject(currentSession) != JsonConvert.SerializeObject(lastSession)) {
+                    if (JsonSerializer.Serialize(currentSession) != JsonSerializer.Serialize(lastSession)) {
                         SetPresence(await BuildPresence(currentSession));
                         lastSession = currentSession;
                         lastUpdated = DateTime.Now;
@@ -132,7 +131,7 @@ namespace PlexampRPC {
             }
         }
 
-        private async Task<dynamic?> GetCurrentSession() {
+        private async Task<SessionData?> GetCurrentSession() {
             try {
                 HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={App.Token}");
                 requestMessage.Headers.Add("Accept", "application/json");
@@ -140,12 +139,10 @@ namespace PlexampRPC {
                 HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
                 sendResponse.EnsureSuccessStatusCode();
 
-                dynamic? metadata = JsonConvert.DeserializeObject<dynamic>(await sendResponse.Content.ReadAsStringAsync())?.MediaContainer.Metadata;
-                if (metadata != null) {
-                    dynamic[] sessions = ((JArray)metadata).ToArray();
-                    return sessions.FirstOrDefault(session => session.type == "track" && session.User.title == App.Account?.Username);
-                }
-                else return null;
+                JsonDocument responseJson = JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync());
+                SessionData[]? sessions = JsonSerializer.Deserialize<SessionData[]>(responseJson.RootElement.GetProperty("MediaContainer").GetProperty("Metadata"));
+
+                return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
             catch (Exception e) {
                 Console.WriteLine($"WARN: Unable to get current session: {e.Message} {e.InnerException}");
@@ -153,35 +150,24 @@ namespace PlexampRPC {
             }
         }
 
-        private async Task<PresenceData> BuildPresence(dynamic session) {
-            string title = session.title;
-            string artist = session.originalTitle ?? session.grandparentTitle;
-            string album = session.parentTitle;
-
-            if (artist.Contains(';')) {
-                string[] artists = artist.Split(';', StringSplitOptions.TrimEntries);
-                if (artists.Length > 2)
-                    artist = String.Join(", ", artists);
-                else artist = String.Join(" & ", artists);
-            }
-
+        private async Task<PresenceData> BuildPresence(SessionData session) {
             string L1 = Config.Settings.TemplateL1
-                .Replace("{title}", title)
-                .Replace("{artist}", artist)
-                .Replace("{album}", album);
+                .Replace("{title}", session.Title)
+                .Replace("{artist}", session.Artists)
+                .Replace("{album}", session.Album);
 
             string L2 = Config.Settings.TemplateL2
-                .Replace("{title}", title)
-                .Replace("{artist}", artist)
-                .Replace("{album}", album);
+                .Replace("{title}", session.Title)
+                .Replace("{artist}", session.Artists)
+                .Replace("{album}", session.Album);
 
             return new PresenceData() {
                 Line1 = L1,
                 Line2 = L2,
-                ImageTooltip = album,
-                ArtLink = await GetThumbnail((string)session.thumb),
-                State = session.Player.state,
-                TimeOffset = session.viewOffset
+                ImageTooltip = session.Album,
+                ArtLink = await GetThumbnail(session.ArtPath),
+                State = session.Player?.State,
+                TimeOffset = session.ViewOffset
             };
         }
 
@@ -250,7 +236,7 @@ namespace PlexampRPC {
             App.DiscordClient.ClearPresence();
         }
 
-        private async Task<string> GetThumbnail(string thumb) {
+        private async Task<string> GetThumbnail(string? thumb) {
             string cacheFile = Path.Combine(Path.GetDirectoryName(Config.FilePath)!, "cache.json");
 
             Dictionary<string, string> thumbnails;
@@ -258,18 +244,18 @@ namespace PlexampRPC {
 
             if (File.Exists(cacheFile)) {
                 thumbnailsJson = File.ReadAllText(cacheFile);
-                try { thumbnails = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(cacheFile))!; }
+                try { thumbnails = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(cacheFile))!; }
                 catch { thumbnails = new(); }
             }
             else
                 thumbnails = new();
 
             string thumbnailLink;
-            if (thumbnails.TryGetValue(thumb, out string? value)) {
+            if (thumb is not null && thumbnails.TryGetValue(thumb, out string? value)) {
                 thumbnailLink = value;
             }
             else {
-                try { thumbnailLink = await UploadImage(thumb); }
+                try { thumbnailLink = await UploadImage(thumb!); }
                 catch {
                     Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead");
                     return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png"; 
@@ -277,7 +263,7 @@ namespace PlexampRPC {
                 thumbnails.Add(thumb, thumbnailLink);
             }
 
-            string newThumbnailsJson = JsonConvert.SerializeObject(thumbnails);
+            string newThumbnailsJson = JsonSerializer.Serialize(thumbnails);
             if (newThumbnailsJson != thumbnailsJson)
                 File.WriteAllText(cacheFile, newThumbnailsJson);
 
@@ -294,7 +280,7 @@ namespace PlexampRPC {
                 Content = new StringContent($"image={dataString}&key=6d207e02198a847aa98d0a2a901485a5", Encoding.UTF8, "application/x-www-form-urlencoded")
             });
             sendResponse.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<dynamic>(await sendResponse.Content.ReadAsStringAsync())!.image.url;
+            return JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync()).RootElement.GetProperty("image").GetProperty("url").GetString()!;
         }
 
         private void Template_LostFocus(object sender, RoutedEventArgs e) => Config.Save();
