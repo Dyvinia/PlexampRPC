@@ -124,6 +124,8 @@ namespace PlexampRPC {
 
                 for (int i = 0; i < source_resources.Length; i++) {
                     Resource resource = source_resources[i];
+                    if (Config.Settings.OwnedOnly && !resource.Owned)
+                        continue;
                     MainWindow.UserNameText = $"Testing {i+1}/{source_resources.Length}";
                     Resource? r = await TestResource(resource);
                     if (r != null)
