@@ -174,8 +174,8 @@ namespace PlexampRPC {
         private void SetPresence(PresenceData presence) {
             if (presence.State == "playing") {
                 App.DiscordClient.SetPresence(new RichPresence() {
-                    Details = presence.Line1,
-                    State = presence.Line2,
+                    Details = TrimUTF8String(presence.Line1!), // theres probably a better way to trim strings but idk
+                    State = TrimUTF8String(presence.Line2!),
                     Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)presence.TimeOffset)),
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
@@ -281,6 +281,15 @@ namespace PlexampRPC {
             });
             sendResponse.EnsureSuccessStatusCode();
             return JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync()).RootElement.GetProperty("image").GetProperty("url").GetString()!;
+        }
+
+        private static string TrimUTF8String(string input) {
+            string trimmed = string.Empty;
+            foreach (char c in input) {
+                if (Encoding.UTF8.GetByteCount(trimmed + c) > 128) break;
+                trimmed += c;
+            }
+            return trimmed;
         }
 
         private void Template_LostFocus(object sender, RoutedEventArgs e) => Config.Save();
