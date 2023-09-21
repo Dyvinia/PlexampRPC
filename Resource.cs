@@ -116,10 +116,16 @@ namespace PlexampRPC {
 
                 JsonDocument responseJson = JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync());
                 Resource[]? source_resources = JsonSerializer.Deserialize<Resource[]>(responseJson.RootElement);
-                List<Resource>? filtered_resources = new List<Resource>();
+                List<Resource>? filtered_resources = new();
+                if (source_resources == null || source_resources.Length == 0) {
+                    Console.WriteLine("WARN: No servers found");
+                    return null;
+                }
 
-                for (int i = 0; i < source_resources?.Length; i++) {
-                    Resource? r = await TestResource(source_resources[i]);
+                for (int i = 0; i < source_resources.Length; i++) {
+                    Resource resource = source_resources[i];
+                    MainWindow.UserNameText = $"Testing {i+1}/{source_resources.Length}";
+                    Resource? r = await TestResource(resource);
                     if (r != null)
                         filtered_resources.Add(r);
                 }
@@ -136,41 +142,47 @@ namespace PlexampRPC {
                 Console.WriteLine($"INFO: Skipping {resource.Name}/{resource.Product}, not a server");
                 return null;
             }
-            TimeSpan TimeoutBackup = MainWindow.httpClient.Timeout;
-            if (Config.Settings.LocalAddress)
-                MainWindow.httpClient.Timeout = TimeSpan.FromSeconds(1);
             foreach (Connection connection in resource.Connections ?? Enumerable.Empty<Connection>()) {
+                MainWindow.UserNameText += ".";
                 Uri Uri;
                 if (connection.Local)
                     Uri = new UriBuilder("http", connection.Address, connection.Port).Uri;
-                else
+                else if (!Config.Settings.LocalAddress)
                     Uri = new UriBuilder(connection.Uri).Uri;
+                else
+                    continue;
+
+                if (Config.Settings.Skipped.Contains($"{Uri}")) {
+                    Console.WriteLine($"INFO: Skipped {Uri} due to previous HTTP error, remove from config.json to retry");
+                    continue;
+                }
+
                 try {
-                    Console.WriteLine($"INFO: Testing {(connection.Local ? 'L' : 'R')} {Uri}status/sessions?X-Plex-Token={resource.AccessToken?.Substring(0, 3)}...");
+                    Console.WriteLine($"INFO: Testing {(connection.Local ? 'L' : 'R')} {Uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
                     HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Uri}status/sessions?X-Plex-Token={resource.AccessToken}");
                     requestMessage.Headers.Add("Accept", "application/json");
 
                     HttpResponseMessage sendResponse = await MainWindow.httpClient.SendAsync(requestMessage);
                     sendResponse.EnsureSuccessStatusCode();
-                    Console.WriteLine($"INFO: Success {(connection.Local ? 'L' : 'R')} {Uri}status/sessions?X-Plex-Token={resource.AccessToken?.Substring(0, 3)}...");
+                    Console.WriteLine($"INFO: Success {(connection.Local ? 'L' : 'R')} {Uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
                     if (connection.Local)
                         resource.LocalUri ??= Uri;
                     else
                         resource.Uri ??= Uri;
                     if (resource.LocalUri != null && resource.Uri != null) {
-
+                        break;
                     }
                 } catch (TaskCanceledException) {
-                    Console.WriteLine($"WARN: Timeout {(connection.Local ? 'L' : 'R')} {Uri}status/sessions?X-Plex-Token={resource.AccessToken?.Substring(0, 3)}...");
-                    // Unreachable local server, skip
+                    Console.WriteLine($"WARN: Timeout {(connection.Local ? 'L' : 'R')} {Uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
+                    // Unreachable server, skip for now
                 } catch (HttpRequestException e) {
-                    Console.WriteLine($"WARN: Unable to access {Uri}status/sessions: {e.Message}");
-                    if (e.StatusCode == HttpStatusCode.Forbidden) break;
+                    Console.WriteLine($"WARN: Unable to access {Uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}: {e.Message}");
+                    Console.WriteLine($"INFO: Adding {Uri} to Skipped list in config.json");
+                    Config.Settings.Skipped.Add($"{Uri}");
                 } catch (Exception e) {
                     Console.WriteLine($"WARN: Unable to get resource: {e.Message} {e.InnerException}");
                 }
             }
-            MainWindow.httpClient.Timeout = TimeoutBackup;
             if (resource.LocalUri == null && resource.Uri == null)
                 return null;
             return resource;

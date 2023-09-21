@@ -14,6 +14,7 @@ using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
 using DyviniaUtils;
 using DyviniaUtils.Dialogs;
+using System.Collections.Generic;
 
 namespace PlexampRPC {
 
@@ -21,6 +22,7 @@ namespace PlexampRPC {
     public class Config : SettingsManager<Config> {
         public bool UpdateChecker { get; set; } = true;
         public bool LocalAddress { get; set; } = false;
+        public List<String> Skipped { get; set; } = new();
 
         public int ArtResolution { get; set; } = 128;
         public double RefreshInterval { get; set; } = 2.5;

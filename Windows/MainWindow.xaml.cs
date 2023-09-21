@@ -14,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
-using Plex.ServerApi.PlexModels.Account;
 
 namespace PlexampRPC {
     /// <summary>
@@ -28,17 +27,46 @@ namespace PlexampRPC {
             get {
                 if (!String.IsNullOrEmpty(Config.Settings.PlexAddress))
                     return new UriBuilder(Config.Settings.PlexAddress).Uri;
-                else if (Config.Settings.LocalAddress)
-                    return ((Resource)UserServerComboBox.SelectedItem).LocalUri;
-                else
-                    return ((Resource)UserServerComboBox.SelectedItem).Uri;
+                else if (UserServerComboBox.SelectedItem != null) {
+                    if (Config.Settings.LocalAddress)
+                        return ((Resource)UserServerComboBox.SelectedItem).LocalUri;
+                    else
+                        return ((Resource)UserServerComboBox.SelectedItem).Uri;
+                }
+                return null;
             }
         }
 
         public string? Token {
             get {
-                return ((Resource)UserServerComboBox.SelectedItem).AccessToken;
+                if (UserServerComboBox.SelectedItem != null)
+                    return ((Resource)UserServerComboBox.SelectedItem).AccessToken;
+                return null;
             }
+        }
+
+        public static string UserNameText {
+            get { return _userNameText; }
+            set {
+                if (_userNameText != value) {
+                    _userNameText = value;
+                    UpdateUserNameTextBlock(value);
+                }
+            }
+        }
+
+        private static string _userNameText = "Logging in...";
+
+        private static void UpdateUserNameTextBlock(string newText) {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (Application.Current.MainWindow is MainWindow mainWindow) {
+                    TextBlock textBlock = (TextBlock)mainWindow.FindName("UserNameTextBox");
+                    if (textBlock != null) {
+                        textBlock.Text = newText;
+                    }
+                }
+            });
         }
 
         public class PresenceData {
@@ -53,6 +81,9 @@ namespace PlexampRPC {
         public MainWindow() {
             InitializeComponent();
 
+            httpClient.Timeout = TimeSpan.FromSeconds(2);
+
+            UserNameTextBox.Text = UserNameText;
             DataContext = Config.Settings;
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
 
@@ -97,10 +128,11 @@ namespace PlexampRPC {
 
         public void GetAccountInfo() {
             UserIcon.Source = new BitmapImage(new Uri(App.Account?.Thumb ?? "/Resources/PlexIcon.png"));
-            UserNameText.Text = App.Account?.Title ?? App.Account?.Username ?? "Name";
+            UserNameText = App.Account?.Title ?? App.Account?.Username ?? "Name";
 
             if (String.IsNullOrEmpty(Config.Settings.PlexAddress)) {
-                UserServerComboBox.ItemsSource = App.PlexResources;
+                if (App.PlexResources != null)
+                    UserServerComboBox.ItemsSource = App.PlexResources;
             }
             else {
                 dynamic customItem = new ExpandoObject();
@@ -141,6 +173,7 @@ namespace PlexampRPC {
 
         private async Task<SessionData?> GetCurrentSession() {
             try {
+                if (UserServerComboBox.SelectedItem == null) return null;
                 HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={Token}");
                 requestMessage.Headers.Add("Accept", "application/json");
                 Console.WriteLine(requestMessage.RequestUri);
@@ -157,8 +190,12 @@ namespace PlexampRPC {
 
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
+            catch (KeyNotFoundException) {
+                // Nothing is playing
+                return null;
+            }
             catch (Exception e) {
-                Console.WriteLine($"WARN: Unable to get current session: {Address}status/sessions?X-Plex-Token={Token?.Substring(0, 3)}... {e.Message} {e.InnerException}");
+                Console.WriteLine($"WARN: Unable to get current session: {Address}status/sessions?X-Plex-Token={Token?[..3]}... {e.Message} {e.InnerException}");
                 return null;
             }
         }
