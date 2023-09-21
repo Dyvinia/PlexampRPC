@@ -22,14 +22,22 @@ namespace PlexampRPC {
     /// </summary>
     public partial class MainWindow : Window {
 
-        private static readonly HttpClient httpClient = new();
+        public static readonly HttpClient httpClient = new();
 
-        public Uri Address {  
+        public Uri? Address {
             get {
                 if (!String.IsNullOrEmpty(Config.Settings.PlexAddress))
                     return new UriBuilder(Config.Settings.PlexAddress).Uri;
+                else if (Config.Settings.LocalAddress)
+                    return ((Resource)UserServerComboBox.SelectedItem).LocalUri;
                 else
-                    return ((AccountServer)UserServerComboBox.SelectedItem).Uri;
+                    return ((Resource)UserServerComboBox.SelectedItem).Uri;
+            }
+        }
+
+        public string? Token {
+            get {
+                return ((Resource)UserServerComboBox.SelectedItem).AccessToken;
             }
         }
 
@@ -92,7 +100,7 @@ namespace PlexampRPC {
             UserNameText.Text = App.Account?.Title ?? App.Account?.Username ?? "Name";
 
             if (String.IsNullOrEmpty(Config.Settings.PlexAddress)) {
-                UserServerComboBox.ItemsSource = App.ServerContainer?.Servers;
+                UserServerComboBox.ItemsSource = App.PlexResources;
             }
             else {
                 dynamic customItem = new ExpandoObject();
@@ -133,8 +141,9 @@ namespace PlexampRPC {
 
         private async Task<SessionData?> GetCurrentSession() {
             try {
-                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={App.Token}");
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={Token}");
                 requestMessage.Headers.Add("Accept", "application/json");
+                Console.WriteLine(requestMessage.RequestUri);
 
                 HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
                 sendResponse.EnsureSuccessStatusCode();
@@ -149,7 +158,7 @@ namespace PlexampRPC {
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
             catch (Exception e) {
-                Console.WriteLine($"WARN: Unable to get current session: {e.Message} {e.InnerException}");
+                Console.WriteLine($"WARN: Unable to get current session: {Address}status/sessions?X-Plex-Token={Token?.Substring(0, 3)}... {e.Message} {e.InnerException}");
                 return null;
             }
         }
@@ -262,7 +271,7 @@ namespace PlexampRPC {
                 try { thumbnailLink = await UploadImage(thumb!); }
                 catch {
                     Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead");
-                    return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png"; 
+                    return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png";
                 }
                 thumbnails.Add(thumb, thumbnailLink);
             }
@@ -275,7 +284,7 @@ namespace PlexampRPC {
         }
 
         private async Task<string> UploadImage(string thumb) {
-            HttpResponseMessage getResponse = await httpClient.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={App.Token}");
+            HttpResponseMessage getResponse = await httpClient.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={Token}");
 
             string dataString = Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()));
             HttpResponseMessage sendResponse = await httpClient.SendAsync(new() {

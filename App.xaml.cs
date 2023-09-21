@@ -20,7 +20,8 @@ namespace PlexampRPC {
     [GlobalConfig]
     public class Config : SettingsManager<Config> {
         public bool UpdateChecker { get; set; } = true;
-        
+        public bool LocalAddress { get; set; } = false;
+
         public int ArtResolution { get; set; } = 128;
         public double RefreshInterval { get; set; } = 2.5;
         public int SessionTimeout { get; set; } = 30;
@@ -52,9 +53,9 @@ namespace PlexampRPC {
 
         public static string? Token { get; set; }
         public static PlexAccount? Account { get; set; }
-        public static AccountServerContainer? ServerContainer { get; set; }
+        public static Resource[]? PlexResources { get; set; }
 
-        public static LogWriter? Log { get; set; } 
+        public static LogWriter? Log { get; set; }
 
         public App() {
             Config.Load();
@@ -119,10 +120,10 @@ namespace PlexampRPC {
 
             try {
                 Account = await AccountClient.GetPlexAccountAsync(Token);
-                ServerContainer = await AccountClient.GetAccountServersAsync(Token);
+                PlexResources = await Resource.GetAccountResources();
             }
-            catch { 
-                _ = PlexSignIn(true); 
+            catch {
+                _ = PlexSignIn(true);
             }
         }
 
