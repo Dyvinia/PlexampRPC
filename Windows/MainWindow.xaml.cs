@@ -164,7 +164,7 @@ namespace PlexampRPC {
             return new PresenceData() {
                 Line1 = L1.Length > 2 ? L1 : L1 + "  ",
                 Line2 = L2.Length > 2 ? L2 : L2 + "  ",
-                ImageTooltip = session.Album,
+                ImageTooltip = session.Album?.Length > 2 ? session.Album : session.Album + "  ",
                 ArtLink = await GetThumbnail(session.ArtPath),
                 State = session.Player?.State,
                 TimeOffset = session.ViewOffset
@@ -195,8 +195,8 @@ namespace PlexampRPC {
             }
             else {
                 App.DiscordClient.SetPresence(new RichPresence() {
-                    Details = presence.Line1,
-                    State = presence.Line2,
+                    Details = TrimUTF8String(presence.Line1!),
+                    State = TrimUTF8String(presence.Line2!),
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip,
