@@ -140,6 +140,10 @@ namespace PlexampRPC {
                 sendResponse.EnsureSuccessStatusCode();
 
                 JsonDocument responseJson = JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync());
+
+                if (!responseJson.RootElement.GetProperty("MediaContainer").TryGetProperty("Metadata", out _))
+                    return null;
+
                 SessionData[]? sessions = JsonSerializer.Deserialize<SessionData[]>(responseJson.RootElement.GetProperty("MediaContainer").GetProperty("Metadata"));
 
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
