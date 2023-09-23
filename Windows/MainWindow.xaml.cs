@@ -50,14 +50,14 @@ namespace PlexampRPC {
             set {
                 if (_userNameText != value) {
                     _userNameText = value;
-                    UpdateUserNameTextBlock(value);
+                    updateUserNameTextBlock(value);
                 }
             }
         }
 
         private static string _userNameText = "Logging in...";
 
-        private static void UpdateUserNameTextBlock(string newText) {
+        private static void updateUserNameTextBlock(string newText) {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 if (Application.Current.MainWindow is MainWindow mainWindow) {

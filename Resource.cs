@@ -115,31 +115,32 @@ namespace PlexampRPC {
                 sendResponse.EnsureSuccessStatusCode();
 
                 JsonDocument responseJson = JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync());
-                Resource[]? source_resources = JsonSerializer.Deserialize<Resource[]>(responseJson.RootElement);
-                List<Resource>? filtered_resources = new();
-                if (source_resources == null || source_resources.Length == 0) {
+                Resource[]? sourceResources = JsonSerializer.Deserialize<Resource[]>(responseJson.RootElement);
+                List<Resource>? filteredResources = new();
+                if (sourceResources == null || sourceResources.Length == 0) {
                     Console.WriteLine("WARN: No servers found");
                     return null;
                 }
 
-                for (int i = 0; i < source_resources.Length; i++) {
-                    Resource resource = source_resources[i];
+                int i = 1;
+                foreach (Resource resource in sourceResources) {
                     if (Config.Settings.OwnedOnly && !resource.Owned)
                         continue;
-                    MainWindow.UserNameText = $"Testing {i+1}/{source_resources.Length}";
-                    Resource? r = await TestResource(resource);
+                    MainWindow.UserNameText = $"Testing {i}/{sourceResources.Length}";
+                    Resource? r = await testResource(resource);
                     if (r != null)
-                        filtered_resources.Add(r);
+                        filteredResources.Add(r);
+                    i += 1;
                 }
 
-                return filtered_resources.ToArray();
+                return filteredResources.ToArray();
             } catch (Exception e) {
                 Console.WriteLine($"WARN: Unable to get resource: {e.Message} {e.InnerException}");
                 return null;
             }
         }
 
-        public static async Task<Resource?> TestResource(Resource resource) {
+        private static async Task<Resource?> testResource(Resource resource) {
             if (!(resource.Provides ?? "").Split(",").Contains("server")) {
                 Console.WriteLine($"INFO: Skipping {resource.Name}/{resource.Product}, not a server");
                 return null;
