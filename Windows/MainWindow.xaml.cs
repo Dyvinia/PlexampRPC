@@ -190,10 +190,6 @@ namespace PlexampRPC {
 
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
-            catch (KeyNotFoundException) {
-                // Nothing is playing
-                return null;
-            }
             catch (Exception e) {
                 Console.WriteLine($"WARN: Unable to get current session: {Address}status/sessions?X-Plex-Token={Token?[..3]}... {e.Message} {e.InnerException}");
                 return null;
