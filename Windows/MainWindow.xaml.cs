@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
+using Button = DiscordRPC.Button;
 
 namespace PlexampRPC {
     /// <summary>
@@ -76,6 +77,7 @@ namespace PlexampRPC {
             public string ArtLink { get; set; } = "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png";
             public string? State { get; set; }
             public int TimeOffset { get; set; }
+            public string? Url { get; set; }
         }
 
         public MainWindow() {
@@ -213,7 +215,8 @@ namespace PlexampRPC {
                 ImageTooltip = session.Album?.Length > 2 ? session.Album : session.Album + "  ",
                 ArtLink = await GetThumbnail(session.ArtPath),
                 State = session.Player?.State,
-                TimeOffset = session.ViewOffset
+                TimeOffset = session.ViewOffset,
+                Url = $"https://listen.plex.tv/{session.Guid?[7..]}" // plex://type/id
             };
         }
 
@@ -226,6 +229,9 @@ namespace PlexampRPC {
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip
+                    },
+                    Buttons = new Button[] {
+                        new Button() { Label = "More...", Url = presence.Url }
                     }
                 });
 
