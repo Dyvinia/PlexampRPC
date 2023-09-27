@@ -216,7 +216,7 @@ namespace PlexampRPC {
                 ArtLink = await GetThumbnail(session.ArtPath),
                 State = session.Player?.State,
                 TimeOffset = session.ViewOffset,
-                Url = $"https://listen.plex.tv/{session.Guid?[7..]}" // plex://type/id
+                Url = (session.Guid != null && session.Guid.StartsWith("plex://")) ? $"https://listen.plex.tv/{session.Guid?[7..]}" : null
             };
         }
 
@@ -230,9 +230,9 @@ namespace PlexampRPC {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip
                     },
-                    Buttons = new Button[] {
+                    Buttons = presence.Url != null ? new Button[] {
                         new Button() { Label = "More...", Url = presence.Url }
-                    }
+                    } : null
                 });
 
                 PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
