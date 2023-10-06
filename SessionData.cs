@@ -40,6 +40,8 @@ namespace PlexampRPC {
             public string? Name { get; set; }
         }
 
+        [JsonPropertyName("guid")]
+        public string? Guid { get; set; }
 
         public PlayerData? Player { get; set; }
         public class PlayerData {

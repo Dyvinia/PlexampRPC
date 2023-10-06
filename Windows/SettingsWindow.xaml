@@ -31,9 +31,13 @@
                     </DockPanel>
 
                     <CheckBox x:Name="CheckUpdatesCheckBox" Margin="0 5 0 0" Content="Check for Updates" IsChecked="{Binding Path=(local:Config.UpdateChecker), Mode=TwoWay}" ToolTip="Checks Github for Updates"/>
-                    
+
                     <CheckBox x:Name="StartupCheckBox" Margin="0 5 0 0" Content="Start on Startup" IsChecked="False" ToolTip="Start PlexampRPC when Windows starts"/>
-                    
+
+                    <CheckBox x:Name="LocalCheckBox" Margin="0 5 0 0" Content="Use Local Address" IsChecked="{Binding Path=(local:Config.LocalAddress), Mode=TwoWay}" ToolTip="Use the Plex server's local IP and port"/>
+
+                    <CheckBox x:Name="OwnedCheckBox" Margin="0 5 0 0" Content="Owned Servers Only" IsChecked="{Binding Path=(local:Config.OwnedOnly), Mode=TwoWay}" ToolTip="Only adds servers to the list that belong to the authenticated Plex user"/>
+
                 </StackPanel>
                 <Grid Height="15"/>
                 <StackPanel>

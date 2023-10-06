@@ -14,7 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
-using Plex.ServerApi.PlexModels.Account;
+using Button = DiscordRPC.Button;
 
 namespace PlexampRPC {
     /// <summary>
@@ -22,15 +22,52 @@ namespace PlexampRPC {
     /// </summary>
     public partial class MainWindow : Window {
 
-        private static readonly HttpClient httpClient = new();
+        public static readonly HttpClient httpClient = new();
 
-        public Uri Address {  
+        public Uri? Address {
             get {
                 if (!String.IsNullOrEmpty(Config.Settings.PlexAddress))
                     return new UriBuilder(Config.Settings.PlexAddress).Uri;
-                else
-                    return ((AccountServer)UserServerComboBox.SelectedItem).Uri;
+                else if (UserServerComboBox.SelectedItem != null) {
+                    if (Config.Settings.LocalAddress)
+                        return ((Resource)UserServerComboBox.SelectedItem).LocalUri;
+                    else
+                        return ((Resource)UserServerComboBox.SelectedItem).Uri;
+                }
+                return null;
             }
+        }
+
+        public string? Token {
+            get {
+                if (UserServerComboBox.SelectedItem != null)
+                    return ((Resource)UserServerComboBox.SelectedItem).AccessToken;
+                return null;
+            }
+        }
+
+        public static string UserNameText {
+            get { return _userNameText; }
+            set {
+                if (_userNameText != value) {
+                    _userNameText = value;
+                    updateUserNameTextBlock(value);
+                }
+            }
+        }
+
+        private static string _userNameText = "Logging in...";
+
+        private static void updateUserNameTextBlock(string newText) {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (Application.Current.MainWindow is MainWindow mainWindow) {
+                    TextBlock textBlock = (TextBlock)mainWindow.FindName("UserNameTextBox");
+                    if (textBlock != null) {
+                        textBlock.Text = newText;
+                    }
+                }
+            });
         }
 
         public class PresenceData {
@@ -40,11 +77,15 @@ namespace PlexampRPC {
             public string ArtLink { get; set; } = "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png";
             public string? State { get; set; }
             public int TimeOffset { get; set; }
+            public string? Url { get; set; }
         }
 
         public MainWindow() {
             InitializeComponent();
 
+            httpClient.Timeout = TimeSpan.FromSeconds(2);
+
+            UserNameTextBox.Text = UserNameText;
             DataContext = Config.Settings;
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
 
@@ -89,10 +130,11 @@ namespace PlexampRPC {
 
         public void GetAccountInfo() {
             UserIcon.Source = new BitmapImage(new Uri(App.Account?.Thumb ?? "/Resources/PlexIcon.png"));
-            UserNameText.Text = App.Account?.Title ?? App.Account?.Username ?? "Name";
+            UserNameText = App.Account?.Title ?? App.Account?.Username ?? "Name";
 
             if (String.IsNullOrEmpty(Config.Settings.PlexAddress)) {
-                UserServerComboBox.ItemsSource = App.ServerContainer?.Servers;
+                if (App.PlexResources != null)
+                    UserServerComboBox.ItemsSource = App.PlexResources;
             }
             else {
                 dynamic customItem = new ExpandoObject();
@@ -133,8 +175,10 @@ namespace PlexampRPC {
 
         private async Task<SessionData?> GetCurrentSession() {
             try {
-                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={App.Token}");
+                if (UserServerComboBox.SelectedItem == null) return null;
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={Token}");
                 requestMessage.Headers.Add("Accept", "application/json");
+                Console.WriteLine(requestMessage.RequestUri);
 
                 HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
                 sendResponse.EnsureSuccessStatusCode();
@@ -149,7 +193,7 @@ namespace PlexampRPC {
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
             catch (Exception e) {
-                Console.WriteLine($"WARN: Unable to get current session: {e.Message} {e.InnerException}");
+                Console.WriteLine($"WARN: Unable to get current session: {Address}status/sessions?X-Plex-Token={Token?[..3]}... {e.Message} {e.InnerException}");
                 return null;
             }
         }
@@ -171,7 +215,8 @@ namespace PlexampRPC {
                 ImageTooltip = session.Album?.Length > 2 ? session.Album : session.Album + "  ",
                 ArtLink = await GetThumbnail(session.ArtPath),
                 State = session.Player?.State,
-                TimeOffset = session.ViewOffset
+                TimeOffset = session.ViewOffset,
+                Url = (session.Guid != null && session.Guid.StartsWith("plex://")) ? $"https://listen.plex.tv/{session.Guid?[7..]}" : null
             };
         }
 
@@ -184,7 +229,10 @@ namespace PlexampRPC {
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip
-                    }
+                    },
+                    Buttons = presence.Url != null ? new Button[] {
+                        new Button() { Label = "More...", Url = presence.Url }
+                    } : null
                 });
 
                 PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
@@ -262,7 +310,7 @@ namespace PlexampRPC {
                 try { thumbnailLink = await UploadImage(thumb!); }
                 catch {
                     Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead");
-                    return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png"; 
+                    return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png";
                 }
                 thumbnails.Add(thumb, thumbnailLink);
             }
@@ -275,7 +323,7 @@ namespace PlexampRPC {
         }
 
         private async Task<string> UploadImage(string thumb) {
-            HttpResponseMessage getResponse = await httpClient.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={App.Token}");
+            HttpResponseMessage getResponse = await httpClient.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={Token}");
 
             string dataString = Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()));
             HttpResponseMessage sendResponse = await httpClient.SendAsync(new() {
