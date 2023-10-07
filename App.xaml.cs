@@ -24,6 +24,7 @@ namespace PlexampRPC {
         public bool LocalAddress { get; set; } = false;
         public List<String> Skipped { get; set; } = new();
         public bool OwnedOnly { get; set; } = true;
+        public bool AllMedia { get; set; } = false;
 
         public int ArtResolution { get; set; } = 128;
         public double RefreshInterval { get; set; } = 2.5;

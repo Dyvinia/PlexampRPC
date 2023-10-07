@@ -190,7 +190,15 @@ namespace PlexampRPC {
 
                 SessionData[]? sessions = JsonSerializer.Deserialize<SessionData[]>(responseJson.RootElement.GetProperty("MediaContainer").GetProperty("Metadata"));
 
-                return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
+                List<String> matchTypes = new() {
+                    "track"
+                };
+                if (Config.Settings.AllMedia) {
+                    matchTypes.Add("episode");
+                    matchTypes.Add("movie");
+                }
+
+                return sessions?.FirstOrDefault(session => session.Type != null && matchTypes.Contains(session.Type) && session.User?.Name == App.Account?.Username);
             }
             catch (Exception e) {
                 Console.WriteLine($"WARN: Unable to get current session: {Address}status/sessions?X-Plex-Token={Token?[..3]}... {e.Message} {e.InnerException}");

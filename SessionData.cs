@@ -14,7 +14,7 @@ namespace PlexampRPC {
 
         public string? Artists {
             get {
-                string artists = TrackArtist ?? AlbumArtist ?? "Artist";
+                string artists = TrackArtist ?? AlbumArtist ?? "Plex";
                 if (artists.Contains(';')) {
                     string[] artistList = artists.Split(';', StringSplitOptions.TrimEntries);
                     if (artistList.Length > 2)
