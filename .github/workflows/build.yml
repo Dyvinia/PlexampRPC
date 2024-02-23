@@ -1,0 +1,25 @@
+name: .NET Core Desktop
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+    - name: Restore the application
+      run: msbuild PlexampRPC.sln /t:Restore /p:Configuration=Release
+    - name: Build the application
+      run: msbuild PlexampRPC.sln /p:Configuration=Release
+    - name: Rescue the rescue
+      uses: actions/upload-artifact@v4
+      with:
+        name: 'PlexampRPC-dev'
+        path: 'bin/Release/net7.0-windows/'
