@@ -51,14 +51,14 @@ namespace PlexampRPC {
             set {
                 if (_userNameText != value) {
                     _userNameText = value;
-                    updateUserNameTextBlock(value);
+                    UpdateUserNameTextBlock(value);
                 }
             }
         }
 
         private static string _userNameText = "Logging in...";
 
-        private static void updateUserNameTextBlock(string newText) {
+        private static void UpdateUserNameTextBlock(string newText) {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 if (Application.Current.MainWindow is MainWindow mainWindow) {
@@ -312,7 +312,7 @@ namespace PlexampRPC {
                     Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead");
                     return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png";
                 }
-                thumbnails.Add(thumb, thumbnailLink);
+                thumbnails.Add(thumb!, thumbnailLink);
             }
 
             string newThumbnailsJson = JsonSerializer.Serialize(thumbnails);
