@@ -6,7 +6,9 @@ using System.Text.Json;
 
 namespace DyviniaUtils {
     public abstract class SettingsManager<T> where T : SettingsManager<T>, new() {
-        public static T Settings { get; private set; }
+        public static T Settings { get; private set; } = new T();
+
+        private static readonly JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
 
         public static string FilePath {
             get {
@@ -37,7 +39,7 @@ namespace DyviniaUtils {
         }
 
         public static void Save() {
-            string json = JsonSerializer.Serialize(Settings, new JsonSerializerOptions { WriteIndented = true });
+            string json = JsonSerializer.Serialize(Settings, serializerOptions);
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
             File.WriteAllText(FilePath, json);
         }

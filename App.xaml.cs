@@ -22,7 +22,7 @@ namespace PlexampRPC {
     public class Config : SettingsManager<Config> {
         public bool UpdateChecker { get; set; } = true;
         public bool LocalAddress { get; set; } = false;
-        public List<String> Skipped { get; set; } = new();
+        public List<string> Skipped { get; set; } = [];
         public bool OwnedOnly { get; set; } = true;
 
         public int ArtResolution { get; set; } = 128;

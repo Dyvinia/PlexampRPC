@@ -84,27 +84,27 @@ namespace PlexampRPC {
         }
 
 
-        private string line = String.Empty;
+        private string line = string.Empty;
         public override void Write(char value) {
             if (!value.Equals('\r') && !value.Equals('\n'))
                 line += value;
             else {
-                if (String.IsNullOrWhiteSpace(line)) {
-                    line = String.Empty;
+                if (string.IsNullOrWhiteSpace(line)) {
+                    line = string.Empty;
                     return;
                 }
                 if (line.Contains("Plex.ServerApi.Api.ApiService")) {
-                    line = String.Empty;
+                    line = string.Empty;
                     return;
                 }
                 Application.Current.Dispatcher.Invoke(new Action(() => {
                     if (Log.Count > 200) 
                         Log.RemoveAt(0);
 
-                    if (!String.IsNullOrWhiteSpace(line))
+                    if (!string.IsNullOrWhiteSpace(line))
                         Log.Add(new LogItem(line));
                 }));
-                line = String.Empty;
+                line = string.Empty;
             }
         }
 
@@ -119,12 +119,12 @@ namespace PlexampRPC {
                 if (text.Trim().StartsWith('{')) {
                     List<string> splitText = text.Replace("{", "{,").Split(',').ToList();
                     splitText.RemoveAll(u => hiddenTags.Any(c => u.Contains(c, StringComparison.OrdinalIgnoreCase)));
-                    text = String.Join(',', splitText).Replace("{,", "{");
+                    text = string.Join(',', splitText).Replace("{,", "{");
                 }
                 else if (text.Trim().StartsWith('<')) {
                     List<string> splitText = text.Split().ToList();
                     splitText.RemoveAll(u => hiddenTags.Any(c => u.Contains(c, StringComparison.OrdinalIgnoreCase)));
-                    text = String.Join(' ', splitText);
+                    text = string.Join(' ', splitText);
                 }
             }
             return text;

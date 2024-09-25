@@ -18,10 +18,10 @@ namespace DyviniaUtils {
             using HttpResponseMessage response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
 
             response.EnsureSuccessStatusCode();
-            long? totalBytes = response.Content.Headers.ContentLength;
+            long totalBytes = response.Content.Headers.ContentLength ?? 0L;
 
             using Stream contentStream = await response.Content.ReadAsStreamAsync();
-            long? totalBytesRead = 0L;
+            long totalBytesRead = 0L;
             long readCount = 0L;
             byte[] buffer = new byte[4096];
             bool isMoreToRead = true;

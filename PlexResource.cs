@@ -115,7 +115,7 @@ namespace PlexampRPC {
 
                 JsonDocument responseJson = JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync());
                 PlexResource[]? sourceResources = JsonSerializer.Deserialize<PlexResource[]>(responseJson.RootElement);
-                List<PlexResource>? filteredResources = new();
+                List<PlexResource>? filteredResources = [];
                 if (sourceResources is null || sourceResources.Length == 0) {
                     Console.WriteLine("WARN: No servers found");
                     return null;
@@ -132,7 +132,7 @@ namespace PlexampRPC {
                     i++;
                 }
 
-                return filteredResources.ToArray();
+                return [.. filteredResources];
             }
             catch (Exception e) {
                 Console.WriteLine($"WARN: Unable to get resource: {e.Message} {e.InnerException}");
