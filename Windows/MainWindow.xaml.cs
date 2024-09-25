@@ -77,6 +77,7 @@ namespace PlexampRPC {
             public string ArtLink { get; set; } = "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png";
             public string? State { get; set; }
             public int TimeOffset { get; set; }
+            public int Duration { get; set; }
             public string? Url { get; set; }
         }
 
@@ -216,6 +217,7 @@ namespace PlexampRPC {
                 ArtLink = await GetThumbnail(session.ArtPath),
                 State = session.Player?.State,
                 TimeOffset = session.ViewOffset,
+                Duration = session.Duration,
                 Url = (session.Guid != null && session.Guid.StartsWith("plex://")) ? $"https://listen.plex.tv/{session.Guid?[7..]}" : null
             };
         }
@@ -225,7 +227,8 @@ namespace PlexampRPC {
                 App.DiscordClient.SetPresence(new RichPresence() {
                     Details = TrimUTF8String(presence.Line1!), // theres probably a better way to trim strings but idk
                     State = TrimUTF8String(presence.Line2!),
-                    Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)presence.TimeOffset)),
+                    Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)presence.TimeOffset), DateTime.UtcNow.AddMilliseconds((double)presence.Duration-(double)presence.TimeOffset)),
+                    Type = ActivityType.Listening,
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip
@@ -249,6 +252,7 @@ namespace PlexampRPC {
                 App.DiscordClient.SetPresence(new RichPresence() {
                     Details = TrimUTF8String(presence.Line1!),
                     State = TrimUTF8String(presence.Line2!),
+                    Type = ActivityType.Listening,
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip,

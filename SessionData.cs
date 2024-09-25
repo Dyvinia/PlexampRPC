@@ -52,5 +52,8 @@ namespace PlexampRPC {
 
         [JsonPropertyName("viewOffset")]
         public int ViewOffset { get; set; }
+
+        [JsonPropertyName("duration")]
+        public int Duration { get; set; }
     }
 }
