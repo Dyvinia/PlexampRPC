@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace PlexampRPC {
-    public class Connection {
+    public class PlexConnection {
         [JsonPropertyName("protocol")]
         public string? Protocol { get; set; }
 
@@ -31,7 +30,7 @@ namespace PlexampRPC {
         public bool IPv6 { get; set; }
     }
 
-    public class Resource {
+    public class PlexResource {
         [JsonPropertyName("name")]
         public string? Name { get; set; }
 
@@ -102,11 +101,11 @@ namespace PlexampRPC {
         public bool NatLoopbackSupported { get; set; }
 
         [JsonPropertyName("connections")]
-        public IList<Connection>? Connections { get; set; }
+        public IList<PlexConnection>? Connections { get; set; }
         public Uri? LocalUri { get; set; }
         public Uri? Uri { get; set; }
 
-        public static async Task<Resource[]?> GetAccountResources() {
+        public static async Task<PlexResource[]?> GetAccountResources() {
             try {
                 HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://plex.tv/api/v2/resources?includeHttps=1&includeIPv6=1&X-Plex-Token={App.Token}&X-Plex-Client-Identifier=PlexampRPC");
                 requestMessage.Headers.Add("Accept", "application/json");
@@ -115,43 +114,44 @@ namespace PlexampRPC {
                 sendResponse.EnsureSuccessStatusCode();
 
                 JsonDocument responseJson = JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync());
-                Resource[]? sourceResources = JsonSerializer.Deserialize<Resource[]>(responseJson.RootElement);
-                List<Resource>? filteredResources = new();
-                if (sourceResources == null || sourceResources.Length == 0) {
+                PlexResource[]? sourceResources = JsonSerializer.Deserialize<PlexResource[]>(responseJson.RootElement);
+                List<PlexResource>? filteredResources = new();
+                if (sourceResources is null || sourceResources.Length == 0) {
                     Console.WriteLine("WARN: No servers found");
                     return null;
                 }
 
                 int i = 1;
-                foreach (Resource resource in sourceResources) {
+                foreach (PlexResource resource in sourceResources) {
                     if (Config.Settings.OwnedOnly && !resource.Owned)
                         continue;
                     MainWindow.UserNameText = $"Testing {i}/{sourceResources.Length}";
-                    Resource? r = await testResource(resource);
-                    if (r != null)
+                    PlexResource? r = await TestResource(resource);
+                    if (r is not null)
                         filteredResources.Add(r);
-                    i += 1;
+                    i++;
                 }
 
                 return filteredResources.ToArray();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Console.WriteLine($"WARN: Unable to get resource: {e.Message} {e.InnerException}");
                 return null;
             }
         }
 
-        private static async Task<Resource?> testResource(Resource resource) {
+        private static async Task<PlexResource?> TestResource(PlexResource resource) {
             if (!(resource.Provides ?? "").Split(",").Contains("server")) {
                 Console.WriteLine($"INFO: Skipping {resource.Name}/{resource.Product}, not a server");
                 return null;
             }
-            foreach (Connection connection in resource.Connections ?? Enumerable.Empty<Connection>()) {
+            foreach (PlexConnection connection in resource.Connections ?? Enumerable.Empty<PlexConnection>()) {
                 MainWindow.UserNameText += ".";
                 Uri Uri;
                 if (connection.Local)
                     Uri = new UriBuilder("http", connection.Address, connection.Port).Uri;
                 else if (!Config.Settings.LocalAddress)
-                    Uri = new UriBuilder(connection.Uri).Uri;
+                    Uri = new UriBuilder(connection.Uri!).Uri;
                 else
                     continue;
 
@@ -172,21 +172,23 @@ namespace PlexampRPC {
                         resource.LocalUri ??= Uri;
                     else
                         resource.Uri ??= Uri;
-                    if (resource.LocalUri != null && resource.Uri != null) {
+                    if (resource.LocalUri is not null && resource.Uri is not null) {
                         break;
                     }
-                } catch (TaskCanceledException) {
+                }
+                catch (TaskCanceledException) {
                     Console.WriteLine($"WARN: Timeout {(connection.Local ? 'L' : 'R')} {Uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
-                    // Unreachable server, skip for now
-                } catch (HttpRequestException e) {
+                }
+                catch (HttpRequestException e) { // Unreachable server, skip for now
                     Console.WriteLine($"WARN: Unable to access {Uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}: {e.Message}");
                     Console.WriteLine($"INFO: Adding {Uri} to Skipped list in config.json");
                     Config.Settings.Skipped.Add($"{Uri}");
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Console.WriteLine($"WARN: Unable to get resource: {e.Message} {e.InnerException}");
                 }
             }
-            if (resource.LocalUri == null && resource.Uri == null)
+            if (resource.LocalUri is null && resource.Uri is null)
                 return null;
             return resource;
         }

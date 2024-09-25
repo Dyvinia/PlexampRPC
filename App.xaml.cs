@@ -34,7 +34,7 @@ namespace PlexampRPC {
 
         public string DiscordClientID { get; set; } = "1100233636491563069";
 
-        public string PlexAddress { get; set; } = String.Empty;
+        public string PlexAddress { get; set; } = string.Empty;
     }
 
 
@@ -56,7 +56,7 @@ namespace PlexampRPC {
 
         public static string? Token { get; set; }
         public static PlexAccount? Account { get; set; }
-        public static Resource[]? PlexResources { get; set; }
+        public static PlexResource[]? PlexResources { get; set; }
 
         public static LogWriter? Log { get; set; }
 
@@ -123,7 +123,7 @@ namespace PlexampRPC {
 
             try {
                 Account = await AccountClient.GetPlexAccountAsync(Token);
-                PlexResources = await Resource.GetAccountResources();
+                PlexResources = await PlexResource.GetAccountResources();
             }
             catch {
                 _ = PlexSignIn(true);
@@ -138,7 +138,7 @@ namespace PlexampRPC {
 
             while (true) {
                 plexPin = await AccountClient.GetAuthTokenFromOAuthPinAsync(oauthUrl.Id.ToString());
-                if (!String.IsNullOrEmpty(plexPin.AuthToken)) break;
+                if (!string.IsNullOrEmpty(plexPin.AuthToken)) break;
                 await Task.Delay(1000);
             }
             return plexPin.AuthToken;

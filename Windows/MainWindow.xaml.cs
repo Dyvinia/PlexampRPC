@@ -30,9 +30,9 @@ namespace PlexampRPC {
                     return new UriBuilder(Config.Settings.PlexAddress).Uri;
                 else if (UserServerComboBox.SelectedItem != null) {
                     if (Config.Settings.LocalAddress)
-                        return ((Resource)UserServerComboBox.SelectedItem).LocalUri;
+                        return ((PlexResource)UserServerComboBox.SelectedItem).LocalUri;
                     else
-                        return ((Resource)UserServerComboBox.SelectedItem).Uri;
+                        return ((PlexResource)UserServerComboBox.SelectedItem).Uri;
                 }
                 return null;
             }
@@ -41,7 +41,7 @@ namespace PlexampRPC {
         public string? Token {
             get {
                 if (UserServerComboBox.SelectedItem != null)
-                    return ((Resource)UserServerComboBox.SelectedItem).AccessToken;
+                    return ((PlexResource)UserServerComboBox.SelectedItem).AccessToken;
                 return null;
             }
         }
@@ -234,7 +234,7 @@ namespace PlexampRPC {
                         LargeImageText = presence.ImageTooltip
                     },
                     Buttons = presence.Url != null ? new Button[] {
-                        new Button() { Label = "More...", Url = presence.Url }
+                        new() { Label = "More...", Url = presence.Url }
                     } : null
                 });
 

@@ -7,8 +7,8 @@
     <UseWPF>true</UseWPF>
 
 	  <AssemblyName>PlexampRPC</AssemblyName>
-	  <Version>1.4.1</Version>
-	  <Copyright>Copyright © 2023 Dyvinia</Copyright>
+	  <Version>1.5.0</Version>
+	  <Copyright>Copyright © 2024 Dyvinia</Copyright>
 	  <Company>Dyvinia</Company>
 	  <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
   </PropertyGroup>
