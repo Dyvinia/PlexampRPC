@@ -26,7 +26,7 @@ namespace PlexampRPC {
 
         public Uri? Address {
             get {
-                if (!String.IsNullOrEmpty(Config.Settings.PlexAddress))
+                if (!string.IsNullOrEmpty(Config.Settings.PlexAddress))
                     return new UriBuilder(Config.Settings.PlexAddress).Uri;
                 else if (UserServerComboBox.SelectedItem != null) {
                     if (Config.Settings.LocalAddress)
@@ -133,7 +133,7 @@ namespace PlexampRPC {
             UserIcon.Source = new BitmapImage(new Uri(App.Account?.Thumb ?? "/Resources/PlexIcon.png"));
             UserNameText = App.Account?.Title ?? App.Account?.Username ?? "Name";
 
-            if (String.IsNullOrEmpty(Config.Settings.PlexAddress)) {
+            if (string.IsNullOrEmpty(Config.Settings.PlexAddress)) {
                 if (App.PlexResources != null)
                     UserServerComboBox.ItemsSource = App.PlexResources;
             }
@@ -233,18 +233,25 @@ namespace PlexampRPC {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip
                     },
-                    Buttons = presence.Url != null ? new Button[] {
-                        new() { Label = "More...", Url = presence.Url }
-                    } : null
+                    //Buttons = presence.Url != null ? [
+                    //    new() { Label = "More...", Url = presence.Url }
+                    //] : null
                 });
 
                 PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
                 PreviewL1.Text = presence.Line1;
                 PreviewL2.Text = presence.Line2;
+                PreviewL3.Text = presence.ImageTooltip;
 
-                TimeSpan t = TimeSpan.FromMilliseconds(presence.TimeOffset);
-                PreviewL3.Text = $"{String.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds)} elapsed";
-                PreviewL3.Visibility = Visibility.Visible;
+                PreviewTime.Visibility = Visibility.Visible;
+
+                TimeSpan timeStart = TimeSpan.FromMilliseconds(presence.TimeOffset);
+                PreviewTimeStart.Text = $"{string.Format("{0:D2}:{1:D2}", timeStart.Minutes, timeStart.Seconds)}";
+
+                TimeSpan timeEnd = TimeSpan.FromMilliseconds(presence.Duration);
+                PreviewTimeEnd.Text = $"{string.Format("{0:D2}:{1:D2}", timeEnd.Minutes, timeEnd.Seconds)}";
+
+                PreviewTimeProgress.Value = 100d * presence.TimeOffset / presence.Duration;
 
                 PreviewPaused.Visibility = Visibility.Collapsed;
             }
@@ -264,10 +271,9 @@ namespace PlexampRPC {
                 PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
                 PreviewL1.Text = presence.Line1;
                 PreviewL2.Text = presence.Line2;
+                PreviewL3.Text = presence.ImageTooltip;
 
-                PreviewL3.Text = "";
-                PreviewL3.Visibility = Visibility.Collapsed;
-
+                PreviewTime.Visibility = Visibility.Collapsed;
                 PreviewPaused.Visibility = Visibility.Visible;
             }
         }
@@ -284,9 +290,12 @@ namespace PlexampRPC {
                 .Replace("{artist}", "Artist")
                 .Replace("{album}", "Album");
 
-            PreviewL3.Text = "";
-            PreviewL3.Visibility = Visibility.Collapsed;
+            PreviewL3.Text = Config.Settings.TemplateL3
+                .Replace("{title}", "Title")
+                .Replace("{artist}", "Artist")
+                .Replace("{album}", "Album");
 
+            PreviewTime.Visibility = Visibility.Collapsed;
             PreviewPaused.Visibility = Visibility.Collapsed;
 
             App.DiscordClient.ClearPresence();
@@ -301,10 +310,10 @@ namespace PlexampRPC {
             if (File.Exists(cacheFile)) {
                 thumbnailsJson = File.ReadAllText(cacheFile);
                 try { thumbnails = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(cacheFile))!; }
-                catch { thumbnails = new(); }
+                catch { thumbnails = []; }
             }
             else
-                thumbnails = new();
+                thumbnails = [];
 
             string thumbnailLink;
             if (thumb is not null && thumbnails.TryGetValue(thumb, out string? value)) {

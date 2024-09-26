@@ -91,14 +91,14 @@
                     <TextBlock TextWrapping="Wrap" Text="Preview" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
 
                     <DockPanel Margin="0 4">
-                        <Grid Height="64" Width="64">
+                        <Grid Height="64" Width="64" VerticalAlignment="Top">
                             <Image x:Name="PreviewArt" Source="https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png" RenderOptions.BitmapScalingMode="Fant" Height="64" Width="64" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Top">
                                 <Image.OpacityMask>
                                     <VisualBrush>
                                         <VisualBrush.Visual>
                                             <Border Height="{Binding ElementName=PreviewArt, Path=ActualHeight}" 
                                                 Width="{Binding ElementName=PreviewArt, Path=ActualWidth}"
-                                                Background="White" CornerRadius="8" />
+                                                Background="White" CornerRadius="4" />
                                         </VisualBrush.Visual>
                                     </VisualBrush>
                                 </Image.OpacityMask>
@@ -106,11 +106,15 @@
                             <Image x:Name="PreviewPaused" Source="/Resources/PlexPaused.png" Margin="46,44,-2,-8" RenderOptions.BitmapScalingMode="Fant" Visibility="Collapsed"/>
                         </Grid>
 
-                        <StackPanel HorizontalAlignment="Left" DockPanel.Dock="Right" Margin="6 0 0 0">
-                            <TextBlock x:Name="PreviewPlexamp" Text="Plexamp" Foreground="#dddddd" FontSize="14" Height="18" FontWeight="Bold" VerticalAlignment="Top"/>
-                            <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
-                            <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
-                            <TextBlock x:Name="PreviewL3" Visibility="Collapsed" Text="00:00 elapsed" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top"/>
+                        <StackPanel HorizontalAlignment="Left" DockPanel.Dock="Right" Margin="7 -1 0 0">
+                            <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" FontWeight="DemiBold" VerticalAlignment="Top" />
+                            <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top"/>
+                            <TextBlock x:Name="PreviewL3" Text="Album" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top"/>
+                            <StackPanel Orientation="Horizontal" x:Name="PreviewTime" Margin="0 3 0 0">
+                                <TextBlock x:Name="PreviewTimeStart" Text="00:00" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="Consolas"/>
+                                <ProgressBar x:Name="PreviewTimeProgress" Width="100" Margin="7 0 7 3" Height="2" Foreground="#dddddd" BorderThickness="0" Value="50"/>
+                                <TextBlock x:Name="PreviewTimeEnd" Text="00:00" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="Consolas"/>
+                            </StackPanel>
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>

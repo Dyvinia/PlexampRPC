@@ -2016,7 +2016,7 @@
                         </VisualStateManager.VisualStateGroups>
                         <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}"/>
                         <Rectangle x:Name="PART_Track"/>
-                        <Grid x:Name="PART_Indicator" ClipToBounds="true" HorizontalAlignment="Left" Margin="1">
+                        <Grid x:Name="PART_Indicator" ClipToBounds="true" HorizontalAlignment="Left" Margin="0">
                             <Rectangle x:Name="Indicator" Fill="{TemplateBinding Foreground}"/>
                             <Rectangle x:Name="Animation" Fill="{TemplateBinding Foreground}" RenderTransformOrigin="0.5,0.5">
                                 <Rectangle.RenderTransform>
