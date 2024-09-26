@@ -14,6 +14,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\ggmono.ttf" />
+    <None Remove="Resources\ggsans semibold.ttf" />
+    <None Remove="Resources\ggsans.ttf" />
     <None Remove="Resources\Icon.ico" />
     <None Remove="Resources\PlexIcon.png" />
     <None Remove="Resources\PlexIconSquare.png" />
@@ -44,6 +47,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\ggmono.ttf" />
+    <Resource Include="Resources\ggsans.ttf" />
+    <Resource Include="Resources\ggsans semibold.ttf" />
     <Resource Include="Resources\Icon.ico" />
     <Resource Include="Resources\PlexIcon.png" />
     <Resource Include="Resources\PlexIconSquare.png" />

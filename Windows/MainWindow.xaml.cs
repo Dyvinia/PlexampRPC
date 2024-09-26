@@ -147,6 +147,8 @@ namespace PlexampRPC {
 
             UserInfoPanel.Visibility = Visibility.Visible;
 
+            UserServerComboBox.Visibility = Visibility.Visible;
+
             LoadingImage.Visibility = Visibility.Collapsed;
         }
 
