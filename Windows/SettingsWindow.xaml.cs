@@ -18,9 +18,24 @@ namespace PlexampRPC {
             StartupCheckBox.Checked += (_, _) => StartOnStartup();
             StartupCheckBox.Unchecked += (_, _) => File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
 
+            SetupListeningTo();
+
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
 
             DataContext = Config.Settings;
+        }
+
+        private void SetupListeningTo() {
+            RadioListeningPlexamp.Checked += (_, _) => Config.Settings.DiscordListeningTo = "Plexamp";
+            RadioListeningMusic.Checked += (_, _) => Config.Settings.DiscordListeningTo = "Music";
+            RadioListeningCustom.Checked += (_, _) => Config.Settings.DiscordListeningTo = "Custom";
+
+            if (Config.Settings.DiscordListeningTo == "Plexamp")
+                RadioListeningPlexamp.IsChecked = true;
+            else if (Config.Settings.DiscordListeningTo == "Music")
+                RadioListeningMusic.IsChecked = true;
+            else
+                RadioListeningCustom.IsChecked = true;
         }
 
         private void StartOnStartup() {

@@ -33,7 +33,8 @@ namespace PlexampRPC {
         public string TemplateL2 { get; set; } = "by {artist}";
         public string TemplateL3 { get; set; } = "{album}";
 
-        public string DiscordClientID { get; set; } = "1100233636491563069";
+        public string DiscordListeningTo { get; set; } = "Plexamp";
+        public string DiscordCustomClientID { get; set; } = "1100233636491563069";
 
         public string PlexAddress { get; set; } = string.Empty;
     }
@@ -46,7 +47,18 @@ namespace PlexampRPC {
 
         public static readonly string Version = "v" + Assembly.GetExecutingAssembly().GetName()?.Version?.ToString()[..5];
 
-        public static DiscordRpcClient DiscordClient { get; } = new(Config.Settings.DiscordClientID);
+        public static string ClientID {
+            get {
+                if (Config.Settings.DiscordListeningTo == "Plexamp")
+                    return "1100233636491563069";
+                else if (Config.Settings.DiscordListeningTo == "Music")
+                    return "1116438265680109598";
+                else
+                    return Config.Settings.DiscordCustomClientID;
+            }
+        }
+
+        public static DiscordRpcClient DiscordClient { get; } = new(ClientID);
 
         public static IPlexAccountClient AccountClient { get; } = new PlexAccountClient(new() {
             Product = "PlexampRPC",
@@ -65,7 +77,7 @@ namespace PlexampRPC {
             Config.Load();
 
             Log = new LogWriter();
-
+            
             DiscordInit();
 
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;

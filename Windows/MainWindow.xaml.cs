@@ -99,6 +99,8 @@ namespace PlexampRPC {
 
             ResetPresence();
             SetupTray();
+
+            PreviewListeningTo.Text = $"Listening to {Config.Settings.DiscordListeningTo}";
         }
 
         public TaskbarIcon TrayIcon = new() {

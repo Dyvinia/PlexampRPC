@@ -39,7 +39,14 @@
                     <CheckBox x:Name="OwnedCheckBox" Margin="0 5 0 0" Content="Owned Servers Only" IsChecked="{Binding Path=(local:Config.OwnedOnly), Mode=TwoWay}" ToolTip="Only adds servers to the list that belong to the authenticated Plex user"/>
 
                 </StackPanel>
-                <Grid Height="15"/>
+                <Grid Height="10"/>
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Text="Listening To" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
+                    <RadioButton x:Name="RadioListeningPlexamp" Content="Plexamp" IsChecked="True"/>
+                    <RadioButton x:Name="RadioListeningMusic" Content="Music"/>
+                    <RadioButton x:Name="RadioListeningCustom" Content="Custom"/>
+                </StackPanel>
+                <Grid Height="10"/>
                 <StackPanel>
                     <TextBlock TextWrapping="Wrap" Text="Template" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
                     <TextBox x:Name="TemplateL1" Margin="0 4 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL1), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}"/>
