@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
-using Button = DiscordRPC.Button;
 
 namespace PlexampRPC {
     /// <summary>
@@ -236,10 +231,7 @@ namespace PlexampRPC {
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip
-                    },
-                    //Buttons = presence.Url != null ? [
-                    //    new() { Label = "More...", Url = presence.Url }
-                    //] : null
+                    }
                 });
 
                 PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
@@ -383,6 +375,9 @@ namespace PlexampRPC {
 
             if (e.Key == Key.F5)
                 new LogWindow(App.Log!).Show();
+
+            if (e.Key == Key.S && Keyboard.Modifiers == ModifierKeys.Control)
+                App.Log?.SaveAs();
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using DiscordRPC;
 using DiscordRPC.Logging;
@@ -14,7 +12,6 @@ using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
 using DyviniaUtils;
 using DyviniaUtils.Dialogs;
-using System.Collections.Generic;
 
 namespace PlexampRPC {
 
@@ -107,6 +104,11 @@ namespace PlexampRPC {
 
         protected override void OnExit(ExitEventArgs e) {
             DiscordClient.Dispose();
+
+            try {
+                File.WriteAllText(Path.Combine(Path.GetDirectoryName(Config.FilePath)!, "log.txt"), Log?.ToString());
+            }
+            catch { }
         }
 
         private static void DiscordInit() {

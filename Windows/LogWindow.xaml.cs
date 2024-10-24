@@ -1,25 +1,28 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Win32;
 
 namespace PlexampRPC {
     /// <summary>
     /// Interaction logic for LogWindow.xaml
     /// </summary>
     public partial class LogWindow : Window {
+        private LogWriter writer;
+
         public LogWindow(LogWriter logWriter) {
             InitializeComponent();
-            LogBox.ItemsSource = logWriter.Log;
-            LogBox.ScrollIntoView(logWriter.Log.Last());
 
-            ((INotifyCollectionChanged)LogBox.ItemsSource).CollectionChanged += (_, _) => LogBox.ScrollIntoView(logWriter.Log.Last());
+            writer = logWriter;
+
+            LogBox.ItemsSource = writer.Log;
+            //if (writer.Log.Count > 0)
+                LogBox.ScrollIntoView(writer.Log.Last());
+
+            ((INotifyCollectionChanged)LogBox.ItemsSource).CollectionChanged += (_, _) => LogBox.ScrollIntoView(writer.Log.Last());
         }
 
         protected override void OnKeyDown(KeyEventArgs e) {
@@ -29,7 +32,7 @@ namespace PlexampRPC {
                 CopyToClipboard();
 
             if (e.Key == Key.S && Keyboard.Modifiers == ModifierKeys.Control)
-                SaveToFile();
+                writer.SaveAs();
         }
 
         private void CopyToClipboard() {
@@ -40,22 +43,6 @@ namespace PlexampRPC {
                 sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
             }
             Clipboard.SetDataObject(sb.ToString());
-        }
-
-        private void SaveToFile() {
-            SaveFileDialog dlg = new() {
-                FileName = "log",
-                DefaultExt = ".txt",
-                Filter = "Text (.txt)|*.txt"
-            };
-
-            if (dlg.ShowDialog() == true) {
-                StringBuilder sb = new();
-                foreach (LogWriter.LogItem item in LogBox.Items) {
-                    sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
-                }
-                File.WriteAllText(dlg.FileName, sb.ToString());
-            }
         }
     }
 
@@ -128,6 +115,25 @@ namespace PlexampRPC {
                 }
             }
             return text;
+        }
+
+        public void SaveAs() {
+            SaveFileDialog dlg = new() {
+                FileName = "log",
+                DefaultExt = ".txt",
+                Filter = "Text (.txt)|*.txt"
+            };
+
+            if (dlg.ShowDialog() == true)
+                File.WriteAllText(dlg.FileName, ToString());
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new();
+            foreach (LogItem item in Log) {
+                sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
+            }
+            return sb.ToString();
         }
     }
 }

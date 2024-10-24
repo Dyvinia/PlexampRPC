@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:PlexampRPC"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="PlexampRPC" SizeToContent="Height" UseLayoutRounding="True" Width="200"
+        Title="PlexampRPC" SizeToContent="Height" UseLayoutRounding="True" Width="190"
         WindowStartupLocation="CenterScreen"
         Icon="/Resources/Icon.ico"
         Style="{DynamicResource CustomWindowStyle}">
     <Grid>
-        <Grid Background="#FF141414" Margin="5">
+        <Grid Background="#FF141414" Margin="0">
             <StackPanel Margin="20">
                 <StackPanel>
                     <TextBlock TextWrapping="Wrap" Text="Options" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>

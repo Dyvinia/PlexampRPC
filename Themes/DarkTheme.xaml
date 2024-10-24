@@ -3,7 +3,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
     <!-- Window Colours. Background, Border and TitleBar colours. -->
-    <SolidColorBrush x:Key="BackgroundColour"  Color="#FF2D2D2D" />
+    <SolidColorBrush x:Key="BackgroundColour"  Color="#FF141414" />
     <SolidColorBrush x:Key="WindowBorderColour"  Color="#FF000000" />
     <SolidColorBrush x:Key="WindowTitleColour"  Color="#FF000000" />
     <!-- Control colour themes. dont mess with em okay unless youre good at styles -->

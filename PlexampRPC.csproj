@@ -4,13 +4,16 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
 
 	  <AssemblyName>PlexampRPC</AssemblyName>
-	  <Version>1.5.1</Version>
+	  <Version>1.5.2</Version>
 	  <Copyright>Copyright © 2024 Dyvinia</Copyright>
 	  <Company>Dyvinia</Company>
 	  <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
+
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=$(MSBuildProjectName)\</PathMap>
   </PropertyGroup>
 
   <ItemGroup>

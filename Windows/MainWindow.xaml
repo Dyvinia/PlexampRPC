@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlexampRPC"
         mc:Ignorable="d"
-        Title="PlexampRPC" Width="320" SizeToContent="Height" UseLayoutRounding="True"
+        Title="PlexampRPC" Width="310" SizeToContent="Height" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
         Icon="/Resources/Icon.ico"
         Style="{DynamicResource CustomWindowStyle}" ResizeMode="CanMinimize">
@@ -16,7 +16,7 @@
     </Window.Resources>
     <Grid>
 
-        <Grid Background="#FF141414" Margin="5">
+        <Grid Background="#FF141414" Margin="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="15"/>
                 <RowDefinition Height="96"/>
