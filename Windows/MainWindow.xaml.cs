@@ -25,7 +25,7 @@ namespace PlexampRPC
 
         public Uri? SelectedAddress {
             get {
-                if (!string.IsNullOrEmpty(Config.Settings.PlexAddress))
+                if (!string.IsNullOrWhiteSpace(Config.Settings.PlexAddress))
                     return new UriBuilder(Config.Settings.PlexAddress).Uri;
 
                 if (Config.Settings.LocalAddress)
@@ -368,13 +368,13 @@ namespace PlexampRPC
                 }
 
                 try {
-                    Console.WriteLine($"INFO: Testing {(connection.Local ? 'L' : 'R')} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
+                    Console.WriteLine($"INFO: Testing {(connection.Local ? "Local" : "Remote")} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
                     HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{uri}status/sessions?X-Plex-Token={resource.AccessToken}");
                     requestMessage.Headers.Add("Accept", "application/json");
 
-                    HttpResponseMessage sendResponse = await MainWindow.httpClient.SendAsync(requestMessage);
+                    HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
                     sendResponse.EnsureSuccessStatusCode();
-                    Console.WriteLine($"INFO: Success {(connection.Local ? 'L' : 'R')} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
+                    Console.WriteLine($"INFO: Success {(connection.Local ? "Local" : "Remote")} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
                     if (connection.Local)
                         resource.LocalUri ??= uri;
                     else
@@ -384,7 +384,7 @@ namespace PlexampRPC
                     }
                 }
                 catch (TaskCanceledException) {
-                    Console.WriteLine($"WARN: Timeout {(connection.Local ? 'L' : 'R')} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
+                    Console.WriteLine($"WARN: Timeout {(connection.Local ? "Local" : "Remote")} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
                 }
                 catch (HttpRequestException e) { // Unreachable server, skip for now
                     Console.WriteLine($"WARN: Unable to access {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}: {e.Message}");

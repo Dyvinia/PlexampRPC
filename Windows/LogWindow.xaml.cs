@@ -19,7 +19,7 @@ namespace PlexampRPC {
             writer = logWriter;
 
             LogBox.ItemsSource = writer.Log;
-            //if (writer.Log.Count > 0)
+            if (writer.Log.Count > 0)
                 LogBox.ScrollIntoView(writer.Log.Last());
 
             ((INotifyCollectionChanged)LogBox.ItemsSource).CollectionChanged += (_, _) => LogBox.ScrollIntoView(writer.Log.Last());
@@ -109,6 +109,8 @@ namespace PlexampRPC {
                     text = string.Join(' ', splitText);
                 }
             }
+            if (App.Token is not null)
+                text = text.Replace(App.Token, $"{App.Token?[..3]}...");
             return text;
         }
 
