@@ -97,7 +97,7 @@
                             <TextBlock x:Name="PreviewListeningTo" Text="Listening to Music" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" Margin="0 -1 0 5" FontFamily="/Resources/gg/#gg sans SemiBold"/>
                             <DockPanel>
                                 <Grid Height="64" Width="64" VerticalAlignment="Top">
-                                    <Image x:Name="PreviewArt" Source="https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png" RenderOptions.BitmapScalingMode="Fant" Height="64" Width="64" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Top">
+                                    <Image x:Name="PreviewArt" Source="https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png" RenderOptions.BitmapScalingMode="Fant" Height="64" Width="64" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Top">
                                         <Image.OpacityMask>
                                             <VisualBrush>
                                                 <VisualBrush.Visual>
@@ -131,10 +131,10 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 6 6 0" VerticalAlignment="Top">
             <Button  Width="24" Height="24" Click="LogsButton_Click" Style="{StaticResource ShapeButton}" >
-                <Image Source="{svgc:SvgImage Source=/Resources/SVG/terminal.svg, AppName=PlexampRPC}" Height="16" Width="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Image Source="{svgc:SvgImage Source=/Resources/Buttons/terminal.svg, AppName=PlexampRPC}" Height="16" Width="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
             <Button  Width="24" Height="24" Click="SettingsButton_Click" Style="{StaticResource ShapeButton}">
-                <Image Source="{svgc:SvgImage Source=/Resources/SVG/settings.svg, AppName=PlexampRPC}" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Image Source="{svgc:SvgImage Source=/Resources/Buttons/settings.svg, AppName=PlexampRPC}" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
         </StackPanel>
         

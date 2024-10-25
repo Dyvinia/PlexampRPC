@@ -250,7 +250,7 @@ namespace PlexampRPC
         }
 
         private void ResetPresence() {
-            PreviewArt.Source = new BitmapImage(new Uri("https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png"));
+            PreviewArt.Source = new BitmapImage(new Uri("https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png"));
 
             PreviewL1.Text = Config.Settings.TemplateL1
                 .Replace("{title}", "Title")

@@ -24,10 +24,13 @@
     <None Remove="Resources\Inter\Inter-Italic-VariableFont_opsz,wght.ttf" />
     <None Remove="Resources\Inter\Inter-VariableFont_opsz,wght.ttf" />
     <None Remove="Resources\PlexIcon.png" />
+    <None Remove="Resources\PlexIcon.svg" />
+    <None Remove="Resources\PlexIconLight.svg" />
     <None Remove="Resources\PlexIconSquare.png" />
+    <None Remove="Resources\PlexIconSquare.svg" />
     <None Remove="Resources\PlexPaused.png" />
     <None Remove="Resources\Settings.svg" />
-    <None Remove="Resources\SVG\terminal.svg" />
+    <None Remove="Resources\Buttons\terminal.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,10 +65,11 @@
     <Resource Include="Resources\Inter\Inter-Italic-VariableFont_opsz,wght.ttf" />
     <Resource Include="Resources\Inter\Inter-VariableFont_opsz,wght.ttf" />
     <Resource Include="Resources\PlexIcon.png" />
-    <Resource Include="Resources\PlexIconSquare.png" />
+    <Resource Include="Resources\PlexIcon.svg" />
+    <Resource Include="Resources\PlexIconLight.svg" />
     <Resource Include="Resources\PlexPaused.png" />
-    <Resource Include="Resources\SVG\settings.svg" />
-    <Resource Include="Resources\SVG\terminal.svg" />
+    <Resource Include="Resources\Buttons\settings.svg" />
+    <Resource Include="Resources\Buttons\terminal.svg" />
   </ItemGroup>
 
 </Project>
