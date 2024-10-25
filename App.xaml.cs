@@ -24,6 +24,8 @@ namespace PlexampRPC
         public List<string> Skipped { get; set; } = [];
         public bool OwnedOnly { get; set; } = true;
 
+        public string SelectedServer { get; set; } = string.Empty;
+
         public int ArtResolution { get; set; } = 128;
         public double RefreshInterval { get; set; } = 2.5;
         public int SessionTimeout { get; set; } = 30;

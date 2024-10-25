@@ -23,7 +23,7 @@ namespace PlexampRPC
 
         private PlexResourceData? SelectedResource => (PlexResourceData)UserServerComboBox.SelectedItem;
 
-        public Uri? Address {
+        public Uri? SelectedAddress {
             get {
                 if (!string.IsNullOrEmpty(Config.Settings.PlexAddress))
                     return new UriBuilder(Config.Settings.PlexAddress).Uri;
@@ -115,12 +115,12 @@ namespace PlexampRPC
                 UserServerComboBox.ItemsSource = new List<dynamic>() { customItem };
                 UserServerComboBox.IsEnabled = false;
             }
-            UserServerComboBox.SelectedIndex = 0;
+            UserServerComboBox.SelectedIndex = App.PlexResources?.ToList().FindIndex(r => r.Name == Config.Settings.SelectedServer) ?? 0;
+            if (UserServerComboBox.SelectedIndex == -1)
+                UserServerComboBox.SelectedIndex = 0;
 
             UserInfoPanel.Visibility = Visibility.Visible;
-
             UserServerComboBox.Visibility = Visibility.Visible;
-
             LoadingImage.Visibility = Visibility.Collapsed;
         }
 
@@ -151,7 +151,7 @@ namespace PlexampRPC
         private async Task<SessionData?> GetCurrentSession() {
             try {
                 if (UserServerComboBox.SelectedItem == null) return null;
-                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={SelectedResource?.AccessToken}");
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{SelectedAddress}status/sessions?X-Plex-Token={SelectedResource?.AccessToken}");
                 requestMessage.Headers.Add("Accept", "application/json");
                 Console.WriteLine(requestMessage.RequestUri);
 
@@ -168,7 +168,7 @@ namespace PlexampRPC
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
             catch (Exception e) {
-                Console.WriteLine($"WARN: Unable to get current session: {Address}status/sessions?X-Plex-Token={SelectedResource?.AccessToken?[..3]}... {e.Message} {e.InnerException}");
+                Console.WriteLine($"WARN: Unable to get current session: {SelectedAddress}status/sessions?X-Plex-Token={SelectedResource?.AccessToken?[..3]}... {e.Message} {e.InnerException}");
                 return null;
             }
         }
@@ -398,7 +398,7 @@ namespace PlexampRPC
         }
 
         private async Task<string> UploadImage(string thumb) {
-            HttpResponseMessage getResponse = await httpClient.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={SelectedResource?.AccessToken}");
+            HttpResponseMessage getResponse = await httpClient.GetAsync($"{SelectedAddress}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={SelectedResource?.AccessToken}");
 
             string dataString = Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()));
             HttpResponseMessage sendResponse = await httpClient.SendAsync(new() {
@@ -433,6 +433,9 @@ namespace PlexampRPC
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);
             App.DiscordClient.Dispose();
+
+            Config.Settings.SelectedServer = SelectedResource?.Name ?? string.Empty;
+
             Config.Save();
         }
 
