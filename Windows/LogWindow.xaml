@@ -11,10 +11,14 @@
         <ListBox x:Name="LogBox" Background="#FF141414" Margin="4" VirtualizingStackPanel.IsVirtualizing="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AlternationCount="2">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" >
-                        <TextBlock Text="{Binding Timestamp, StringFormat='{}{0: [hh:mm:ss] }'}" TextWrapping="Wrap" FontFamily="Consolas"/>
-                        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" FontFamily="Consolas" Width="1500"/>
-                    </StackPanel>
+                    <Grid VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Timestamp, StringFormat='{}{0: [hh:mm:ss] }'}" TextWrapping="Wrap" FontFamily="Consolas"/>
+                        <TextBox Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap" FontFamily="Consolas" IsReadOnly="True" Style="{StaticResource FakeTextBlockBox}" Margin="0 0 0 1"/>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
             
@@ -24,7 +28,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Margin="-5 1" SnapsToDevicePixels="true">
+                                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Margin="-5 0" SnapsToDevicePixels="true">
                                     <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                 </Border>
                             </ControlTemplate>
@@ -33,6 +37,7 @@
                     <Style.Triggers>
                         <Trigger Property="ItemsControl.AlternationIndex"  Value="0">
                             <Setter Property="Background" Value="#09FFFFFF" />
+                            <Setter Property="BorderBrush" Value="#09FFFFFF" />
                         </Trigger>
                     </Style.Triggers>
                 </Style>
