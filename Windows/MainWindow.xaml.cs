@@ -153,7 +153,7 @@ namespace PlexampRPC
                 if (UserServerComboBox.SelectedItem == null) return null;
                 HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{SelectedAddress}status/sessions?X-Plex-Token={SelectedResource?.AccessToken}");
                 requestMessage.Headers.Add("Accept", "application/json");
-                Console.WriteLine(requestMessage.RequestUri);
+                //Console.WriteLine(requestMessage.RequestUri);
 
                 HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
                 sendResponse.EnsureSuccessStatusCode();
