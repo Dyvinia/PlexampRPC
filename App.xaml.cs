@@ -12,8 +12,10 @@ using Plex.ServerApi.PlexModels.Account;
 using Plex.ServerApi.PlexModels.OAuth;
 using DyviniaUtils;
 using DyviniaUtils.Dialogs;
+using PlexampRPC.Data;
 
-namespace PlexampRPC {
+namespace PlexampRPC
+{
 
     [GlobalConfig]
     public class Config : SettingsManager<Config> {
@@ -66,7 +68,7 @@ namespace PlexampRPC {
 
         public static string? Token { get; set; }
         public static PlexAccount? Account { get; set; }
-        public static PlexResource[]? PlexResources { get; set; }
+        public static PlexResourceData[]? PlexResources { get; set; }
 
         public static LogWriter? Log { get; set; }
 
@@ -88,6 +90,8 @@ namespace PlexampRPC {
             window.Show();
 
             await PlexSignIn();
+            window.UpdateAccountIcon();
+            PlexResources = await window.GetAccountResources();
 
             window.WindowState = WindowState.Normal;
             window.Activate();
@@ -138,7 +142,6 @@ namespace PlexampRPC {
 
             try {
                 Account = await AccountClient.GetPlexAccountAsync(Token);
-                PlexResources = await PlexResource.GetAccountResources();
             }
             catch {
                 _ = PlexSignIn(true);

@@ -80,7 +80,7 @@
                 </Image>
 
                 <StackPanel x:Name="UserInfoPanel" Grid.Column="1" VerticalAlignment="Center" Margin="4" >
-                    <TextBlock x:Name="UserNameTextBox" Text="{x:Static local:MainWindow.UserNameText}" Foreground="#FFF1F1F1" Width="150" FontSize="16" Height="20" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="StatusTextBox" Text="Logging In..." Foreground="#FFF1F1F1" Width="150" FontSize="16" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <ComboBox x:Name="UserServerComboBox" Width="150" DisplayMemberPath="Name" Margin="0 4 0 0" Visibility="Collapsed"/>
                 </StackPanel>
             </Grid>

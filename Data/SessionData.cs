@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace PlexampRPC {
-    public class SessionData {
+namespace PlexampRPC.Data
+{
+    public class SessionData
+    {
         [JsonPropertyName("title")]
         public string? Title { get; set; }
 
@@ -12,14 +14,17 @@ namespace PlexampRPC {
         [JsonPropertyName("grandparentTitle")]
         public string? AlbumArtist { private get; set; }
 
-        public string? Artists {
-            get {
+        public string? Artists
+        {
+            get
+            {
                 string artists = TrackArtist ?? AlbumArtist ?? "Artist";
-                if (artists.Contains(';')) {
+                if (artists.Contains(';'))
+                {
                     string[] artistList = artists.Split(';', StringSplitOptions.TrimEntries);
                     if (artistList.Length > 2)
-                        artists = String.Join(", ", artistList);
-                    else artists = String.Join(" & ", artistList);
+                        artists = string.Join(", ", artistList);
+                    else artists = string.Join(" & ", artistList);
                 }
                 return artists;
             }
@@ -35,7 +40,8 @@ namespace PlexampRPC {
         public string? Type { get; set; }
 
         public UserData? User { get; set; }
-        public class UserData {
+        public class UserData
+        {
             [JsonPropertyName("title")]
             public string? Name { get; set; }
         }
@@ -44,7 +50,8 @@ namespace PlexampRPC {
         public string? Guid { get; set; }
 
         public PlayerData? Player { get; set; }
-        public class PlayerData {
+        public class PlayerData
+        {
             [JsonPropertyName("state")]
             public string? State { get; set; }
         }

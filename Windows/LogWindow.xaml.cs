@@ -11,7 +11,7 @@ namespace PlexampRPC {
     /// Interaction logic for LogWindow.xaml
     /// </summary>
     public partial class LogWindow : Window {
-        private LogWriter writer;
+        private readonly LogWriter writer;
 
         public LogWindow(LogWriter logWriter) {
             InitializeComponent();
@@ -38,7 +38,7 @@ namespace PlexampRPC {
         private void CopyToClipboard() {
             StringBuilder sb = new();
             foreach (LogWriter.LogItem item in LogBox.Items) {
-                if (item.Message.StartsWith("{"))
+                if (item.Message.StartsWith('{'))
                     continue;
                 sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
             }
@@ -47,17 +47,12 @@ namespace PlexampRPC {
     }
 
     public class LogWriter : TextWriter {
-        public class LogItem {
-            public DateTime Timestamp { get; set; }
-            public string Message { get; set; }
-
-            public LogItem(string message) {
-                Timestamp = DateTime.Now;
-                Message = RemoveTags(message).Trim();
-            }
+        public class LogItem(string message) {
+            public DateTime Timestamp { get; set; } = DateTime.Now;
+            public string Message { get; set; } = RemoveTags(message).Trim();
         }
 
-        public ObservableCollection<LogItem> Log = new();
+        public ObservableCollection<LogItem> Log = [];
 
         public LogWriter() {
             Console.SetOut(this);
@@ -100,16 +95,16 @@ namespace PlexampRPC {
         }
 
         private static string RemoveTags(string text) {
-            string[] hiddenTags = { "\"id\"", "uuid", "token", "identifier", "secret", "address", "host", "port" };
+            string[] hiddenTags = ["\"id\"", "uuid", "token", "identifier", "secret", "address", "host", "port"];
 
             if (hiddenTags.Any(c => text.Contains(c, StringComparison.OrdinalIgnoreCase))) {
                 if (text.Trim().StartsWith('{')) {
-                    List<string> splitText = text.Replace("{", "{,").Split(',').ToList();
+                    List<string> splitText = [.. text.Replace("{", "{,").Split(',')];
                     splitText.RemoveAll(u => hiddenTags.Any(c => u.Contains(c, StringComparison.OrdinalIgnoreCase)));
                     text = string.Join(',', splitText).Replace("{,", "{");
                 }
                 else if (text.Trim().StartsWith('<')) {
-                    List<string> splitText = text.Split().ToList();
+                    List<string> splitText = [.. text.Split()];
                     splitText.RemoveAll(u => hiddenTags.Any(c => u.Contains(c, StringComparison.OrdinalIgnoreCase)));
                     text = string.Join(' ', splitText);
                 }

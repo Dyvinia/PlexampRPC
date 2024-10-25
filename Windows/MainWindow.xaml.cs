@@ -10,8 +10,10 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
+using PlexampRPC.Data;
 
-namespace PlexampRPC {
+namespace PlexampRPC
+{
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -19,50 +21,18 @@ namespace PlexampRPC {
 
         public static readonly HttpClient httpClient = new();
 
+        private PlexResourceData? SelectedResource => (PlexResourceData)UserServerComboBox.SelectedItem;
+
         public Uri? Address {
             get {
                 if (!string.IsNullOrEmpty(Config.Settings.PlexAddress))
                     return new UriBuilder(Config.Settings.PlexAddress).Uri;
-                else if (UserServerComboBox.SelectedItem != null) {
-                    if (Config.Settings.LocalAddress)
-                        return ((PlexResource)UserServerComboBox.SelectedItem).LocalUri;
-                    else
-                        return ((PlexResource)UserServerComboBox.SelectedItem).Uri;
-                }
-                return null;
+
+                if (Config.Settings.LocalAddress)
+                    return SelectedResource?.LocalUri;
+                else
+                    return SelectedResource?.Uri;
             }
-        }
-
-        public string? Token {
-            get {
-                if (UserServerComboBox.SelectedItem != null)
-                    return ((PlexResource)UserServerComboBox.SelectedItem).AccessToken;
-                return null;
-            }
-        }
-
-        public static string UserNameText {
-            get { return _userNameText; }
-            set {
-                if (_userNameText != value) {
-                    _userNameText = value;
-                    UpdateUserNameTextBlock(value);
-                }
-            }
-        }
-
-        private static string _userNameText = "Logging in...";
-
-        private static void UpdateUserNameTextBlock(string newText) {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (Application.Current.MainWindow is MainWindow mainWindow) {
-                    TextBlock textBlock = (TextBlock)mainWindow.FindName("UserNameTextBox");
-                    if (textBlock != null) {
-                        textBlock.Text = newText;
-                    }
-                }
-            });
         }
 
         public class PresenceData {
@@ -81,7 +51,6 @@ namespace PlexampRPC {
 
             httpClient.Timeout = TimeSpan.FromSeconds(2);
 
-            UserNameTextBox.Text = UserNameText;
             DataContext = Config.Settings;
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
 
@@ -126,9 +95,15 @@ namespace PlexampRPC {
             TrayIcon.ContextMenu = contextMenu;
         }
 
+        public void UpdateAccountIcon() {
+            Uri uri = new(App.Account?.Thumb ?? "/Resources/PlexIcon.png");
+            if (UserIcon.Source?.ToString() != uri.ToString())
+                UserIcon.Source = new BitmapImage(uri);
+        }
+
         public void GetAccountInfo() {
-            UserIcon.Source = new BitmapImage(new Uri(App.Account?.Thumb ?? "/Resources/PlexIcon.png"));
-            UserNameText = App.Account?.Title ?? App.Account?.Username ?? "Name";
+            UpdateAccountIcon();
+            StatusTextBox.Text = App.Account?.Title ?? App.Account?.Username ?? "Name";
 
             if (string.IsNullOrEmpty(Config.Settings.PlexAddress)) {
                 if (App.PlexResources != null)
@@ -176,7 +151,7 @@ namespace PlexampRPC {
         private async Task<SessionData?> GetCurrentSession() {
             try {
                 if (UserServerComboBox.SelectedItem == null) return null;
-                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={Token}");
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{Address}status/sessions?X-Plex-Token={SelectedResource?.AccessToken}");
                 requestMessage.Headers.Add("Accept", "application/json");
                 Console.WriteLine(requestMessage.RequestUri);
 
@@ -193,7 +168,7 @@ namespace PlexampRPC {
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
             catch (Exception e) {
-                Console.WriteLine($"WARN: Unable to get current session: {Address}status/sessions?X-Plex-Token={Token?[..3]}... {e.Message} {e.InnerException}");
+                Console.WriteLine($"WARN: Unable to get current session: {Address}status/sessions?X-Plex-Token={SelectedResource?.AccessToken?[..3]}... {e.Message} {e.InnerException}");
                 return null;
             }
         }
@@ -331,8 +306,97 @@ namespace PlexampRPC {
             return thumbnailLink;
         }
 
+        public async Task<PlexResourceData[]?> GetAccountResources() {
+            try {
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://plex.tv/api/v2/resources?includeHttps=1&includeIPv6=1&X-Plex-Token={App.Token}&X-Plex-Client-Identifier=PlexampRPC");
+                requestMessage.Headers.Add("Accept", "application/json");
+
+                HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
+                sendResponse.EnsureSuccessStatusCode();
+
+                JsonDocument responseJson = JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync());
+
+                PlexResourceData[]? serverResources = JsonSerializer.Deserialize<PlexResourceData[]>(responseJson.RootElement)?.Where(r => r.Provides?.Split(",").Contains("server") == true).ToArray();
+
+                if (serverResources is null || serverResources.Length == 0) {
+                    Console.WriteLine("WARN: No servers found");
+                    return null;
+                }
+
+                List<PlexResourceData>? finalResources = [];
+                for (int i = 0; i < serverResources.Length; i++) {
+                    PlexResourceData resource = serverResources[i];
+
+                    if (Config.Settings.OwnedOnly && !resource.Owned)
+                        continue;
+                    if (serverResources.Length > 1)
+                        StatusTextBox.Text = $"Loading Servers...\n[{i}/{serverResources.Length}]";
+                    else
+                        StatusTextBox.Text = "Loading Servers...";
+                    await TestResource(resource);
+                    if (resource is not null)
+                        finalResources.Add(resource);
+                }
+                // Show it being complete before replacing the text with username/etc
+                if (serverResources.Length > 1)
+                    StatusTextBox.Text = $"Loading Servers...\n[{serverResources.Length}/{serverResources.Length}]";
+                await Task.Delay(200);
+
+                return [.. finalResources];
+            }
+            catch (Exception e) {
+                Console.WriteLine($"WARN: Unable to get resource: {e.Message} {e.InnerException}");
+                return null;
+            }
+        }
+
+        private static async Task TestResource(PlexResourceData resource) {
+            foreach (PlexConnectionData connection in resource.Connections!) {
+                Uri uri;
+                if (connection.Local)
+                    uri = new UriBuilder("http", connection.Address, connection.Port).Uri;
+                else if (!Config.Settings.LocalAddress)
+                    uri = new UriBuilder(connection.Uri!).Uri;
+                else
+                    continue;
+
+                if (Config.Settings.Skipped.Contains($"{uri}")) {
+                    Console.WriteLine($"INFO: Skipped {uri} due to previous HTTP error, remove from config.json to retry");
+                    continue;
+                }
+
+                try {
+                    Console.WriteLine($"INFO: Testing {(connection.Local ? 'L' : 'R')} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
+                    HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{uri}status/sessions?X-Plex-Token={resource.AccessToken}");
+                    requestMessage.Headers.Add("Accept", "application/json");
+
+                    HttpResponseMessage sendResponse = await MainWindow.httpClient.SendAsync(requestMessage);
+                    sendResponse.EnsureSuccessStatusCode();
+                    Console.WriteLine($"INFO: Success {(connection.Local ? 'L' : 'R')} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
+                    if (connection.Local)
+                        resource.LocalUri ??= uri;
+                    else
+                        resource.Uri ??= uri;
+                    if (resource.LocalUri is not null && resource.Uri is not null) {
+                        break;
+                    }
+                }
+                catch (TaskCanceledException) {
+                    Console.WriteLine($"WARN: Timeout {(connection.Local ? 'L' : 'R')} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
+                }
+                catch (HttpRequestException e) { // Unreachable server, skip for now
+                    Console.WriteLine($"WARN: Unable to access {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}: {e.Message}");
+                    Console.WriteLine($"INFO: Adding {uri} to Skipped list in config.json");
+                    Config.Settings.Skipped.Add($"{uri}");
+                }
+                catch (Exception e) {
+                    Console.WriteLine($"WARN: Unable to get resource: {e.Message} {e.InnerException}");
+                }
+            }
+        }
+
         private async Task<string> UploadImage(string thumb) {
-            HttpResponseMessage getResponse = await httpClient.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={Token}");
+            HttpResponseMessage getResponse = await httpClient.GetAsync($"{Address}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={SelectedResource?.AccessToken}");
 
             string dataString = Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()));
             HttpResponseMessage sendResponse = await httpClient.SendAsync(new() {
