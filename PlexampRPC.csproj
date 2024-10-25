@@ -21,9 +21,13 @@
     <None Remove="Resources\ggsans semibold.ttf" />
     <None Remove="Resources\ggsans.ttf" />
     <None Remove="Resources\Icon.ico" />
+    <None Remove="Resources\Inter\Inter-Italic-VariableFont_opsz,wght.ttf" />
+    <None Remove="Resources\Inter\Inter-VariableFont_opsz,wght.ttf" />
     <None Remove="Resources\PlexIcon.png" />
     <None Remove="Resources\PlexIconSquare.png" />
     <None Remove="Resources\PlexPaused.png" />
+    <None Remove="Resources\Settings.svg" />
+    <None Remove="Resources\SVG\terminal.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +47,7 @@
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" />
     <PackageReference Include="Plex.Api" Version="4.1.2" />
+    <PackageReference Include="SharpVectors.Wpf" Version="1.8.4.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,13 +55,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\ggmono.ttf" />
-    <Resource Include="Resources\ggsans.ttf" />
-    <Resource Include="Resources\ggsans semibold.ttf" />
+    <Resource Include="Resources\gg\ggmono.ttf" />
+    <Resource Include="Resources\gg\ggsans.ttf" />
+    <Resource Include="Resources\gg\ggsans semibold.ttf" />
     <Resource Include="Resources\Icon.ico" />
+    <Resource Include="Resources\Inter\Inter-Italic-VariableFont_opsz,wght.ttf" />
+    <Resource Include="Resources\Inter\Inter-VariableFont_opsz,wght.ttf" />
     <Resource Include="Resources\PlexIcon.png" />
     <Resource Include="Resources\PlexIconSquare.png" />
     <Resource Include="Resources\PlexPaused.png" />
+    <Resource Include="Resources\SVG\settings.svg" />
+    <Resource Include="Resources\SVG\terminal.svg" />
   </ItemGroup>
 
 </Project>

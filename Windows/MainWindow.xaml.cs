@@ -425,6 +425,9 @@ namespace PlexampRPC
             Config.Save();
         }
 
+        private void LogsButton_Click(object sender, RoutedEventArgs e) => new LogWindow(App.Log!).Show();
+
+
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);
             App.DiscordClient.Dispose();

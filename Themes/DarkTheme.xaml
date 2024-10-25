@@ -2,6 +2,9 @@
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
+
+    <!-- Default Font -->
+    <FontFamily x:Key="DefaultFontFamily">/Resources/Inter/#Inter</FontFamily>
     <!-- Window Colours. Background, Border and TitleBar colours. -->
     <SolidColorBrush x:Key="BackgroundColour"  Color="#FF141414" />
     <SolidColorBrush x:Key="WindowBorderColour"  Color="#FF000000" />
@@ -177,6 +180,29 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="ShapeButton" TargetType="{x:Type Button}">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="#00000000"/>
+        <Setter Property="Foreground" Value="#FFF1F1F1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Opacity" Value="0.65"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Opacity" Value="0.45"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- -->
@@ -4042,6 +4068,7 @@
         <Setter Property="BorderBrush" Value="{StaticResource WindowBorderColour}" />
         <Setter Property="Background" Value="{StaticResource BackgroundColour}" />
         <Setter Property="Foreground" Value="{StaticResource ControlDefaultForeground}"/>
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="ResizeMode" Value="CanResizeWithGrip"/>
         <Setter Property="WindowStyle" Value="SingleBorderWindow"/>

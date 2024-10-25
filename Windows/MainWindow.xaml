@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:svg="http://sharpvectors.codeplex.com/runtime/"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         xmlns:local="clr-namespace:PlexampRPC"
         mc:Ignorable="d"
         Title="PlexampRPC" Width="310" SizeToContent="Height" UseLayoutRounding="True"
@@ -18,7 +20,7 @@
 
         <Grid Background="#FF141414" Margin="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="15"/>
+                <RowDefinition Height="20"/>
                 <RowDefinition Height="96"/>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="Auto"/>
@@ -92,8 +94,8 @@
                     
                     <Border Background="#252627" CornerRadius="4" Padding="9">
                         <StackPanel>
-                            <TextBlock x:Name="PreviewListeningTo" Text="Listening to Music" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" Margin="0 -1 0 5" FontFamily="/Resources/ggsans semibold.ttf #gg sans SemiBold"/>
-                            <DockPanel >
+                            <TextBlock x:Name="PreviewListeningTo" Text="Listening to Music" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" Margin="0 -1 0 5" FontFamily="/Resources/gg/#gg sans SemiBold"/>
+                            <DockPanel>
                                 <Grid Height="64" Width="64" VerticalAlignment="Top">
                                     <Image x:Name="PreviewArt" Source="https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png" RenderOptions.BitmapScalingMode="Fant" Height="64" Width="64" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Top">
                                         <Image.OpacityMask>
@@ -111,13 +113,13 @@
 
 
                                 <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="7 0 0 0">
-                                    <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top" FontFamily="/Resources/ggsans semibold.ttf #gg sans SemiBold"/>
-                                    <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/ggsans.ttf #gg sans Normal"/>
-                                    <TextBlock x:Name="PreviewL3" Text="Album" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/ggsans.ttf #gg sans Normal"/>
+                                    <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal"/>
+                                    <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal"/>
+                                    <TextBlock x:Name="PreviewL3" Text="Album" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal"/>
                                     <StackPanel Orientation="Horizontal" x:Name="PreviewTime" Margin="0 1 0 -2">
-                                        <TextBlock x:Name="PreviewTimeStart" Text="00:00" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/ggmono.ttf #gg sans mono"/>
+                                        <TextBlock x:Name="PreviewTimeStart" Text="00:00" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans mono"/>
                                         <ProgressBar x:Name="PreviewTimeProgress" Width="100" Margin="8 0 8 2" Height="2" Foreground="#dddddd" Background="#4e5058" BorderThickness="0" Value="50"/>
-                                        <TextBlock x:Name="PreviewTimeEnd" Text="00:00" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/ggmono.ttf #gg sans mono"/>
+                                        <TextBlock x:Name="PreviewTimeEnd" Text="00:00" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans mono"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DockPanel>
@@ -127,42 +129,14 @@
             </Grid>
         </Grid>
 
-        <Button HorizontalAlignment="Right" Margin="0 6 7 0" VerticalAlignment="Top" Width="25" Height="25" Click="SettingsButton_Click" >
-
-            <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Name="svg21" Width="20" Height="20" Margin="-1">
-                <Canvas.RenderTransform>
-                    <TranslateTransform X="0" Y="0"/>
-                </Canvas.RenderTransform>
-                <Canvas.Resources/>
-                <Canvas>
-                    <Canvas.RenderTransform>
-                        <MatrixTransform Matrix="0.01937812 0 0 0.01937812 0.07654627 0.07912296"/>
-                    </Canvas.RenderTransform>
-                    <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path18" Fill="#FFFFFFFF" Opacity="1" Data="m 418.03 87.15 c 4.35 -2.02 9.24 -1.93 13.93 -1.89 55 0.03 110 -0.03 165 0.03 10.59 -0.29 20.32 8.17 21.8 18.59 5.31 37.47 10.61 74.95 15.91 112.42 25.73 10.82 50 25.03 72.12 42.04 35.44 -14.37 70.89 -28.72 106.39 -42.95 9.42 -3.86 21.08 0.46 25.92 9.35 28.45 49.22 56.86 98.47 85.25 147.73 5.17 8.62 3.15 20.79 -4.82 27.03 -30.17 23.61 -60.35 47.21 -90.52 70.83 3.81 27.6 3.84 55.65 -0.01 83.26 29.97 23.51 59.98 46.98 89.92 70.54 8.1 6.22 10.56 18.5 5.27 27.28 -27.54 47.7 -55.07 95.4 -82.59 143.11 -2.25 4 -4.45 8.23 -8.24 11.02 -5.84 4.52 -14.08 5.59 -20.92 2.86 -35.3 -14.26 -70.57 -28.61 -105.91 -42.79 -22.05 17.1 -46.4 31.17 -72.07 42.08 -5.33 37.47 -10.6 74.94 -15.92 112.41 -1.11 8.3 -7.46 15.59 -15.53 17.8 -3.59 1 -7.35 0.74 -11.02 0.77 -53.34 -0.01 -106.68 -0.01 -160.01 0 -3.66 -0.03 -7.39 0.23 -10.95 -0.76 -8.11 -2.19 -14.5 -9.51 -15.58 -17.84 -5.31 -37.46 -10.58 -74.92 -15.91 -112.38 -25.7 -10.87 -49.92 -25.14 -72.08 -42.08 -33.25 13.36 -66.46 26.82 -99.66 40.28 -4.45 1.74 -8.87 4.07 -13.77 4.12 -7.72 0.21 -15.31 -4.19 -19.02 -10.95 C 156.63 749.83 128.2 700.62 99.8 651.4 c -5.4 -9.02 -2.77 -21.69 5.85 -27.74 29.77 -23.37 59.56 -46.72 89.34 -70.07 -3.85 -27.6 -3.82 -55.66 -0.01 -83.27 -30.12 -23.64 -60.26 -47.25 -90.38 -70.88 -7.66 -6.23 -9.96 -18.07 -4.94 -26.62 28.51 -49.51 57.08 -98.97 85.66 -148.43 5 -8.8 16.71 -12.67 26.05 -8.86 35.37 14.2 70.72 28.45 106.03 42.82 22.04 -17.14 46.4 -31.23 72.14 -42.04 5.3 -37.47 10.6 -74.95 15.91 -112.42 0.97 -7.26 5.88 -13.8 12.58 -16.74 m 75.53 276.66 c -23.98 2.88 -47.24 11.74 -66.98 25.67 -27.75 19.21 -48.61 48.14 -57.94 80.59 -11.91 40.42 -5.77 85.81 16.91 121.38 19.51 31.22 50.97 54.79 86.53 64.43 22.94 6.41 47.46 7.1 70.77 2.22 36.08 -7.43 68.98 -28.96 90.37 -58.93 23.31 -31.98 32.73 -73.49 25.95 -112.43 -5.93 -35.6 -25.4 -68.73 -53.67 -91.18 -30.93 -25.28 -72.37 -36.78 -111.94 -31.75 z"/>
-                </Canvas>
-            </Canvas>
-            <Button.Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Cursor" Value="Hand"/>
-                    <Setter Property="Background" Value="#00000000"/>
-                    <Setter Property="Foreground" Value="#FFF1F1F1"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Opacity" Value="0.65"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Opacity" Value="0.45"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-            <Button.Template>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Background="{TemplateBinding Background}">
-                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Border>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 6 6 0" VerticalAlignment="Top">
+            <Button  Width="24" Height="24" Click="LogsButton_Click" Style="{StaticResource ShapeButton}" >
+                <Image Source="{svgc:SvgImage Source=/Resources/SVG/terminal.svg, AppName=PlexampRPC}" Height="16" Width="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Button>
+            <Button  Width="24" Height="24" Click="SettingsButton_Click" Style="{StaticResource ShapeButton}">
+                <Image Source="{svgc:SvgImage Source=/Resources/SVG/settings.svg, AppName=PlexampRPC}" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Button>
+        </StackPanel>
+        
     </Grid>
 </Window>
