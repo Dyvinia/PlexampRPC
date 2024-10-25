@@ -88,7 +88,7 @@
             </Grid>
             <Separator Grid.Row="2" Background="#FF323232" VerticalAlignment="Bottom"/>
 
-            <Grid Grid.Row="3" Margin="15 10 15 20">
+            <Grid Grid.Row="3" Margin="15 10 15 15">
                 <StackPanel Orientation="Vertical">
                     <TextBlock TextWrapping="Wrap" Text="Preview" Foreground="#FFF1F1F1" FontSize="14" Margin="1 0 0 2" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
                     
