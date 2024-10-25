@@ -66,7 +66,7 @@
                 <Image x:Name="BackIcon" Grid.Column="0" Source="/Resources/PlexIcon.png" RenderOptions.BitmapScalingMode="HighQuality">
                     <Image.OpacityMask>
                         <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
-                            <GradientStop Color="#ffffffff" Offset="1" />
+                            <GradientStop Color="#ffffffff" Offset="0.98" />
                             <GradientStop Color="#00ffffff" Offset="1" />
                         </RadialGradientBrush>
                     </Image.OpacityMask>
@@ -75,15 +75,15 @@
                 <Image x:Name="UserIcon" Grid.Column="0" RenderOptions.BitmapScalingMode="HighQuality">
                     <Image.OpacityMask>
                         <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
-                            <GradientStop Color="#ffffffff" Offset="1" />
+                            <GradientStop Color="#ffffffff" Offset="0.98" />
                             <GradientStop Color="#00ffffff" Offset="1" />
                         </RadialGradientBrush>
                     </Image.OpacityMask>
                 </Image>
 
                 <StackPanel x:Name="UserInfoPanel" Grid.Column="1" VerticalAlignment="Center" Margin="4" >
-                    <TextBlock x:Name="StatusTextBox" Text="Logging In..." Foreground="#FFF1F1F1" Width="150" FontSize="16" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <ComboBox x:Name="UserServerComboBox" Width="150" DisplayMemberPath="Name" Margin="0 4 0 0" Visibility="Collapsed"/>
+                    <TextBlock x:Name="StatusTextBox" Text="Logging In..." Foreground="#FFF1F1F1" Width="165" FontSize="16" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="UserServerComboBox" Width="165" DisplayMemberPath="Name" Margin="0 4 0 0" Visibility="Collapsed"/>
                 </StackPanel>
             </Grid>
             <Separator Grid.Row="2" Background="#FF323232" VerticalAlignment="Bottom"/>
