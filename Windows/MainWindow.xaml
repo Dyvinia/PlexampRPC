@@ -113,7 +113,7 @@
 
 
                                 <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="7 0 0 0">
-                                    <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal"/>
+                                    <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans SemiBold"/>
                                     <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal"/>
                                     <TextBlock x:Name="PreviewL3" Text="Album" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal"/>
                                     <StackPanel Orientation="Horizontal" x:Name="PreviewTime" Margin="0 1 0 -2">
