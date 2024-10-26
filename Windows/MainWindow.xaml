@@ -129,12 +129,12 @@
             </Grid>
         </Grid>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 6 6 0" VerticalAlignment="Top">
-            <Button  Width="24" Height="24" Click="LogsButton_Click" Style="{StaticResource ShapeButton}" >
-                <Image Source="{svgc:SvgImage Source=/Resources/Buttons/terminal.svg, AppName=PlexampRPC}" Height="16" Width="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 5 0" VerticalAlignment="Top">
+            <Button Width="20" Height="20" Click="LogsButton_Click" Style="{StaticResource ShapeButton}" ToolTip="Open Log" ToolTipService.InitialShowDelay="250" ToolTipService.BetweenShowDelay="1">
+                <Image Source="{svgc:SvgImage Source=/Resources/Buttons/terminal.svg, AppName=PlexampRPC}" Height="14" Width="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
-            <Button  Width="24" Height="24" Click="SettingsButton_Click" Style="{StaticResource ShapeButton}">
-                <Image Source="{svgc:SvgImage Source=/Resources/Buttons/settings.svg, AppName=PlexampRPC}" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button Width="20" Height="20" Click="SettingsButton_Click" Style="{StaticResource ShapeButton}" ToolTip="Open Settings" ToolTipService.InitialShowDelay="250" ToolTipService.BetweenShowDelay="1">
+                <Image Source="{svgc:SvgImage Source=/Resources/Buttons/settings.svg, AppName=PlexampRPC}" Height="18" Width="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
         </StackPanel>
         

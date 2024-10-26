@@ -110,7 +110,7 @@ namespace PlexampRPC {
                 }
             }
             if (App.Token is not null)
-                text = text.Replace(App.Token, $"{App.Token?[..3]}...");
+                return text.Replace(App.Token, $"{App.Token?[..3]}...");
             return text;
         }
 
