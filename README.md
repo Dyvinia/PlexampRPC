@@ -18,23 +18,23 @@ PlexampRPC displays currently playing Plex music as Discord Rich Presence, while
 ## Options & Template
 Click the gear icon on the top right to open the Settings window. Here you can change different options, change the template, and easily see the current version of PlexampRPC.
 
-![image](https://i.imgur.com/fkPqi7C.png)
+![image](https://i.imgur.com/EhWWCQq.png)
 
 
 The config file, aswell as the thumbnail cache and the stored auth token, are stored in `%AppData%\PlexampRPC\`. Press `F12` in the app to automatically open this folder.
 
 ## FAQ
-> **Q:** How do I change the Bold "Plexamp" text?
+> **Q:** How do I change the "Listening to Plexamp" text?
 > 
-> **A:** You must make a new application [here](https://discord.com/developers/applications) and set the Name you desire. Then open the config.json file in `%AppData%\PlexampRPC\` and paste the Application ID in.
+> **A:** In the settings window you can choose between "Listening to Plexamp", "Listening to Music", or a custom "Listening to ". To use a custom one, you must make a new application [here](https://discord.com/developers/applications) and set the Name you desire. Then open the config.json file in `%AppData%\PlexampRPC\` and paste the Application ID in.
 
-> **Q:** How do I see a debug log?
+> **Q:** How do I see the debug log?
 > 
-> **A:** Press `F5`, you can also press `Ctrl+C` to copy the log into the clipboard.
+> **A:** Press the Icon to the left of the gear at the top left or press `F5`. When opened, you can press `Ctrl+C` to copy the log into the clipboard, or `Ctrl+S` to save it as a .txt file.
 
 > **Q:** I can't run this
 > 
-> **A:** This requires [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0#runtime-desktop-8.0.8) and is Windows Only.
+> **A:** This requires [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0#runtime-desktop-8.0.10) and is Windows Only.
 
 ## Donate
 [![Donate-Kofi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J63UBHG)
