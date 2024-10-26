@@ -426,7 +426,7 @@
                                                   Grid.Column="1" Focusable="False" 
                                                   HorizontalAlignment="Left"  RecognizesAccessKey="True" 
                                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                  VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                                  VerticalAlignment="Center" Margin="5,0,0,0"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="HasContent" Value="true">
@@ -2106,7 +2106,7 @@
                                           Grid.Column="1" Focusable="False"
                                           HorizontalAlignment="Left" RecognizesAccessKey="True" 
                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                          VerticalAlignment="Center" Margin="8 0 0 0"/>
+                                          VerticalAlignment="Center" Margin="5 0 0 0"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="HasContent" Value="true">

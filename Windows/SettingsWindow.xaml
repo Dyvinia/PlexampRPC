@@ -17,26 +17,26 @@
                     <TextBlock TextWrapping="Wrap" Text="Options" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
                     <DockPanel ToolTip="Seconds between each refresh">
                         <TextBlock Text="Refresh Interval:" Foreground="#CCCCCC" VerticalAlignment="Center" Margin="0 1 0 0"/>
-                        <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="50" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.RefreshInterval), Mode=TwoWay}"/>
+                        <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="40" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.RefreshInterval), Mode=TwoWay}"/>
                     </DockPanel>
 
                     <DockPanel ToolTip="Clears presence if session has not been updated in this many seconds &#x0a;Fixes Plexamp issue where session does not properly end when music ends">
                         <TextBlock Text="Session Timeout:" Foreground="#CCCCCC" VerticalAlignment="Center" Margin="0 1 0 0"/>
-                        <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="50" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.SessionTimeout), Mode=TwoWay}"/>
+                        <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="40" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.SessionTimeout), Mode=TwoWay}"/>
                     </DockPanel>
 
                     <DockPanel ToolTip="Album Art Resolution in Pixels">
                         <TextBlock Text="Art Resolution:" Foreground="#CCCCCC" VerticalAlignment="Center" Margin="0 1 0 0"/>
-                        <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="50" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.ArtResolution), Mode=TwoWay}"/>
+                        <TextBox DockPanel.Dock="Right" Margin="0 4 0 0" Width="40" HorizontalAlignment="Right" Text="{Binding Path=(local:Config.ArtResolution), Mode=TwoWay}"/>
                     </DockPanel>
 
-                    <CheckBox x:Name="CheckUpdatesCheckBox" Margin="0 5 0 0" Content="Check for Updates" IsChecked="{Binding Path=(local:Config.UpdateChecker), Mode=TwoWay}" ToolTip="Checks Github for Updates"/>
+                    <CheckBox x:Name="CheckUpdatesCheckBox" Margin="0 2 0 0" Content="Check for Updates" IsChecked="{Binding Path=(local:Config.UpdateChecker), Mode=TwoWay}" ToolTip="Checks Github for Updates"/>
 
-                    <CheckBox x:Name="StartupCheckBox" Margin="0 5 0 0" Content="Start on Startup" IsChecked="False" ToolTip="Start PlexampRPC when Windows starts"/>
+                    <CheckBox x:Name="StartupCheckBox" Margin="0 0 0 0" Content="Start on Startup" IsChecked="False" ToolTip="Start PlexampRPC when Windows starts"/>
 
-                    <CheckBox x:Name="LocalCheckBox" Margin="0 5 0 0" Content="Use Local Address" IsChecked="{Binding Path=(local:Config.LocalAddress), Mode=TwoWay}" ToolTip="Use the Plex server's local IP and port"/>
+                    <CheckBox x:Name="LocalCheckBox" Margin="0 0 0 0" Content="Use Local Address" IsChecked="{Binding Path=(local:Config.LocalAddress), Mode=TwoWay}" ToolTip="Use the Plex server's local IP and port"/>
 
-                    <CheckBox x:Name="OwnedCheckBox" Margin="0 5 0 0" Content="Owned Servers Only" IsChecked="{Binding Path=(local:Config.OwnedOnly), Mode=TwoWay}" ToolTip="Only adds servers to the list that belong to the authenticated Plex user"/>
+                    <CheckBox x:Name="OwnedCheckBox" Margin="0 0 0 0" Content="Owned Servers Only" IsChecked="{Binding Path=(local:Config.OwnedOnly), Mode=TwoWay}" ToolTip="Only adds servers to the list that belong to the authenticated Plex user"/>
 
                 </StackPanel>
                 <Grid Height="10"/>
@@ -49,7 +49,7 @@
                 <Grid Height="10"/>
                 <StackPanel>
                     <TextBlock TextWrapping="Wrap" Text="Template" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
-                    <TextBox x:Name="TemplateL1" Margin="0 4 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL1), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}"/>
+                    <TextBox x:Name="TemplateL1" Margin="0 2 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL1), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}"/>
                     <TextBox x:Name="TemplateL2" Margin="0 1 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL2), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}"/>
                     <TextBox x:Name="TemplateL3" Margin="0 1 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL3), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}"/>
                 </StackPanel>
