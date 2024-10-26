@@ -49,7 +49,6 @@
     <Resource Include="Resources\Inter\Inter-VariableFont_opsz,wght.ttf" />
     <Resource Include="Resources\PlexIcon.png" />
     <Resource Include="Resources\PlexIcon.svg" />
-    <Resource Include="Resources\PlexIconLight.svg" />
     <Resource Include="Resources\PlexPaused.png" />
     <Resource Include="Resources\Buttons\settings.svg" />
     <Resource Include="Resources\Buttons\terminal.svg" />

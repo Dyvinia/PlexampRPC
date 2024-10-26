@@ -63,7 +63,7 @@
                     </Image.RenderTransform>
                 </Image>
 
-                <Image x:Name="BackIcon" Grid.Column="0" Source="/Resources/PlexIcon.png" RenderOptions.BitmapScalingMode="HighQuality">
+                <Image x:Name="BackIcon" Grid.Column="0" Source="{svgc:SvgImage Source=/Resources/PlexIcon.svg, AppName=PlexampRPC}">
                     <Image.OpacityMask>
                         <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
                             <GradientStop Color="#ffffffff" Offset="0.98" />
@@ -123,7 +123,7 @@
 
                                 <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="7 0 0 0">
                                     <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans SemiBold"/>
-                                    <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal"/>
+                                    <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal" Margin="0 0 0 -2"/>
                                     <TextBlock x:Name="PreviewL3" Text="Album" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal"/>
                                     <StackPanel Orientation="Horizontal" x:Name="PreviewTime" Margin="0 1 0 -2">
                                         <TextBlock x:Name="PreviewTimeStart" Text="00:00" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans mono"/>
