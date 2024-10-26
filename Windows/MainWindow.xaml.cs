@@ -19,7 +19,7 @@ namespace PlexampRPC
     /// </summary>
     public partial class MainWindow : Window {
 
-        public static readonly HttpClient httpClient = new();
+        private static readonly HttpClient httpClient = new();
 
         private PlexResourceData? SelectedResource => (PlexResourceData)UserServerComboBox.SelectedItem;
 
