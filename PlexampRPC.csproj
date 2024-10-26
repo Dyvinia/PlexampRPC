@@ -8,30 +8,13 @@
     <UseWPF>true</UseWPF>
 
 	  <AssemblyName>PlexampRPC</AssemblyName>
-	  <Version>1.5.3</Version>
+	  <Version>1.5.4</Version>
 	  <Copyright>Copyright © 2024 Dyvinia</Copyright>
 	  <Company>Dyvinia</Company>
 	  <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
 
     <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=$(MSBuildProjectName)\</PathMap>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Resources\ggmono.ttf" />
-    <None Remove="Resources\ggsans semibold.ttf" />
-    <None Remove="Resources\ggsans.ttf" />
-    <None Remove="Resources\Icon.ico" />
-    <None Remove="Resources\Inter\Inter-Italic-VariableFont_opsz,wght.ttf" />
-    <None Remove="Resources\Inter\Inter-VariableFont_opsz,wght.ttf" />
-    <None Remove="Resources\PlexIcon.png" />
-    <None Remove="Resources\PlexIcon.svg" />
-    <None Remove="Resources\PlexIconLight.svg" />
-    <None Remove="Resources\PlexIconSquare.png" />
-    <None Remove="Resources\PlexIconSquare.svg" />
-    <None Remove="Resources\PlexPaused.png" />
-    <None Remove="Resources\Settings.svg" />
-    <None Remove="Resources\Buttons\terminal.svg" />
-  </ItemGroup>
 
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">

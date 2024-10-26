@@ -101,16 +101,25 @@
                                         <Image.OpacityMask>
                                             <VisualBrush>
                                                 <VisualBrush.Visual>
-                                                    <Border Height="{Binding ElementName=PreviewArt, Path=ActualHeight}" 
-                                                            Width="{Binding ElementName=PreviewArt, Path=ActualWidth}"
+                                                    <Border Height="{Binding ElementName=PreviewArt, Path=ActualHeight}"
+                                                            Width="{Binding ElementName=PreviewArt, Path=ActualWidth}" 
                                                             Background="White" CornerRadius="4" />
                                                 </VisualBrush.Visual>
                                             </VisualBrush>
                                         </Image.OpacityMask>
                                     </Image>
-                                    <Image x:Name="PreviewPaused" Source="/Resources/PlexPaused.png" Margin="46,44,-2,-8" RenderOptions.BitmapScalingMode="Fant" Visibility="Collapsed"/>
+                                    <Grid x:Name="PreviewPaused" Visibility="Collapsed">
+                                        <Border Margin="0,0,-6,-6"  Height="28" Width="28" Background="#252627" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                            <Border.OpacityMask>
+                                                <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                                                    <GradientStop Color="#ffffffff" Offset="0.98" />
+                                                    <GradientStop Color="#00ffffff" Offset="1" />
+                                                </RadialGradientBrush>
+                                            </Border.OpacityMask>
+                                        </Border>
+                                        <Image Source="/Resources/PlexPaused.png" Margin="0,0,-4,-4" Width="24" Height="24" RenderOptions.BitmapScalingMode="Fant" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                                    </Grid>
                                 </Grid>
-
 
                                 <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="7 0 0 0">
                                     <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans SemiBold"/>

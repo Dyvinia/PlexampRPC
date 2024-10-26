@@ -296,7 +296,7 @@ namespace PlexampRPC
                 try { thumbnailLink = await UploadImage(thumb!); }
                 catch {
                     Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead");
-                    return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png";
+                    return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png";
                 }
                 thumbnails.Add(thumb!, thumbnailLink);
             }
