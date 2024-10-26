@@ -362,11 +362,6 @@ namespace PlexampRPC
                 else
                     continue;
 
-                if (Config.Settings.Skipped.Contains($"{uri}")) {
-                    Console.WriteLine($"INFO: Skipped {uri} due to previous HTTP error, remove from config.json to retry");
-                    continue;
-                }
-
                 try {
                     Console.WriteLine($"INFO: Testing {(connection.Local ? "Local" : "Remote")} {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}...");
                     HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{uri}status/sessions?X-Plex-Token={resource.AccessToken}");
@@ -388,8 +383,6 @@ namespace PlexampRPC
                 }
                 catch (HttpRequestException e) { // Unreachable server, skip for now
                     Console.WriteLine($"WARN: Unable to access {uri}status/sessions?X-Plex-Token={resource.AccessToken?[..3]}: {e.Message}");
-                    Console.WriteLine($"INFO: Adding {uri} to Skipped list in config.json");
-                    Config.Settings.Skipped.Add($"{uri}");
                 }
                 catch (Exception e) {
                     Console.WriteLine($"WARN: Unable to get resource: {e.Message} {e.InnerException}");

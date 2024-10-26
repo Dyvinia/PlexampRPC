@@ -21,7 +21,6 @@ namespace PlexampRPC
     public class Config : SettingsManager<Config> {
         public bool UpdateChecker { get; set; } = true;
         public bool LocalAddress { get; set; } = false;
-        public List<string> Skipped { get; set; } = [];
         public bool OwnedOnly { get; set; } = true;
 
         public string SelectedServer { get; set; } = string.Empty;
