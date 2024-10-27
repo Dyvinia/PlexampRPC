@@ -202,7 +202,6 @@ namespace PlexampRPC
                     Details = TrimUTF8String(presence.Line1!), // theres probably a better way to trim strings but idk
                     State = TrimUTF8String(presence.Line2!),
                     Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)presence.TimeOffset), DateTime.UtcNow.AddMilliseconds((double)presence.Duration-(double)presence.TimeOffset)),
-                    Type = ActivityType.Listening,
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip
@@ -230,7 +229,6 @@ namespace PlexampRPC
                 App.DiscordClient.SetPresence(new RichPresence() {
                     Details = TrimUTF8String(presence.Line1!),
                     State = TrimUTF8String(presence.Line2!),
-                    Type = ActivityType.Listening,
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = presence.ImageTooltip,
