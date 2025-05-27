@@ -21,6 +21,8 @@ namespace PlexampRPC
 
         private static readonly HttpClient httpClient = new();
 
+        private static readonly JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
+
         private PlexResourceData? SelectedResource => (PlexResourceData)UserServerComboBox.SelectedItem;
 
         public Uri? SelectedAddress {
@@ -150,10 +152,14 @@ namespace PlexampRPC
 
         private async Task<SessionData?> GetCurrentSession() {
             try {
-                if (UserServerComboBox.SelectedItem == null) return null;
+                if (UserServerComboBox.SelectedItem is null) 
+                    return null;
+                if (!Uri.IsWellFormedUriString(SelectedAddress?.ToString(), UriKind.Absolute)) {
+                    Console.WriteLine("WARN: No server selected or address is invalid");
+                    return null;
+                }
                 HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{SelectedAddress}status/sessions?X-Plex-Token={SelectedResource?.AccessToken}");
                 requestMessage.Headers.Add("Accept", "application/json");
-                //Console.WriteLine(requestMessage.RequestUri);
 
                 HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
                 sendResponse.EnsureSuccessStatusCode();
@@ -168,7 +174,7 @@ namespace PlexampRPC
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
             catch (Exception e) {
-                Console.WriteLine($"WARN: Unable to get current session: {SelectedAddress}status/sessions?X-Plex-Token={SelectedResource?.AccessToken?[..3]}... {e.Message} {e.InnerException}");
+                Console.WriteLine($"WARN: Unable to get current session: {SelectedAddress}status/sessions?X-Plex-Token={SelectedResource?.AccessToken?[..3]}...\n{e.Message} {e.InnerException}");
                 return null;
             }
         }
@@ -230,6 +236,7 @@ namespace PlexampRPC
                 App.DiscordClient.SetPresence(new RichPresence() {
                     Details = TrimUTF8String(presence.Line1!),
                     State = TrimUTF8String(presence.Line2!),
+                    Timestamps = new(DateTime.UtcNow, DateTime.UtcNow), // this is the least broken option to avoid any timer from showing I think
                     Type = ActivityType.Listening,
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
@@ -294,14 +301,14 @@ namespace PlexampRPC
             }
             else {
                 try { thumbnailLink = await UploadImage(thumb!); }
-                catch {
-                    Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead");
+                catch (Exception e) {
+                    Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead\n{e.Message} {e.InnerException}");
                     return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png";
                 }
                 thumbnails.Add(thumb!, thumbnailLink);
             }
 
-            string newThumbnailsJson = JsonSerializer.Serialize(thumbnails);
+            string newThumbnailsJson = JsonSerializer.Serialize(thumbnails, serializerOptions);
             if (newThumbnailsJson != thumbnailsJson)
                 File.WriteAllText(cacheFile, newThumbnailsJson);
 

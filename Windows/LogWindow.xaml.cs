@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Microsoft.Win32;
 
 namespace PlexampRPC {
@@ -40,16 +41,29 @@ namespace PlexampRPC {
             foreach (LogWriter.LogItem item in LogBox.Items) {
                 if (item.Message.StartsWith('{'))
                     continue;
-                sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
+                sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.RawMessage}");
             }
             Clipboard.SetDataObject(sb.ToString());
         }
     }
 
     public class LogWriter : TextWriter {
-        public class LogItem(string message) {
-            public DateTime Timestamp { get; set; } = DateTime.Now;
-            public string Message { get; set; } = RemoveTags(message).Trim();
+        public enum LogType {
+            Info,
+            Warn
+        }
+
+        public class LogItem(string inMessage) {
+            public DateTime Timestamp { get; } = DateTime.Now;
+
+            public LogType Type => RawMessage.StartsWith("WARN:") ? LogType.Warn : LogType.Info;
+
+            public string Prefix => Type == LogType.Warn ? "WARN" : "INFO";
+            public Brush PrefixColor => Type == LogType.Warn ? new SolidColorBrush(Colors.Orange) : new SolidColorBrush(Colors.White);
+
+            public string Message => RawMessage.Replace("WARN:", "").Replace("INFO:", "").Trim();
+
+            public string RawMessage { get; } = RemoveTags(inMessage).Trim();
         }
 
         public ObservableCollection<LogItem> Log = [];
@@ -60,7 +74,7 @@ namespace PlexampRPC {
 
         public override void WriteLine(string? value) {
             Application.Current.Dispatcher.Invoke(new Action(() => {
-                if (Log.Count > 200) Log.RemoveAt(0);
+                if (Log.Count > 500) Log.RemoveAt(0);
                 Log.Add(new LogItem(value!));
             }));
         }
@@ -128,7 +142,7 @@ namespace PlexampRPC {
         public override string ToString() {
             StringBuilder sb = new();
             foreach (LogItem item in Log) {
-                sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.Message}");
+                sb.AppendLine($"[{item.Timestamp.ToString("HH:mm:ss")}] {item.RawMessage}");
             }
             return sb.ToString();
         }

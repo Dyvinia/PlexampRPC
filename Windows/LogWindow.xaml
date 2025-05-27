@@ -14,10 +14,12 @@
                     <Grid VerticalAlignment="Center">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Timestamp, StringFormat='{}{0: [hh:mm:ss] }'}" TextWrapping="Wrap" FontFamily="Consolas"/>
-                        <TextBox Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap" FontFamily="Consolas" IsReadOnly="True" Style="{StaticResource FakeTextBlockBox}" Margin="0 0 0 1"/>
+                        <TextBlock Grid.Column="0" Text="{Binding Timestamp, Mode=OneWay, StringFormat='{}{0: [hh:mm:ss] }'}" TextWrapping="Wrap" FontFamily="Consolas"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Prefix, Mode=OneWay}" Foreground="{Binding PrefixColor, Mode=OneWay}" FontWeight="Black" TextWrapping="Wrap" FontFamily="Consolas" Margin="0 0 5 0"/>
+                        <TextBox Grid.Column="2" Text="{Binding Message, Mode=OneWay}" TextWrapping="Wrap" FontFamily="Consolas" IsReadOnly="True" Style="{StaticResource FakeTextBlockBox}" Margin="0 0 0 1"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
