@@ -211,14 +211,14 @@ namespace PlexampRPC
                     Type = ActivityType.Listening,
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
-                        LargeImageText = presence.ImageTooltip
+                        LargeImageText = TrimUTF8String(presence.ImageTooltip!)
                     }
                 });
 
                 PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
-                PreviewL1.Text = presence.Line1;
-                PreviewL2.Text = presence.Line2;
-                PreviewL3.Text = presence.ImageTooltip;
+                PreviewL1.Text = TrimUTF8String(presence.Line1!);
+                PreviewL2.Text = TrimUTF8String(presence.Line2!);
+                PreviewL3.Text = TrimUTF8String(presence.ImageTooltip!);
 
                 PreviewTime.Visibility = Visibility.Visible;
 
@@ -240,16 +240,16 @@ namespace PlexampRPC
                     Type = ActivityType.Listening,
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
-                        LargeImageText = presence.ImageTooltip,
+                        LargeImageText = TrimUTF8String(presence.ImageTooltip!),
                         SmallImageKey = "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexPaused.png",
                         SmallImageText = "Paused",
                     }
                 });
 
                 PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
-                PreviewL1.Text = presence.Line1;
-                PreviewL2.Text = presence.Line2;
-                PreviewL3.Text = presence.ImageTooltip;
+                PreviewL1.Text = TrimUTF8String(presence.Line1!);
+                PreviewL2.Text = TrimUTF8String(presence.Line2!);
+                PreviewL3.Text = TrimUTF8String(presence.ImageTooltip!);
 
                 PreviewTime.Visibility = Visibility.Collapsed;
                 PreviewPaused.Visibility = Visibility.Visible;
