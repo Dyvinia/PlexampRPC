@@ -4124,18 +4124,18 @@
 
                                         <!-- CUSTOM ICON -->
 
-                                        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Margin="2" Height="24" Source="pack://application:,,,/Resources/Icon.ico" />
+                                        <!--<Image HorizontalAlignment="Left" VerticalAlignment="Top" Margin="2" Height="24" Source="pack://application:,,,/Resources/Icon.ico" />-->
 
                                         <!-- CUSTOM ICON END -->
 
-                                        <TextBlock Margin="2,6"
+                                        <TextBlock Margin="9,7"
                                                    VerticalAlignment="Top"
                                                    HorizontalAlignment="Stretch"
                                                    TextWrapping="NoWrap"
-                                                   FontFamily="Calibri" FontWeight="Bold" FontSize="14" Width="1000"
+                                                   FontWeight="Bold" FontSize="12" Width="1000"
                                                    Foreground="{StaticResource ControlDefaultForeground}"
                                                    Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}"   
-                                                   Grid.Column="1" TextAlignment="Left"/>
+                                                   Grid.Column="1" TextAlignment="Left" />
                                     </DockPanel>
                                     <StackPanel Orientation="Horizontal"
                                         Grid.Column="0" HorizontalAlignment="Right">

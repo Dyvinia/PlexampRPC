@@ -194,7 +194,7 @@ namespace PlexampRPC
                 Line1 = L1.Length > 2 ? L1 : L1 + "  ",
                 Line2 = L2.Length > 2 ? L2 : L2 + "  ",
                 ImageTooltip = session.Album?.Length > 2 ? session.Album : session.Album + "  ",
-                ArtLink = await GetThumbnail(session.ArtPath),
+                ArtLink = await GetThumbnail(session.ArtPath, session.Album),
                 State = session.Player?.State,
                 TimeOffset = session.ViewOffset,
                 Duration = session.Duration,
@@ -281,31 +281,32 @@ namespace PlexampRPC
             App.DiscordClient.ClearPresence();
         }
 
-        private async Task<string> GetThumbnail(string? thumb) {
+        private async Task<string> GetThumbnail(string? path, string? album) {
             string cacheFile = Path.Combine(Path.GetDirectoryName(Config.FilePath)!, "cache.json");
 
-            Dictionary<string, string> thumbnails;
+            Dictionary<string, ThumbnailData> thumbnails;
             string thumbnailsJson = "";
 
             if (File.Exists(cacheFile)) {
                 thumbnailsJson = File.ReadAllText(cacheFile);
-                try { thumbnails = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(cacheFile))!; }
+                try { thumbnails = JsonSerializer.Deserialize<Dictionary<string, ThumbnailData>>(File.ReadAllText(cacheFile))!; }
                 catch { thumbnails = []; }
+
             }
             else
                 thumbnails = [];
 
             string thumbnailLink;
-            if (thumb is not null && thumbnails.TryGetValue(thumb, out string? value)) {
-                thumbnailLink = value;
+            if (path is not null && thumbnails.TryGetValue(path, out ThumbnailData? value)) {
+                thumbnailLink = value.Art;
             }
             else {
-                try { thumbnailLink = await UploadImage(thumb!); }
+                try { thumbnailLink = await UploadImage(path!); }
                 catch (Exception e) {
                     Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead\n{e.Message} {e.InnerException}");
                     return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png";
                 }
-                thumbnails.Add(thumb!, thumbnailLink);
+                thumbnails.Add(path!, new() { Name = album ?? "Unknown", Art = thumbnailLink });
             }
 
             string newThumbnailsJson = JsonSerializer.Serialize(thumbnails, serializerOptions);
