@@ -16,17 +16,17 @@ namespace DyviniaUtils {
         class Release {
 
             [JsonPropertyName("tag_name")]
-            public string Tag { get; set; }
+            public required string Tag { get; set; }
 
             [JsonPropertyName("assets")]
-            public Asset[] Assets { get; set; }
+            public required Asset[] Assets { get; set; }
 
             public class Asset {
                 [JsonPropertyName("name")]
-                public string Name { get; set; }
+                public required string Name { get; set; }
 
                 [JsonPropertyName("browser_download_url")]
-                public string DownloadURL { get; set; }
+                public required string DownloadURL { get; set; }
             }
         }
 
@@ -78,12 +78,18 @@ namespace DyviniaUtils {
             string filePath = Environment.ProcessPath!;
             string oldPath = filePath.Replace(".exe", ".old.exe");
 
-            File.Move(filePath, oldPath, true);
+            try {
+                File.Move(filePath, oldPath, true);
 
-            await Downloader.DownloadWithWindow(downloadUrl, filePath);
+                await Downloader.DownloadWithWindow(downloadUrl, filePath);
 
-            Process.Start(new ProcessStartInfo { FileName = filePath, UseShellExecute = true });
-            Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown());
+                Process.Start(new ProcessStartInfo { FileName = filePath, UseShellExecute = true });
+                Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown());
+            }
+            catch (Exception e) {
+                MessageBoxDialog.Show($"Failed to install update, please update manually.\n{e.Message}", repoName, MessageBoxButton.OK, DialogSound.Error);
+                Process.Start(new ProcessStartInfo($"https://github.com/{repoAuthor}/{repoName}/releases/latest") { UseShellExecute = true });
+            }
         }
 
         /// <summary>

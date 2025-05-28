@@ -72,7 +72,7 @@ namespace DyviniaUtils.Dialogs {
 
             if (height < 300) {
                 Browser.Height = height;
-                Browser.InvokeScript("execScript", new object[] { "document.body.style.overflow ='hidden'", "JavaScript" });
+                Browser.InvokeScript("execScript", ["document.body.style.overflow ='hidden'", "JavaScript"]);
             }
         }
     }
