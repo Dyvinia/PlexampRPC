@@ -8,6 +8,10 @@
         Title="Log" Height="500" Width="750"
         Style="{DynamicResource CustomWindowStyle}" ResizeMode="CanResize">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="28"/>
+        </Grid.RowDefinitions>
         <ListBox x:Name="LogBox" Background="#FF141414" Margin="4" VirtualizingStackPanel.IsVirtualizing="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AlternationCount="2">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -17,8 +21,8 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Timestamp, Mode=OneWay, StringFormat='{}{0: [hh:mm:ss] }'}" TextWrapping="Wrap" FontFamily="Consolas"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Prefix, Mode=OneWay}" Foreground="{Binding PrefixColor, Mode=OneWay}" FontWeight="Black" TextWrapping="Wrap" FontFamily="Consolas" Margin="0 0 5 0"/>
+                        <TextBlock Grid.Column="0" Text="{Binding Timestamp, Mode=OneWay, StringFormat='{}{0: [hh:mm:ss]}'}" TextWrapping="Wrap" FontFamily="Consolas" Margin="0 0 5 0"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Prefix, Mode=OneWay}" Foreground="{Binding PrefixColor, Mode=OneWay}" FontWeight="Black" FontFamily="Consolas" Margin="0 0 5 0"/>
                         <TextBox Grid.Column="2" Text="{Binding Message, Mode=OneWay}" TextWrapping="Wrap" FontFamily="Consolas" IsReadOnly="True" Style="{StaticResource FakeTextBlockBox}" Margin="0 0 0 1"/>
                     </Grid>
                 </DataTemplate>
@@ -45,5 +49,10 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="1">
+            <Button x:Name="SaveButton" Content="Save to File" Width="90" HorizontalAlignment="Right" Margin="5,1,0,5" />
+            <Button x:Name="CopyButton" Content="Copy to Clipboard" Width="130" HorizontalAlignment="Right" Margin="5,1,0,5" />
+        </StackPanel>
     </Grid>
 </Window>

@@ -24,6 +24,9 @@ namespace PlexampRPC {
                 LogBox.ScrollIntoView(writer.Log.Last());
 
             ((INotifyCollectionChanged)LogBox.ItemsSource).CollectionChanged += (_, _) => LogBox.ScrollIntoView(writer.Log.Last());
+
+            SaveButton.Click += (_, _) => writer.SaveAs();
+            CopyButton.Click += (_, _) => CopyToClipboard();
         }
 
         protected override void OnKeyDown(KeyEventArgs e) {
