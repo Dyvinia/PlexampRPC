@@ -16,17 +16,38 @@ namespace PlexampRPC {
             Title += $" {App.Version}";
 
             CheckForStartup();
-            StartupCheckBox.Checked += (_, _) => {
-                StartOnStartup();
+
+            // Handle "Start on Startup" checkbox
+            StartupCheckBox.Checked += (_, _) =>
+            {
+                CreateStartupShortcut();
                 TrayStartupCheckBox.IsEnabled = true;
             };
-            StartupCheckBox.Unchecked += (_, _) => {
-                File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
+
+            StartupCheckBox.Unchecked += (_, _) =>
+            {
+                string shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk");
+                if (File.Exists(shortcutPath))
+                    File.Delete(shortcutPath);
+
                 TrayStartupCheckBox.IsEnabled = false;
                 TrayStartupCheckBox.IsChecked = false;
             };
 
-            // Set initial enabled state based on current setting
+            // Handle "Start in Tray" checkbox changes
+            TrayStartupCheckBox.Checked += (_, _) =>
+            {
+                if (StartupCheckBox.IsChecked == true)
+                    CreateStartupShortcut();
+            };
+
+            TrayStartupCheckBox.Unchecked += (_, _) =>
+            {
+                if (StartupCheckBox.IsChecked == true)
+                    CreateStartupShortcut();
+            };
+
+            // Set initial enabled/checked state
             TrayStartupCheckBox.IsEnabled = StartupCheckBox.IsChecked == true;
             if (StartupCheckBox.IsChecked != true)
                 TrayStartupCheckBox.IsChecked = false;
@@ -37,6 +58,7 @@ namespace PlexampRPC {
 
             DataContext = Config.Settings;
         }
+
 
         private void SetupListeningTo() {
             RadioListeningPlexamp.Checked += (_, _) => Config.Settings.DiscordListeningTo = "Plexamp";
@@ -51,20 +73,22 @@ namespace PlexampRPC {
                 RadioListeningCustom.IsChecked = true;
         }
 
-        private void StartOnStartup() {
-            IWshRuntimeLibrary.WshShell wshShell = new();
-            IWshRuntimeLibrary.IWshShortcut shortcut = wshShell.CreateShortcut(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
-            shortcut.TargetPath = Environment.ProcessPath;
-            shortcut.WorkingDirectory = Environment.CurrentDirectory;
-            shortcut.Save();
-        }
-
-        private void TrayOnStartup()
+        private void CreateStartupShortcut()
         {
+            string shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk");
+
             IWshRuntimeLibrary.WshShell wshShell = new();
-            IWshRuntimeLibrary.IWshShortcut shortcut = wshShell.CreateShortcut(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
+            IWshRuntimeLibrary.IWshShortcut shortcut = wshShell.CreateShortcut(shortcutPath);
+
             shortcut.TargetPath = Environment.ProcessPath;
             shortcut.WorkingDirectory = Environment.CurrentDirectory;
+
+            // Add "--tray" if the tray option is enabled
+            if (TrayStartupCheckBox.IsChecked == true)
+                shortcut.Arguments = "--tray";
+            else
+                shortcut.Arguments = "";
+
             shortcut.Save();
         }
 
