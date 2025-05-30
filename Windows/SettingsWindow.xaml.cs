@@ -7,15 +7,29 @@ namespace PlexampRPC {
     /// <summary>
     /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    public partial class SettingsWindow : Window {
-        public SettingsWindow() {
+    public partial class SettingsWindow : Window
+    {
+        public SettingsWindow()
+        {
             InitializeComponent();
 
             Title += $" {App.Version}";
 
             CheckForStartup();
-            StartupCheckBox.Checked += (_, _) => StartOnStartup();
-            StartupCheckBox.Unchecked += (_, _) => File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
+            StartupCheckBox.Checked += (_, _) => {
+                StartOnStartup();
+                TrayStartupCheckBox.IsEnabled = true;
+            };
+            StartupCheckBox.Unchecked += (_, _) => {
+                File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
+                TrayStartupCheckBox.IsEnabled = false;
+                TrayStartupCheckBox.IsChecked = false;
+            };
+
+            // Set initial enabled state based on current setting
+            TrayStartupCheckBox.IsEnabled = StartupCheckBox.IsChecked == true;
+            if (StartupCheckBox.IsChecked != true)
+                TrayStartupCheckBox.IsChecked = false;
 
             SetupListeningTo();
 
@@ -23,6 +37,8 @@ namespace PlexampRPC {
 
             DataContext = Config.Settings;
         }
+
+
 
         private void SetupListeningTo() {
             RadioListeningPlexamp.Checked += (_, _) => Config.Settings.DiscordListeningTo = "Plexamp";
@@ -38,6 +54,15 @@ namespace PlexampRPC {
         }
 
         private void StartOnStartup() {
+            IWshRuntimeLibrary.WshShell wshShell = new();
+            IWshRuntimeLibrary.IWshShortcut shortcut = wshShell.CreateShortcut(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
+            shortcut.TargetPath = Environment.ProcessPath;
+            shortcut.WorkingDirectory = Environment.CurrentDirectory;
+            shortcut.Save();
+        }
+
+        private void TrayOnStartup()
+        {
             IWshRuntimeLibrary.WshShell wshShell = new();
             IWshRuntimeLibrary.IWshShortcut shortcut = wshShell.CreateShortcut(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
             shortcut.TargetPath = Environment.ProcessPath;
