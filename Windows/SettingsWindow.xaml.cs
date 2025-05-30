@@ -92,12 +92,31 @@ namespace PlexampRPC {
             shortcut.Save();
         }
 
-        private void CheckForStartup() {
-            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"))) {
-                StartupCheckBox.IsChecked = true;
-            }
-        }
+        private void CheckForStartup()
+        {
+            string shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk");
 
+            if (File.Exists(shortcutPath))
+            {
+                StartupCheckBox.IsChecked = true;
+
+                // Read the shortcut and check if it includes the "--tray" argument
+                IWshRuntimeLibrary.WshShell shell = new();
+                IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(shortcutPath);
+
+                if (shortcut.Arguments?.Contains("--tray") == true)
+                    TrayStartupCheckBox.IsChecked = true;
+                else
+                    TrayStartupCheckBox.IsChecked = false;
+            }
+            else
+            {
+                StartupCheckBox.IsChecked = false;
+                TrayStartupCheckBox.IsChecked = false;
+            }
+
+            TrayStartupCheckBox.IsEnabled = StartupCheckBox.IsChecked == true;
+        }
         protected override void OnKeyDown(KeyEventArgs e) {
             base.OnKeyDown(e);
 
