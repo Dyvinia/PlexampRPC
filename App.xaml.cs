@@ -13,6 +13,7 @@ using Plex.ServerApi.PlexModels.OAuth;
 using DyviniaUtils;
 using DyviniaUtils.Dialogs;
 using PlexampRPC.Data;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace PlexampRPC
 {
@@ -20,6 +21,7 @@ namespace PlexampRPC
     [GlobalConfig]
     public class Config : SettingsManager<Config> {
         public bool UpdateChecker { get; set; } = true;
+        public bool StartInTray { get; set; } = false;
         public bool LocalAddress { get; set; } = false;
         public bool OwnedOnly { get; set; } = true;
 
@@ -88,7 +90,11 @@ namespace PlexampRPC
 
         protected override async void OnStartup(StartupEventArgs e) {
             MainWindow window = new();
-            window.Show();
+
+            if (Config.Settings.StartInTray)
+                window.TrayIcon.ShowBalloonTip(null, "Started PlexampRPC in Tray", BalloonIcon.None);
+            else
+                window.Show();
 
             await PlexSignIn();
             window.UpdateAccountIcon();
