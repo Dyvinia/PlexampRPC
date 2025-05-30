@@ -16,7 +16,8 @@ namespace DyviniaUtils.Dialogs {
             InitializeComponent();
 
             Title += $" {repoName}";
-            Owner = Application.Current.MainWindow;
+            if (Application.Current.MainWindow.ActualHeight > 0)
+                Owner = Application.Current.MainWindow;
 
             InstallButton.Click += OnClose;
             IgnoreButton.Click += OnClose;
