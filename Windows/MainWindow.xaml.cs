@@ -48,7 +48,8 @@ namespace PlexampRPC
             public string? Url { get; set; }
         }
 
-        public MainWindow() {
+        public MainWindow(bool startInTray = false)
+        {
             InitializeComponent();
 
             httpClient.Timeout = TimeSpan.FromSeconds(2);
@@ -57,7 +58,8 @@ namespace PlexampRPC
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
 
             StateChanged += (_, _) => {
-                if (WindowState == WindowState.Minimized) {
+                if (WindowState == WindowState.Minimized)
+                {
                     Hide();
                     TrayIcon.ShowBalloonTip(null, "Minimized to Tray", BalloonIcon.None);
                 }
@@ -67,6 +69,14 @@ namespace PlexampRPC
             SetupTray();
 
             PreviewListeningTo.Text = $"Listening to {Config.Settings.DiscordListeningTo}";
+
+            if (startInTray)
+            {
+                // Minimize to tray at startup
+                WindowState = WindowState.Minimized;
+                ShowInTaskbar = false;
+                Hide();
+            }
         }
 
         public TaskbarIcon TrayIcon = new() {

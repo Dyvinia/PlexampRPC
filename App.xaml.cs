@@ -86,16 +86,29 @@ namespace PlexampRPC
             DispatcherUnhandledException += ExceptionDialog.UnhandledException;
         }
 
-        protected override async void OnStartup(StartupEventArgs e) {
-            MainWindow window = new();
-            window.Show();
+        protected override async void OnStartup(StartupEventArgs e)
+        {
+            bool startInTray = e.Args.Contains("--tray");
+
+            MainWindow window = new(startInTray); // Pass flag to constructor
+            MainWindow = window;
+
+            if (!startInTray)
+            {
+                window.Show();
+                window.WindowState = WindowState.Normal;
+                window.Activate();
+            }
+            else
+            {
+                window.WindowState = WindowState.Minimized;
+                window.ShowInTaskbar = false;
+                window.Hide();
+            }
 
             await PlexSignIn();
             window.UpdateAccountIcon();
             PlexResources = await window.GetAccountResources();
-
-            window.WindowState = WindowState.Normal;
-            window.Activate();
             window.GetAccountInfo();
             window.StartPolling();
 
@@ -106,7 +119,6 @@ namespace PlexampRPC
             if (Config.Settings.UpdateChecker)
                 await GitHub.CheckAndInstall("Dyvinia", "PlexampRPC");
         }
-
         protected override void OnExit(ExitEventArgs e) {
             DiscordClient.Dispose();
 
