@@ -1,4 +1,7 @@
 # PlexampRPC
+[![Latest Release](https://img.shields.io/github/v/release/Dyvinia/PlexampRPC?style=for-the-badge&labelColor=191919&color=e5a00d&label=Release)](https://github.com/Dyvinia/PlexampRPC/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/Dyvinia/PlexampRPC/total?style=for-the-badge&labelColor=191919&color=e5a00d&label=Downloads)](https://github.com/Dyvinia/PlexampRPC/releases)
+
 PlexampRPC displays currently playing Plex music as Discord Rich Presence, while using the proper Album Art.<br/> *Despite using the name Plexamp, it works regardless of the client used.*
 
 <p float="left">
