@@ -38,8 +38,6 @@ namespace PlexampRPC {
             DataContext = Config.Settings;
         }
 
-
-
         private void SetupListeningTo() {
             RadioListeningPlexamp.Checked += (_, _) => Config.Settings.DiscordListeningTo = "Plexamp";
             RadioListeningMusic.Checked += (_, _) => Config.Settings.DiscordListeningTo = "Music";
