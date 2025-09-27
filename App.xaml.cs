@@ -32,13 +32,14 @@ namespace PlexampRPC
         public int SessionTimeout { get; set; } = 30;
 
         public string TemplateL1 { get; set; } = "{title}";
-        public string TemplateL2 { get; set; } = "by {artist}";
+        public string TemplateL2 { get; set; } = "{artist}";
         public string TemplateL3 { get; set; } = "{album}";
 
         public string DiscordListeningTo { get; set; } = "Plexamp";
         public string DiscordCustomClientID { get; set; } = "1100233636491563069";
 
         public string PlexAddress { get; set; } = string.Empty;
+        public string StatusDisplayType { get; set; } = "Name";
     }
 
 
