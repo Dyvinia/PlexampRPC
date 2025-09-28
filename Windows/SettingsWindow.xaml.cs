@@ -18,6 +18,7 @@ namespace PlexampRPC {
             StartupCheckBox.Unchecked += (_, _) => File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
 
             SetupListeningTo();
+            SetupStatusDisplayType();
 
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
 
@@ -35,6 +36,21 @@ namespace PlexampRPC {
                 RadioListeningMusic.IsChecked = true;
             else
                 RadioListeningCustom.IsChecked = true;
+        }
+
+        private void SetupStatusDisplayType() {
+            RadioStatusName.Checked += (_, _) => Config.Settings.StatusDisplayType = "Name";
+            RadioStatusState.Checked += (_, _) => Config.Settings.StatusDisplayType = "State";
+            RadioStatusDetails.Checked += (_, _) => Config.Settings.StatusDisplayType = "Details";
+
+            switch (Config.Settings.StatusDisplayType) {
+                case "State":
+                    RadioStatusState.IsChecked = true; break;
+                case "Details":
+                    RadioStatusDetails.IsChecked = true; break;
+                default:
+                    RadioStatusName.IsChecked = true; break;
+            }
         }
 
         private void StartOnStartup() {

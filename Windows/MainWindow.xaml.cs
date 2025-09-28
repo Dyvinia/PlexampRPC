@@ -66,8 +66,6 @@ namespace PlexampRPC
 
             ResetPresence();
             SetupTray();
-
-            PreviewListeningTo.Text = $"Listening to {Config.Settings.DiscordListeningTo}";
         }
 
         public TaskbarIcon TrayIcon = new() {
@@ -261,7 +259,9 @@ namespace PlexampRPC
                     State = TrimUTF8String(presence.Line2!),
                     Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)presence.TimeOffset), DateTime.UtcNow.AddMilliseconds((double)presence.Duration-(double)presence.TimeOffset)),
                     Type = ActivityType.Listening,
-                    Assets = new() {
+                    StatusDisplay = Enum.Parse<StatusDisplayType>(Config.Settings.StatusDisplayType),
+                    Assets = new()
+                    {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = TrimUTF8String(presence.ImageTooltip!)
                     }
@@ -271,6 +271,14 @@ namespace PlexampRPC
                 PreviewL1.Text = TrimUTF8String(presence.Line1!);
                 PreviewL2.Text = TrimUTF8String(presence.Line2!);
                 PreviewL3.Text = TrimUTF8String(presence.ImageTooltip!);
+
+                PreviewListeningTo.Text = "Listening to ";
+                PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch
+                {
+                    "State" => PreviewL2.Text,
+                    "Details" => PreviewL1.Text,
+                    _ => Config.Settings.DiscordListeningTo,
+                };
 
                 PreviewTime.Visibility = Visibility.Visible;
 
@@ -290,6 +298,7 @@ namespace PlexampRPC
                     State = TrimUTF8String(presence.Line2!),
                     Timestamps = new(DateTime.UtcNow, DateTime.UtcNow), // this is the least broken option to avoid any timer from showing I think
                     Type = ActivityType.Listening,
+                    StatusDisplay = Enum.Parse<StatusDisplayType>(Config.Settings.StatusDisplayType),
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = TrimUTF8String(presence.ImageTooltip!),
@@ -302,6 +311,14 @@ namespace PlexampRPC
                 PreviewL1.Text = TrimUTF8String(presence.Line1!);
                 PreviewL2.Text = TrimUTF8String(presence.Line2!);
                 PreviewL3.Text = TrimUTF8String(presence.ImageTooltip!);
+
+                PreviewListeningTo.Text = "Listening to ";
+                PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch
+                {
+                    "State" => PreviewL2.Text,
+                    "Details" => PreviewL1.Text,
+                    _ => Config.Settings.DiscordListeningTo,
+                };
 
                 PreviewTime.Visibility = Visibility.Collapsed;
                 PreviewPaused.Visibility = Visibility.Visible;
@@ -326,6 +343,14 @@ namespace PlexampRPC
                 .Replace("{title}", "Title")
                 .Replace("{artist}", "Artist")
                 .Replace("{album}", "Album");
+
+            PreviewListeningTo.Text = "Listening to ";
+			PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch
+            {
+                "State" => PreviewL2.Text,
+                "Details" => PreviewL1.Text,
+                _ => Config.Settings.DiscordListeningTo,
+            };
 
             PreviewTime.Visibility = Visibility.Collapsed;
             PreviewPaused.Visibility = Visibility.Collapsed;

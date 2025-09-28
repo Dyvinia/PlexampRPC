@@ -32,7 +32,7 @@ namespace PlexampRPC
         public int SessionTimeout { get; set; } = 30;
 
         public string TemplateL1 { get; set; } = "{title}";
-        public string TemplateL2 { get; set; } = "by {artist}";
+        public string TemplateL2 { get; set; } = "{artist}";
         public string TemplateL3 { get; set; } = "{album}";
 
         public string DiscordListeningTo { get; set; } = "Plexamp";
@@ -40,6 +40,7 @@ namespace PlexampRPC
 
         public string PlexAddress { get; set; } = string.Empty;
         public bool LocalPlayer { get; set; }
+        public string StatusDisplayType { get; set; } = "Name";
     }
 
 
