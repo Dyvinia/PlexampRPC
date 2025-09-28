@@ -10,12 +10,12 @@ namespace PlexampRPC.Utils {
                 .Replace("{album}", session?.Album ?? "Album")
                 .Replace("{year}", session?.Year.ToString() ?? "Year")
                 .Replace("{player}", session?.Player?.PlayerName ?? "Player")
-                .Replace("{listens}", session?.ListenCount.ToString() ?? "Listens")
+                .Replace("{listens}", session?.ListenCount.ToString() ?? "Listen Count")
                 .Replace("{codec}", session?.Media?.Codec?.ToUpper() ?? "Codec")
                 .Replace("{container}", session?.Media?.Container?.ToUpper() ?? "Container")
                 .Replace("{bitrate}", session?.Media?.Bitrate.ToString() ?? "Bitrate")
-                .Replace("{channel}", CultureInfo.InvariantCulture.TextInfo.ToTitleCase(session?.Media?.Part?.Stream?.ChannelLayout ?? "") ?? "Channel")
-                .Replace("{bitdepth}", session?.Media?.Part?.Stream?.BitDepth.ToString() ?? "Depth")
+                .Replace("{channel}", CultureInfo.InvariantCulture.TextInfo.ToTitleCase(session?.Media?.Part?.Stream?.ChannelLayout ?? "") ?? "Channel Layout")
+                .Replace("{bitdepth}", session?.Media?.Part?.Stream?.BitDepth.ToString() ?? "Bit Depth")
                 .Replace("{samplerate}", session?.Media?.Part?.Stream?.SampleRateKHz.ToString() ?? "Sample Rate");
         }
 
