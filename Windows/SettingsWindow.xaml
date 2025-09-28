@@ -44,17 +44,17 @@
                 </StackPanel>
                 <Grid Height="10"/>
                 <StackPanel>
-                    <TextBlock TextWrapping="Wrap" Text="Listening To" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
-                    <RadioButton x:Name="RadioListeningPlexamp" Content="Plexamp" IsChecked="True"/>
-                    <RadioButton x:Name="RadioListeningMusic" Content="Music"/>
-                    <RadioButton x:Name="RadioListeningCustom" Content="Custom"/>
+                    <TextBlock TextWrapping="Wrap" Text="Status Display" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top" ToolTip="The text displayed in the member list"/>
+                    <RadioButton x:Name="RadioStatusDetails" Content="Line 1" ToolTip="Uses the first line of the rich presence (Default: Track Title)&#x0a;[Details]"/>
+                    <RadioButton x:Name="RadioStatusState" Content="Line 2" ToolTip="Uses the second line of the rich presence (Default: Track Author)&#x0a;[State]"/>
+                    <RadioButton x:Name="RadioStatusName" Content="Name" ToolTip="Uses the client id's application name&#x0a;[Name]"/>
                 </StackPanel>
                 <Grid Height="10"/>
                 <StackPanel>
-                    <TextBlock TextWrapping="Wrap" Text="Status Display" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
-                    <RadioButton x:Name="RadioStatusName" Content="Name"/>
-                    <RadioButton x:Name="RadioStatusState" Content="State"/>
-                    <RadioButton x:Name="RadioStatusDetails" Content="Details"/>
+                    <TextBlock TextWrapping="Wrap" Text="Listening To" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top" ToolTip="Sets the client id's application name"/>
+                    <RadioButton x:Name="RadioListeningPlexamp" Content="Plexamp"/>
+                    <RadioButton x:Name="RadioListeningMusic" Content="Music"/>
+                    <RadioButton x:Name="RadioListeningCustom" Content="Custom"/>
                 </StackPanel>
                 <Grid Height="10"/>
                 <StackPanel>
