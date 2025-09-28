@@ -129,7 +129,7 @@
                         </Grid>
                     </Grid>
                     <Grid Height="1"/>
-                    <Border Background="#252627" CornerRadius="4" Padding="9">
+                    <Border Background="#252627" CornerRadius="8" Padding="9">
                         <StackPanel>
                             <TextBlock x:Name="PreviewListeningTo" Text="Listening to Music" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" Margin="0 -1 0 5" FontFamily="/Resources/gg/#gg sans Medium"/>
                             <DockPanel>
@@ -140,7 +140,7 @@
                                                 <VisualBrush.Visual>
                                                     <Border Height="{Binding ElementName=PreviewArt, Path=ActualHeight}"
                                                             Width="{Binding ElementName=PreviewArt, Path=ActualWidth}" 
-                                                            Background="White" CornerRadius="4" />
+                                                            Background="White" CornerRadius="8" />
                                                 </VisualBrush.Visual>
                                             </VisualBrush>
                                         </Image.OpacityMask>
@@ -159,9 +159,9 @@
                                 </Grid>
 
                                 <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="7 0 0 0">
-                                    <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans SemiBold"/>
-                                    <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal" Margin="0 0 0 -2"/>
-                                    <TextBlock x:Name="PreviewL3" Text="Album" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans Normal"/>
+                                    <TextBlock x:Name="PreviewL1" Text="Title" Foreground="#dddddd" FontSize="14" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans SemiBold" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+                                    <TextBlock x:Name="PreviewL2" Text="Author" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans" Margin="0 0 0 -2" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+                                    <TextBlock x:Name="PreviewL3" Text="Album" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
                                     <StackPanel Orientation="Horizontal" x:Name="PreviewTime" Margin="0 1 0 -2">
                                         <TextBlock x:Name="PreviewTimeStart" Text="00:00" Foreground="#dddddd" FontSize="12" Height="18" VerticalAlignment="Top" FontFamily="/Resources/gg/#gg sans mono"/>
                                         <ProgressBar x:Name="PreviewTimeProgress" Width="100" Margin="8 0 8 2" Height="2" Foreground="#dddddd" Background="#4e5058" BorderThickness="0" Value="50"/>
