@@ -5,26 +5,42 @@
 PlexampRPC displays currently playing Plex music as Discord Rich Presence, while using the proper Album Art.<br/> *Despite using the name Plexamp, it works regardless of the client used.*
 
 <p float="left">
-<img src="https://i.imgur.com/RB1Chep.png" />
-<img src="https://i.imgur.com/cNsPQ7z.png" height="326" />
-<img src="https://i.imgur.com/IAVWupR.png" height="326" />
+<img src="https://i.imgur.com/wbEsU6T.png" />
+<img src="https://i.imgur.com/2x8HjMt.png" height="330" />
 </p>
 
 ## Features
 - Proper Album Art for your Music
-- Uses Track Artist instead of Album Artist if available 
-- Start PlexampRPC on Windows startup
+- Uses Track Artist instead of Album Artist if available
+- Custom "Listening to..." text
 - Customize Template
+- Load presence locally or from the server
+- Start PlexampRPC on Windows startup
 - Minimize to tray
 - Self contained single .exe
 
-## Options & Template
+## Options
 Click the gear icon on the top right to open the Settings window. Here you can change different options, change the template, and easily see the current version of PlexampRPC.
 
-![image](https://i.imgur.com/EhWWCQq.png)
+![image](https://i.imgur.com/qtn8y6P.png)
 
 
 The config file, aswell as the thumbnail cache and the stored auth token, are stored in `%AppData%\PlexampRPC\`. Press `F12` in the app to automatically open this folder.
+
+### Template
+These are all the placeholders that can be used for the template (bottom 3 lines in the Settings window.
+- `{title}`: Track Title
+- `{artist}`: Artist
+- `{album}`: Album
+- `{year}`: Album Year
+- `{player}`: Name of the device playing the music
+- `{listens}`: Number of times listened to the track
+- `{codec}`: Audio Codec
+- `{container}`: File Container
+- `{bitrate}`: Bitrate (Kbps)
+- `{channel}`: Channel Layout (ex. Stereo)
+- `{bitdepth}`: Bit Depth
+- `{samplerate}` Sample Rate (kHz)
 
 ## FAQ
 > **Q:** How do I change the "Listening to Plexamp" text?
