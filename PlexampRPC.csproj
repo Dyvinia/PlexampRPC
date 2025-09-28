@@ -42,6 +42,8 @@
 
   <ItemGroup>
     <Resource Include="Resources\gg\ggmono.ttf" />
+    <Resource Include="Resources\gg\ggsans bold.ttf" />
+    <Resource Include="Resources\gg\ggsans medium.ttf" />
     <Resource Include="Resources\gg\ggsans.ttf" />
     <Resource Include="Resources\gg\ggsans semibold.ttf" />
     <Resource Include="Resources\Icon.ico" />
@@ -52,6 +54,7 @@
     <Resource Include="Resources\PlexPaused.png" />
     <Resource Include="Resources\Buttons\settings.svg" />
     <Resource Include="Resources\Buttons\terminal.svg" />
+    <Resource Include="Resources\Svg\NowPlaying.svg" />
   </ItemGroup>
 
 </Project>

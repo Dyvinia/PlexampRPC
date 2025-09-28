@@ -98,8 +98,16 @@ namespace PlexampRPC {
 
         public void UpdateAccountIcon() {
             Uri uri = new(App.Account?.Thumb ?? "/Resources/PlexIcon.png");
-            if (UserIcon.Source?.ToString() != uri.ToString())
-                UserIcon.Source = new BitmapImage(uri);
+            if (UserIcon.Source?.ToString() != uri.ToString()) {
+                UserIcon.Source = new BitmapImage(uri) {
+                    CreateOptions = BitmapCreateOptions.IgnoreImageCache
+                };
+            }
+
+            DiscordUsername.Text = App.DiscordClient.CurrentUser.DisplayName;
+            DiscordAvatar.Source = new BitmapImage(new(App.DiscordClient.CurrentUser.GetAvatarURL())) {
+                CreateOptions = BitmapCreateOptions.IgnoreImageCache
+            };
         }
 
         public void GetAccountInfo() {
@@ -261,12 +269,13 @@ namespace PlexampRPC {
                 PreviewL2.Text = TrimUTF8String(presence.Line2!);
                 PreviewL3.Text = TrimUTF8String(presence.Line3!);
 
-                PreviewListeningTo.Text = "Listening to ";
-                PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch {
+                PreviewListeningTo.Text = $"Listening to {Config.Settings.DiscordListeningTo}";
+                PreviewStatusListeningTo.Text = Config.Settings.StatusDisplayType switch {
                     "State" => PreviewL2.Text,
                     "Details" => PreviewL1.Text,
                     _ => Config.Settings.DiscordListeningTo,
                 };
+                DiscordStatus.Visibility = Visibility.Visible;
 
                 PreviewTime.Visibility = Visibility.Visible;
 
@@ -300,12 +309,13 @@ namespace PlexampRPC {
                 PreviewL2.Text = TrimUTF8String(presence.Line2!);
                 PreviewL3.Text = TrimUTF8String(presence.Line3!);
 
-                PreviewListeningTo.Text = "Listening to ";
-                PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch {
+                PreviewListeningTo.Text = $"Listening to {Config.Settings.DiscordListeningTo}";
+                PreviewStatusListeningTo.Text = Config.Settings.StatusDisplayType switch {
                     "State" => PreviewL2.Text,
                     "Details" => PreviewL1.Text,
                     _ => Config.Settings.DiscordListeningTo,
                 };
+                DiscordStatus.Visibility = Visibility.Visible;
 
                 PreviewTime.Visibility = Visibility.Collapsed;
                 PreviewPaused.Visibility = Visibility.Visible;
@@ -321,12 +331,9 @@ namespace PlexampRPC {
             PreviewL2.Text = Config.Settings.TemplateL2.ApplyPlaceholders();
             PreviewL3.Text = Config.Settings.TemplateL3.ApplyPlaceholders();
 
-            PreviewListeningTo.Text = "Listening to ";
-            PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch {
-                "State" => PreviewL2.Text,
-                "Details" => PreviewL1.Text,
-                _ => Config.Settings.DiscordListeningTo,
-            };
+            PreviewListeningTo.Text = $"Listening to {Config.Settings.DiscordListeningTo}";
+            PreviewStatusListeningTo.Text = Config.Settings.DiscordListeningTo;
+            DiscordStatus.Visibility = Visibility.Collapsed;
 
             PreviewTime.Visibility = Visibility.Collapsed;
             PreviewPaused.Visibility = Visibility.Collapsed;
