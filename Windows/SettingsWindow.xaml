@@ -40,6 +40,7 @@
 
                     <CheckBox x:Name="OwnedCheckBox" Margin="0 0 0 0" Content="Owned Servers Only" IsChecked="{Binding Path=(local:Config.OwnedOnly), Mode=TwoWay}" ToolTip="Only adds servers to the list that belong to the authenticated Plex user"/>
 
+                    <CheckBox x:Name="LocalPlayerCheckBox" Margin="0 0 0 0" Content="Use Local Player" IsChecked="{Binding Path=(local:Config.LocalPlayer), Mode=TwoWay}" ToolTip="Poll the local PlexAmp player instead of querying the Plex server"/>
                 </StackPanel>
                 <Grid Height="10"/>
                 <StackPanel>
