@@ -131,7 +131,8 @@ namespace PlexampRPC
 
             DiscordClient.OnPresenceUpdate += (_, e) => {
                 if (e.Presence != null)
-                    Console.WriteLine($"Updated Presence to [{e.Presence?.Details} | {e.Presence?.State}]");
+                    Console.WriteLine("Updated Presence");
+                    //Console.WriteLine($"Updated Presence to [{e.Presence?.Details} | {e.Presence?.State}]");
                 else
                     Console.WriteLine($"Cleared Presence");
             };

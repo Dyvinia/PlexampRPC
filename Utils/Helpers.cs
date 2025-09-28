@@ -1,4 +1,5 @@
-﻿using PlexampRPC.Data;
+﻿using System.Globalization;
+using PlexampRPC.Data;
 
 namespace PlexampRPC.Utils {
     public static class Helpers {
@@ -13,10 +14,9 @@ namespace PlexampRPC.Utils {
                 .Replace("{codec}", session?.Media?.Codec?.ToUpper() ?? "Codec")
                 .Replace("{container}", session?.Media?.Container?.ToUpper() ?? "Container")
                 .Replace("{bitrate}", session?.Media?.Bitrate.ToString() ?? "Bitrate")
-                .Replace("{channel}", session?.Media?.Part?.Stream?.ChannelLayout ?? "Channel")
+                .Replace("{channel}", CultureInfo.InvariantCulture.TextInfo.ToTitleCase(session?.Media?.Part?.Stream?.ChannelLayout ?? "") ?? "Channel")
                 .Replace("{bitdepth}", session?.Media?.Part?.Stream?.BitDepth.ToString() ?? "Depth")
-                .Replace("{samplerate}", session?.Media?.Part?.Stream?.SampleRateKHz.ToString() ?? "Sample Rate")
-                ;
+                .Replace("{samplerate}", session?.Media?.Part?.Stream?.SampleRateKHz.ToString() ?? "Sample Rate");
         }
 
         public static string ApplyPlaceholders(this string inString) => inString.ApplyPlaceholders(null);

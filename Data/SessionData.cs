@@ -84,7 +84,7 @@ namespace PlexampRPC.Data {
 
                     [JsonPropertyName("samplingRate")]
                     public int SampleRate { get; set; }
-                    public int SampleRateKHz => SampleRate / 1000;
+                    public float SampleRateKHz => SampleRate / 1000f;
                 }
             }
         }

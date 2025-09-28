@@ -134,6 +134,9 @@ namespace PlexampRPC {
                 if (currentSession != null) {
                     if (JsonSerializer.Serialize(currentSession) != JsonSerializer.Serialize(lastSession)) {
                         SetPresence(await BuildPresence(currentSession));
+                        if (currentSession?.Key != lastSession?.Key)
+                            Console.WriteLine("Title: {title}\nArtist: {artist}\nAlbum: {album}\nYear: {year}\nPlayer: {player}\nListen Count: {listens}\nCodec: {codec}\nContainer: {container}\nBitrate (Kbps): {bitrate}\nChannel Layout: {channel}\nBit Depth: {bitdepth}\nSamplerate (kHz): {samplerate}".ApplyPlaceholders(currentSession));
+
                         lastSession = currentSession;
                         lastUpdated = DateTime.Now;
                     }
