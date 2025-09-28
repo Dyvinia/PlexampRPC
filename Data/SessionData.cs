@@ -106,5 +106,8 @@ namespace PlexampRPC.Data {
             [JsonPropertyName("title")]
             public string? PlayerName { get; set; }
         }
+
+        [JsonPropertyName("key")]
+        public string? Key { get; set; }
     }
 }
