@@ -51,16 +51,11 @@ namespace PlexampRPC
 
         public static readonly string Version = "v" + Assembly.GetExecutingAssembly().GetName()?.Version?.ToString()[..5];
 
-        public static string ClientID {
-            get {
-                if (Config.Settings.DiscordListeningTo == "Plexamp")
-                    return "1100233636491563069";
-                else if (Config.Settings.DiscordListeningTo == "Music")
-                    return "1116438265680109598";
-                else
-                    return Config.Settings.DiscordCustomClientID;
-            }
-        }
+        public static string ClientID => Config.Settings.DiscordListeningTo switch {
+            "Plexamp" => "1100233636491563069",
+            "Music" => "1116438265680109598",
+            _ => Config.Settings.DiscordCustomClientID
+        };
 
         public static DiscordRpcClient DiscordClient { get; } = new(ClientID);
 

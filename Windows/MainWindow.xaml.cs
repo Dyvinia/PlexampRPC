@@ -31,22 +31,8 @@ namespace PlexampRPC {
                 if (!string.IsNullOrWhiteSpace(Config.Settings.PlexAddress))
                     return new UriBuilder(Config.Settings.PlexAddress).Uri;
 
-                if (Config.Settings.LocalAddress)
-                    return SelectedResource?.LocalUri;
-                else
-                    return SelectedResource?.Uri;
+                return Config.Settings.LocalAddress ? SelectedResource?.LocalUri : SelectedResource?.Uri;
             }
-        }
-
-        public class PresenceData {
-            public string? Line1 { get; set; }
-            public string? Line2 { get; set; }
-            public string? Line3 { get; set; }
-            public string ArtLink { get; set; } = "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIconSquare.png";
-            public string? State { get; set; }
-            public int TimeOffset { get; set; }
-            public int Duration { get; set; }
-            public string? Url { get; set; }
         }
 
         public MainWindow() {
@@ -239,9 +225,9 @@ namespace PlexampRPC {
             string L3 = Config.Settings.TemplateL3.ApplyPlaceholders(session);
 
             return new PresenceData() {
-                Line1 = L1.Length > 2 ? L1 : L1 + "  ",
-                Line2 = L2.Length > 2 ? L2 : L2 + "  ",
-                Line3 = L3.Length > 2 ? L3 : L3 + "  ",
+                Line1 = L1,
+                Line2 = L2,
+                Line3 = L3,
                 ArtLink = Config.Settings.LocalPlayer ? "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png" : await GetThumbnail(session.ArtPath, session.Album),
                 State = session.Player?.State,
                 TimeOffset = session.ProgressOffset,
@@ -253,21 +239,21 @@ namespace PlexampRPC {
         private void SetPresence(PresenceData presence) {
             if (presence.State == "playing") {
                 App.DiscordClient.SetPresence(new() {
-                    Details = TrimUTF8String(presence.Line1!), // theres probably a better way to trim strings but idk
-                    State = TrimUTF8String(presence.Line2!),
+                    Details = presence.Line1,
+                    State = presence.Line2,
                     Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)presence.TimeOffset), DateTime.UtcNow.AddMilliseconds((double)presence.Duration - (double)presence.TimeOffset)),
                     Type = ActivityType.Listening,
                     StatusDisplay = Enum.Parse<StatusDisplayType>(Config.Settings.StatusDisplayType),
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
-                        LargeImageText = TrimUTF8String(presence.Line3!)
+                        LargeImageText = presence.Line3
                     }
                 });
 
                 PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
-                PreviewL1.Text = TrimUTF8String(presence.Line1!);
-                PreviewL2.Text = TrimUTF8String(presence.Line2!);
-                PreviewL3.Text = TrimUTF8String(presence.Line3!);
+                PreviewL1.Text = presence.Line1;
+                PreviewL2.Text = presence.Line2;
+                PreviewL3.Text = presence.Line3;
 
                 PreviewListeningTo.Text = $"Listening to {Config.Settings.DiscordListeningTo}";
                 PreviewStatusListeningTo.Text = Config.Settings.StatusDisplayType switch {
@@ -291,23 +277,23 @@ namespace PlexampRPC {
             }
             else {
                 App.DiscordClient.SetPresence(new RichPresence() {
-                    Details = TrimUTF8String(presence.Line1!),
-                    State = TrimUTF8String(presence.Line2!),
+                    Details = presence.Line1,
+                    State = presence.Line2,
                     Timestamps = new(DateTime.UtcNow, DateTime.UtcNow), // this is the least broken option to avoid any timer from showing I think
                     Type = ActivityType.Listening,
                     StatusDisplay = Enum.Parse<StatusDisplayType>(Config.Settings.StatusDisplayType),
                     Assets = new() {
                         LargeImageKey = presence.ArtLink,
-                        LargeImageText = TrimUTF8String(presence.Line3!),
+                        LargeImageText = presence.Line3,
                         SmallImageKey = "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexPaused.png",
                         SmallImageText = "Paused",
                     }
                 });
 
                 PreviewArt.Source = new BitmapImage(new Uri(presence.ArtLink));
-                PreviewL1.Text = TrimUTF8String(presence.Line1!);
-                PreviewL2.Text = TrimUTF8String(presence.Line2!);
-                PreviewL3.Text = TrimUTF8String(presence.Line3!);
+                PreviewL1.Text = presence.Line1;
+                PreviewL2.Text = presence.Line2;
+                PreviewL3.Text = presence.Line3;
 
                 PreviewListeningTo.Text = $"Listening to {Config.Settings.DiscordListeningTo}";
                 PreviewStatusListeningTo.Text = Config.Settings.StatusDisplayType switch {
@@ -469,15 +455,6 @@ namespace PlexampRPC {
             });
             sendResponse.EnsureSuccessStatusCode();
             return JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync()).RootElement.GetProperty("image").GetProperty("url").GetString()!;
-        }
-
-        private static string TrimUTF8String(string input) {
-            string trimmed = string.Empty;
-            foreach (char c in input) {
-                if (Encoding.UTF8.GetByteCount(trimmed + c) > 128) break;
-                trimmed += c;
-            }
-            return trimmed;
         }
 
         private void Template_LostFocus(object sender, RoutedEventArgs e) => Config.Save();
