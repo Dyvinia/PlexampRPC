@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using PlexampRPC.Utils;
 
 namespace PlexampRPC {
     /// <summary>
@@ -57,14 +58,8 @@ namespace PlexampRPC {
         }
 
         private void SetupStatusDisplayTypeNames() {
-            RadioStatusDetails.Content = Config.Settings.TemplateL1
-                .Replace("{title}", "Title")
-                .Replace("{artist}", "Artist")
-                .Replace("{album}", "Album");
-            RadioStatusState.Content = Config.Settings.TemplateL2
-                .Replace("{title}", "Title")
-                .Replace("{artist}", "Artist")
-                .Replace("{album}", "Album");
+            RadioStatusDetails.Content = Config.Settings.TemplateL1.ApplyPlaceholders();
+            RadioStatusState.Content = Config.Settings.TemplateL2.ApplyPlaceholders();
         }
 
         private void Template_LostFocus(object sender, RoutedEventArgs e) => SetupStatusDisplayTypeNames();

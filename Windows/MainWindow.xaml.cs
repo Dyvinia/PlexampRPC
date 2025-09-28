@@ -12,6 +12,7 @@ using System.Xml;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
 using PlexampRPC.Data;
+using PlexampRPC.Utils;
 
 namespace PlexampRPC {
     /// <summary>
@@ -179,7 +180,7 @@ namespace PlexampRPC {
                     TrackArtist = GetAttr(trackNode, "originalTitle"),
                     AlbumArtist = GetAttr(trackNode, "grandparentTitle"),
                     Player = new SessionData.PlayerData { State = GetAttr(timelineNode, "state") },
-                    ViewOffset = int.TryParse(GetAttr(timelineNode, "time"), out int vo) ? vo : 0,
+                    ProgressOffset = int.TryParse(GetAttr(timelineNode, "time"), out int vo) ? vo : 0,
                     Duration = int.TryParse(GetAttr(trackNode, "duration") ?? GetAttr(timelineNode, "duration"), out int dur) ? dur : 0,
                     User = App.Account?.Username is not null ? new SessionData.UserData { Name = App.Account.Username } : null
                 };
@@ -222,15 +223,8 @@ namespace PlexampRPC {
         }
 
         private async Task<PresenceData> BuildPresence(SessionData session) {
-            string L1 = Config.Settings.TemplateL1
-                .Replace("{title}", session.Title)
-                .Replace("{artist}", session.Artists)
-                .Replace("{album}", session.Album);
-
-            string L2 = Config.Settings.TemplateL2
-                .Replace("{title}", session.Title)
-                .Replace("{artist}", session.Artists)
-                .Replace("{album}", session.Album);
+            string L1 = Config.Settings.TemplateL1.ApplyPlaceholders(session);
+            string L2 = Config.Settings.TemplateL2.ApplyPlaceholders(session);
 
             return new PresenceData() {
                 Line1 = L1.Length > 2 ? L1 : L1 + "  ",
@@ -238,7 +232,7 @@ namespace PlexampRPC {
                 ImageTooltip = session.Album?.Length > 2 ? session.Album : session.Album + "  ",
                 ArtLink = Config.Settings.LocalPlayer ? "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png" : await GetThumbnail(session.ArtPath, session.Album),
                 State = session.Player?.State,
-                TimeOffset = session.ViewOffset,
+                TimeOffset = session.ProgressOffset,
                 Duration = session.Duration,
                 Url = session?.Guid?.StartsWith("plex://") == true ? $"https://listen.plex.tv/{session.Guid?[7..]}" : null
             };
@@ -319,19 +313,9 @@ namespace PlexampRPC {
                 CreateOptions = BitmapCreateOptions.IgnoreImageCache
             };
 
-            PreviewL1.Text = Config.Settings.TemplateL1
-                .Replace("{title}", "Title")
-                .Replace("{artist}", "Artist")
-                .Replace("{album}", "Album");
-            PreviewL2.Text = Config.Settings.TemplateL2
-                .Replace("{title}", "Title")
-                .Replace("{artist}", "Artist")
-                .Replace("{album}", "Album");
-
-            PreviewL3.Text = Config.Settings.TemplateL3
-                .Replace("{title}", "Title")
-                .Replace("{artist}", "Artist")
-                .Replace("{album}", "Album");
+            PreviewL1.Text = Config.Settings.TemplateL1.ApplyPlaceholders();
+            PreviewL2.Text = Config.Settings.TemplateL2.ApplyPlaceholders();
+            PreviewL3.Text = Config.Settings.TemplateL3.ApplyPlaceholders();
 
             PreviewListeningTo.Text = "Listening to ";
             PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch {
