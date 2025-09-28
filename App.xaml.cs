@@ -24,6 +24,7 @@ namespace PlexampRPC
         public bool StartInTray { get; set; } = false;
         public bool LocalAddress { get; set; } = false;
         public bool OwnedOnly { get; set; } = true;
+        public bool LocalPlayer { get; set; } = false;
 
         public string SelectedServer { get; set; } = string.Empty;
 
@@ -39,7 +40,6 @@ namespace PlexampRPC
         public string DiscordCustomClientID { get; set; } = "1100233636491563069";
 
         public string PlexAddress { get; set; } = string.Empty;
-        public bool LocalPlayer { get; set; }
         public string StatusDisplayType { get; set; } = "Name";
     }
 

@@ -13,8 +13,7 @@ using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
 using PlexampRPC.Data;
 
-namespace PlexampRPC
-{
+namespace PlexampRPC {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -149,17 +148,15 @@ namespace PlexampRPC
             }
         }
 
-        private async Task<SessionData?> GetLocalSession()
-        {
-            try
-            {
+        private static async Task<SessionData?> GetLocalSession() {
+            try {
                 HttpRequestMessage requestMessage = new(HttpMethod.Get, "http://localhost:32500/player/timeline/poll?wait=0&includeMetadata=1&commandID=1");
                 requestMessage.Headers.Add("Accept", "application/xml");
 
                 HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
                 sendResponse.EnsureSuccessStatusCode();
 
-                XmlDocument responseXml = new XmlDocument();
+                XmlDocument responseXml = new();
                 responseXml.LoadXml(await sendResponse.Content.ReadAsStringAsync());
 
                 // Find the active music timeline with a Track element
@@ -171,9 +168,9 @@ namespace PlexampRPC
                 if (trackNode is null)
                     return null;
 
-                string? GetAttr(XmlNode node, string name) => node.Attributes?[name]?.Value;
+                static string? GetAttr(XmlNode node, string name) => node.Attributes?[name]?.Value;
 
-                var sessionData = new SessionData {
+                SessionData sessionData = new() {
                     Title = GetAttr(trackNode, "title"),
                     Album = GetAttr(trackNode, "parentTitle"),
                     ArtPath = GetAttr(trackNode, "thumb"),
@@ -189,21 +186,17 @@ namespace PlexampRPC
 
                 return sessionData;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Console.WriteLine($"WARN: Unable to get current session: local timeline poll\n{e.Message} {e.InnerException}");
                 return null;
             }
         }
 
-        private async Task<SessionData?> GetServerSession()
-        {
-            try
-            {
+        private async Task<SessionData?> GetServerSession() {
+            try {
                 if (UserServerComboBox.SelectedItem is null)
                     return null;
-                if (!Uri.IsWellFormedUriString(SelectedAddress?.ToString(), UriKind.Absolute))
-                {
+                if (!Uri.IsWellFormedUriString(SelectedAddress?.ToString(), UriKind.Absolute)) {
                     Console.WriteLine("WARN: No server selected or address is invalid");
                     return null;
                 }
@@ -222,8 +215,7 @@ namespace PlexampRPC
 
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Console.WriteLine($"WARN: Unable to get current session: {SelectedAddress}status/sessions?X-Plex-Token={SelectedResource?.AccessToken?[..3]}...\n{e.Message} {e.InnerException}");
                 return null;
             }
@@ -248,20 +240,19 @@ namespace PlexampRPC
                 State = session.Player?.State,
                 TimeOffset = session.ViewOffset,
                 Duration = session.Duration,
-                Url = (session.Guid != null && session.Guid.StartsWith("plex://")) ? $"https://listen.plex.tv/{session.Guid?[7..]}" : null
+                Url = session?.Guid?.StartsWith("plex://") == true ? $"https://listen.plex.tv/{session.Guid?[7..]}" : null
             };
         }
 
         private void SetPresence(PresenceData presence) {
             if (presence.State == "playing") {
-                App.DiscordClient.SetPresence(new RichPresence() {
+                App.DiscordClient.SetPresence(new() {
                     Details = TrimUTF8String(presence.Line1!), // theres probably a better way to trim strings but idk
                     State = TrimUTF8String(presence.Line2!),
-                    Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)presence.TimeOffset), DateTime.UtcNow.AddMilliseconds((double)presence.Duration-(double)presence.TimeOffset)),
+                    Timestamps = new(DateTime.UtcNow.AddMilliseconds(-(double)presence.TimeOffset), DateTime.UtcNow.AddMilliseconds((double)presence.Duration - (double)presence.TimeOffset)),
                     Type = ActivityType.Listening,
                     StatusDisplay = Enum.Parse<StatusDisplayType>(Config.Settings.StatusDisplayType),
-                    Assets = new()
-                    {
+                    Assets = new() {
                         LargeImageKey = presence.ArtLink,
                         LargeImageText = TrimUTF8String(presence.ImageTooltip!)
                     }
@@ -273,8 +264,7 @@ namespace PlexampRPC
                 PreviewL3.Text = TrimUTF8String(presence.ImageTooltip!);
 
                 PreviewListeningTo.Text = "Listening to ";
-                PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch
-                {
+                PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch {
                     "State" => PreviewL2.Text,
                     "Details" => PreviewL1.Text,
                     _ => Config.Settings.DiscordListeningTo,
@@ -313,8 +303,7 @@ namespace PlexampRPC
                 PreviewL3.Text = TrimUTF8String(presence.ImageTooltip!);
 
                 PreviewListeningTo.Text = "Listening to ";
-                PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch
-                {
+                PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch {
                     "State" => PreviewL2.Text,
                     "Details" => PreviewL1.Text,
                     _ => Config.Settings.DiscordListeningTo,
@@ -326,7 +315,7 @@ namespace PlexampRPC
         }
 
         private void ResetPresence() {
-            PreviewArt.Source = new BitmapImage(new Uri("https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png")) { 
+            PreviewArt.Source = new BitmapImage(new Uri("https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png")) {
                 CreateOptions = BitmapCreateOptions.IgnoreImageCache
             };
 
@@ -345,8 +334,7 @@ namespace PlexampRPC
                 .Replace("{album}", "Album");
 
             PreviewListeningTo.Text = "Listening to ";
-			PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch
-            {
+            PreviewListeningTo.Text += Config.Settings.StatusDisplayType switch {
                 "State" => PreviewL2.Text,
                 "Details" => PreviewL1.Text,
                 _ => Config.Settings.DiscordListeningTo,

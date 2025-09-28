@@ -30,12 +30,14 @@ namespace PlexampRPC {
             RadioListeningMusic.Checked += (_, _) => Config.Settings.DiscordListeningTo = "Music";
             RadioListeningCustom.Checked += (_, _) => Config.Settings.DiscordListeningTo = "Custom";
 
-            if (Config.Settings.DiscordListeningTo == "Plexamp")
-                RadioListeningPlexamp.IsChecked = true;
-            else if (Config.Settings.DiscordListeningTo == "Music")
-                RadioListeningMusic.IsChecked = true;
-            else
-                RadioListeningCustom.IsChecked = true;
+            switch (Config.Settings.DiscordListeningTo) {
+                case "Plexamp":
+                    RadioListeningPlexamp.IsChecked = true; break;
+                case "Music":
+                    RadioListeningMusic.IsChecked = true; break;
+                default:
+                    RadioListeningCustom.IsChecked = true; break;
+            }
         }
 
         private void SetupStatusDisplayType() {
