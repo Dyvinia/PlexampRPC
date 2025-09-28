@@ -34,7 +34,7 @@ namespace PlexampRPC
 
         public string TemplateL1 { get; set; } = "{title}";
         public string TemplateL2 { get; set; } = "{artist}";
-        public string TemplateL3 { get; set; } = "{album}";
+        public string TemplateL3 { get; set; } = "{album} ({year})";
 
         public string DiscordListeningTo { get; set; } = "Plexamp";
         public string DiscordCustomClientID { get; set; } = "1100233636491563069";
