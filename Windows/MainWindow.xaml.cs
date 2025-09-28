@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Xml;
 using DiscordRPC;
 using Hardcodet.Wpf.TaskbarNotification;
 using PlexampRPC.Data;
@@ -131,7 +132,7 @@ namespace PlexampRPC
             DateTime lastUpdated = DateTime.Now;
 
             while (true) {
-                SessionData? currentSession = await GetCurrentSession();
+                SessionData? currentSession = Config.Settings.LocalPlayer ? await GetLocalSession() : await GetServerSession();
                 if (currentSession != null) {
                     if (JsonSerializer.Serialize(currentSession) != JsonSerializer.Serialize(lastSession)) {
                         SetPresence(await BuildPresence(currentSession));
@@ -150,11 +151,61 @@ namespace PlexampRPC
             }
         }
 
-        private async Task<SessionData?> GetCurrentSession() {
-            try {
-                if (UserServerComboBox.SelectedItem is null) 
+        private async Task<SessionData?> GetLocalSession()
+        {
+            try
+            {
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, "http://localhost:32500/player/timeline/poll?wait=0&includeMetadata=1&commandID=1");
+                requestMessage.Headers.Add("Accept", "application/xml");
+
+                HttpResponseMessage sendResponse = await httpClient.SendAsync(requestMessage);
+                sendResponse.EnsureSuccessStatusCode();
+
+                XmlDocument responseXml = new XmlDocument();
+                responseXml.LoadXml(await sendResponse.Content.ReadAsStringAsync());
+
+                // Find the active music timeline with a Track element
+                XmlNode? timelineNode = responseXml.SelectSingleNode("/MediaContainer/Timeline[Track]");
+                if (timelineNode is null)
                     return null;
-                if (!Uri.IsWellFormedUriString(SelectedAddress?.ToString(), UriKind.Absolute)) {
+
+                XmlNode? trackNode = timelineNode.SelectSingleNode("Track");
+                if (trackNode is null)
+                    return null;
+
+                string? GetAttr(XmlNode node, string name) => node.Attributes?[name]?.Value;
+
+                var sessionData = new SessionData {
+                    Title = GetAttr(trackNode, "title"),
+                    Album = GetAttr(trackNode, "parentTitle"),
+                    ArtPath = GetAttr(trackNode, "thumb"),
+                    Type = GetAttr(trackNode, "type"),
+                    Guid = GetAttr(trackNode, "guid"),
+                    TrackArtist = GetAttr(trackNode, "originalTitle"),
+                    AlbumArtist = GetAttr(trackNode, "grandparentTitle"),
+                    Player = new SessionData.PlayerData { State = GetAttr(timelineNode, "state") },
+                    ViewOffset = int.TryParse(GetAttr(timelineNode, "time"), out int vo) ? vo : 0,
+                    Duration = int.TryParse(GetAttr(trackNode, "duration") ?? GetAttr(timelineNode, "duration"), out int dur) ? dur : 0,
+                    User = App.Account?.Username is not null ? new SessionData.UserData { Name = App.Account.Username } : null
+                };
+
+                return sessionData;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"WARN: Unable to get current session: local timeline poll\n{e.Message} {e.InnerException}");
+                return null;
+            }
+        }
+
+        private async Task<SessionData?> GetServerSession()
+        {
+            try
+            {
+                if (UserServerComboBox.SelectedItem is null)
+                    return null;
+                if (!Uri.IsWellFormedUriString(SelectedAddress?.ToString(), UriKind.Absolute))
+                {
                     Console.WriteLine("WARN: No server selected or address is invalid");
                     return null;
                 }
@@ -173,7 +224,8 @@ namespace PlexampRPC
 
                 return sessions?.FirstOrDefault(session => session.Type == "track" && session.User?.Name == App.Account?.Username);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Console.WriteLine($"WARN: Unable to get current session: {SelectedAddress}status/sessions?X-Plex-Token={SelectedResource?.AccessToken?[..3]}...\n{e.Message} {e.InnerException}");
                 return null;
             }
@@ -194,7 +246,7 @@ namespace PlexampRPC
                 Line1 = L1.Length > 2 ? L1 : L1 + "  ",
                 Line2 = L2.Length > 2 ? L2 : L2 + "  ",
                 ImageTooltip = session.Album?.Length > 2 ? session.Album : session.Album + "  ",
-                ArtLink = await GetThumbnail(session.ArtPath, session.Album),
+                ArtLink = Config.Settings.LocalPlayer ? "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png" : await GetThumbnail(session.ArtPath, session.Album),
                 State = session.Player?.State,
                 TimeOffset = session.ViewOffset,
                 Duration = session.Duration,
