@@ -59,8 +59,8 @@
                 <Grid Height="10"/>
                 <StackPanel>
                     <TextBlock TextWrapping="Wrap" Text="Template" Foreground="#FFF1F1F1" FontSize="14" Height="20" FontWeight="Bold" VerticalAlignment="Top"/>
-                    <TextBox x:Name="TemplateL1" Margin="0 2 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL1), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}"/>
-                    <TextBox x:Name="TemplateL2" Margin="0 1 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL2), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}"/>
+                    <TextBox x:Name="TemplateL1" Margin="0 2 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL1), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}" LostFocus="Template_LostFocus" LostKeyboardFocus="Template_LostFocus"/>
+                    <TextBox x:Name="TemplateL2" Margin="0 1 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL2), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}" LostFocus="Template_LostFocus" LostKeyboardFocus="Template_LostFocus"/>
                     <TextBox x:Name="TemplateL3" Margin="0 1 0 0" HorizontalAlignment="Stretch" Text="{Binding Path=(local:Config.TemplateL3), Mode=TwoWay}" ToolTip="{}{title}, {artist}, {album}"/>
                 </StackPanel>
             </StackPanel>

@@ -19,6 +19,7 @@ namespace PlexampRPC {
 
             SetupListeningTo();
             SetupStatusDisplayType();
+            SetupStatusDisplayTypeNames();
 
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
 
@@ -54,6 +55,19 @@ namespace PlexampRPC {
                     RadioStatusName.IsChecked = true; break;
             }
         }
+
+        private void SetupStatusDisplayTypeNames() {
+            RadioStatusDetails.Content = Config.Settings.TemplateL1
+                .Replace("{title}", "Title")
+                .Replace("{artist}", "Artist")
+                .Replace("{album}", "Album");
+            RadioStatusState.Content = Config.Settings.TemplateL2
+                .Replace("{title}", "Title")
+                .Replace("{artist}", "Artist")
+                .Replace("{album}", "Album");
+        }
+
+        private void Template_LostFocus(object sender, RoutedEventArgs e) => SetupStatusDisplayTypeNames();
 
         private void StartOnStartup() {
             IWshRuntimeLibrary.WshShell wshShell = new();
