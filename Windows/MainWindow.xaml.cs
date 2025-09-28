@@ -104,8 +104,8 @@ namespace PlexampRPC {
                 };
             }
 
-            DiscordUsername.Text = App.DiscordClient.CurrentUser.DisplayName;
-            DiscordAvatar.Source = new BitmapImage(new(App.DiscordClient.CurrentUser.GetAvatarURL())) {
+            DiscordUsername.Text = App.DiscordClient.CurrentUser?.DisplayName ?? "Discord";
+            DiscordAvatar.Source = new BitmapImage(new(App.DiscordClient.CurrentUser?.GetAvatarURL() ?? "https://cdn.discordapp.com/embed/avatars/0.png")) {
                 CreateOptions = BitmapCreateOptions.IgnoreImageCache
             };
         }
