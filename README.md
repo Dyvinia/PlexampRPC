@@ -29,7 +29,11 @@ The config file, aswell as the thumbnail cache and the stored auth token, are st
 ## FAQ
 > **Q:** How do I change the "Listening to Plexamp" text?
 > 
-> **A:** In the settings window you can choose between "Listening to Plexamp", "Listening to Music", or a custom "Listening to ". To use a custom one, you must make a new application [here](https://discord.com/developers/applications) and set the Name you desire. Then open the config.json file in `%AppData%\PlexampRPC\` and paste the Application ID in.
+> **A:** In the settings window you can choose between "Listening to Plexamp", "Listening to Music", or a custom "Listening to ". To use a custom one, you must make a new application [here](https://discord.com/developers/applications) and set the Name you desire. Then open the config.json file in `%AppData%\PlexampRPC\` and paste the Application ID in. You can also have it say the track title or author in the member list with the "Status Display" setting.
+
+> **Q:** My Plexamp can't get the now playing status, is it because I use someone else's Plex server to stream music?
+> 
+> **A:** It is. As a workaround, go to the settings window and enable `Use Local Player`. (Album Art will not show up with this)
 
 > **Q:** How do I see the debug log?
 > 
@@ -37,7 +41,7 @@ The config file, aswell as the thumbnail cache and the stored auth token, are st
 
 > **Q:** I can't run this
 > 
-> **A:** This requires [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0#runtime-desktop-8.0.10) and is Windows Only.
+> **A:** This requires [.NET 9 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/9.0#runtime-desktop-9.0.9) and is Windows Only.
 
 ## Donate
 [![Donate-Kofi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J63UBHG)
