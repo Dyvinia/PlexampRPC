@@ -13,7 +13,7 @@ PlexampRPC displays currently playing Plex music as Discord Rich Presence, while
 - Proper Album Art for your Music
 - Uses Track Artist instead of Album Artist if available
 - Custom "Listening to..." text
-- Customize Template
+- Template to customize the info shown in the presence
 - Load presence locally or from the server
 - Start PlexampRPC on Windows startup
 - Minimize to tray
@@ -24,11 +24,10 @@ Click the gear icon on the top right to open the Settings window. Here you can c
 
 ![image](https://i.imgur.com/qtn8y6P.png)
 
-
 The config file, aswell as the thumbnail cache and the stored auth token, are stored in `%AppData%\PlexampRPC\`. Press `F12` in the app to automatically open this folder.
 
 ### Template
-These are all the placeholders that can be used for the template (bottom 3 lines in the Settings window.
+These are all the placeholders that can be used for the template (the 3 text boxes at the bottom of the Settings window).
 - `{title}`: Track Title
 - `{artist}`: Artist
 - `{album}`: Album
