@@ -88,7 +88,7 @@ namespace PlexampRPC
         protected override async void OnStartup(StartupEventArgs e) {
             MainWindow window = new();
 
-            if (Config.Settings.StartInTray)
+            if (Config.Settings.StartInTray && Environment.GetCommandLineArgs().Any(a => a == "--startup"))
                 window.TrayIcon.ShowBalloonTip(null, "Started PlexampRPC in Tray", BalloonIcon.None);
             else
                 window.Show();

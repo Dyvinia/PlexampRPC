@@ -69,6 +69,7 @@ namespace PlexampRPC {
             IWshRuntimeLibrary.IWshShortcut shortcut = wshShell.CreateShortcut(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "PlexampRPC.lnk"));
             shortcut.TargetPath = Environment.ProcessPath;
             shortcut.WorkingDirectory = Environment.CurrentDirectory;
+            shortcut.Arguments = "--startup";
             shortcut.Save();
         }
 
