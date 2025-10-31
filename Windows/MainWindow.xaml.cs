@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Net.Http;
@@ -44,7 +45,7 @@ namespace PlexampRPC {
             MouseDown += (_, _) => FocusManager.SetFocusedElement(this, this);
 
             StateChanged += (_, _) => {
-                if (WindowState == WindowState.Minimized) {
+                if (WindowState == WindowState.Minimized && !Config.Settings.CloseToTray) {
                     Hide();
                     TrayIcon.ShowBalloonTip(null, "Minimized to Tray", BalloonIcon.None);
                 }
@@ -65,14 +66,14 @@ namespace PlexampRPC {
             MenuItem menuShow = new() { Header = "Show PlexampRPC" };
             MenuItem menuExit = new() { Header = "Exit PlexampRPC" };
 
-            TrayIcon.TrayMouseDoubleClick += (_, _) => {
+            void show(object s, RoutedEventArgs e) {
                 Show();
                 WindowState = WindowState.Normal;
-            };
-            menuShow.Click += (_, _) => {
-                Show();
-                WindowState = WindowState.Normal;
-            };
+            }
+
+            TrayIcon.TrayMouseDoubleClick += show;
+            TrayIcon.TrayLeftMouseUp += show;
+            menuShow.Click += show;
             menuExit.Click += (_, _) => {
                 Application.Current.Shutdown();
             };
@@ -467,6 +468,14 @@ namespace PlexampRPC {
 
         private void LogsButton_Click(object sender, RoutedEventArgs e) => new LogWindow(App.Log!).Show();
 
+        protected override void OnClosing(CancelEventArgs e) {
+            base.OnClosing(e);
+            if (Config.Settings.CloseToTray) {
+                Hide();
+                TrayIcon.ShowBalloonTip(null, "Minimized to Tray", BalloonIcon.None);
+                e.Cancel = true;;
+            }
+        }
 
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);

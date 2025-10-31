@@ -22,6 +22,7 @@ namespace PlexampRPC
     public class Config : SettingsManager<Config> {
         public bool UpdateChecker { get; set; } = true;
         public bool StartInTray { get; set; } = false;
+        public bool CloseToTray { get; set; } = false;
         public bool LocalAddress { get; set; } = false;
         public bool OwnedOnly { get; set; } = true;
         public bool LocalPlayer { get; set; } = false;

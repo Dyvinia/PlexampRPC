@@ -35,6 +35,7 @@
                     <CheckBox x:Name="StartupCheckBox" Margin="0 0 0 0" Content="Start on Startup" IsChecked="False" ToolTip="Start PlexampRPC when Windows starts"/>
 
                     <CheckBox x:Name="TrayCheckBox" Margin="0 0 0 0" Content="Startup in Tray" IsChecked="{Binding Path=(local:Config.StartInTray), Mode=TwoWay}" ToolTip="Starts the application in the tray when Starting on Startup"/>
+                    <CheckBox x:Name="CloseTrayCheckBox" Margin="0 0 0 0" Content="Close to Tray" IsChecked="{Binding Path=(local:Config.CloseToTray), Mode=TwoWay}" ToolTip="Pressing the X button minimizes to tray"/>
 
                     <CheckBox x:Name="OwnedCheckBox" Margin="0 0 0 0" Content="Owned Servers Only" IsChecked="{Binding Path=(local:Config.OwnedOnly), Mode=TwoWay}" ToolTip="Only adds servers to the list that belong to the authenticated Plex user"/>
 
