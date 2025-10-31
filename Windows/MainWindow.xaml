@@ -123,8 +123,7 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Image Grid.Column="0" Source="{svgc:SvgImage Source=/Resources/Svg/NowPlaying.svg, AppName=PlexampRPC}" Height="12" Width="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="1" Margin="4 0 0 0" Text="Listening to " Foreground="#82838b" FontSize="12" Height="16" FontFamily="/Resources/gg/#gg sans Medium"/>
-                                <TextBlock Grid.Column="2" x:Name="PreviewStatusListeningTo" Margin="0 0 0 0" Text="Music" HorizontalAlignment="Stretch" Foreground="#82838b" FontSize="12" Height="16" FontFamily="/Resources/gg/#gg sans SemiBold" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="2" x:Name="PreviewStatusListeningTo" Margin="4 0 0 0" Text="Music" HorizontalAlignment="Stretch" Foreground="#82838b" FontSize="12" Height="16" FontFamily="/Resources/gg/#gg sans Medium" TextTrimming="CharacterEllipsis"/>
                             </Grid>
                         </Grid>
                     </Grid>
