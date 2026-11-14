@@ -26,6 +26,8 @@ Click the gear icon on the top right to open the Settings window. Here you can c
 
 The config file, aswell as the thumbnail cache and the stored auth token, are stored in `%AppData%\PlexampRPC\`. Press `F12` in the app to automatically open this folder.
 
+Artwork is transcoded by Plex and uploaded to freeimage.host so Discord can display it. Cached links are checked periodically and re-uploaded if they expire. If artwork cannot be retrieved or uploaded, the Plex icon is shown and the reason is recorded in the log.
+
 ### Template
 These are all the placeholders that can be used for the template (the 3 text boxes at the bottom of the Settings window).
 - `{title}`: Track Title

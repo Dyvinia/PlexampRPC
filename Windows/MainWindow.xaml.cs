@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +22,9 @@ namespace PlexampRPC {
 
         private static readonly HttpClient httpClient = new();
 
-        private static readonly JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
+        private static readonly HttpClient artworkHttpClient = new() { Timeout = TimeSpan.FromSeconds(30) };
+        private readonly ArtworkService artworkService = new(artworkHttpClient);
+        private const string DefaultArt = "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png";
 
         private PlexResourceData? SelectedResource => (PlexResourceData)UserServerComboBox.SelectedItem;
 
@@ -173,6 +174,7 @@ namespace PlexampRPC {
                     Title = GetAttr(trackNode, "title"),
                     Album = GetAttr(trackNode, "parentTitle"),
                     ArtPath = GetAttr(trackNode, "thumb"),
+                    AlbumArtPath = GetAttr(trackNode, "parentThumb"),
                     Type = GetAttr(trackNode, "type"),
                     Guid = GetAttr(trackNode, "guid"),
                     TrackArtist = GetAttr(trackNode, "originalTitle"),
@@ -229,7 +231,7 @@ namespace PlexampRPC {
                 Line1 = L1,
                 Line2 = L2,
                 Line3 = L3,
-                ArtLink = Config.Settings.LocalPlayer ? "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png" : await GetThumbnail(session.ArtPath, session.Album),
+                ArtLink = Config.Settings.LocalPlayer ? DefaultArt : await GetThumbnail(session),
                 State = session.Player?.State,
                 TimeOffset = session.ProgressOffset,
                 Duration = session.Duration,
@@ -328,39 +330,23 @@ namespace PlexampRPC {
             App.DiscordClient.ClearPresence();
         }
 
-        private async Task<string> GetThumbnail(string? path, string? album) {
-            string cacheFile = Path.Combine(Path.GetDirectoryName(Config.FilePath)!, "cache.json");
-
-            Dictionary<string, ThumbnailData> thumbnails;
-            string thumbnailsJson = "";
-
-            if (File.Exists(cacheFile)) {
-                thumbnailsJson = File.ReadAllText(cacheFile);
-                try { thumbnails = JsonSerializer.Deserialize<Dictionary<string, ThumbnailData>>(File.ReadAllText(cacheFile))!; }
-                catch { thumbnails = []; }
-
-            }
-            else
-                thumbnails = [];
-
-            string thumbnailLink;
-            if (path is not null && thumbnails.TryGetValue(path, out ThumbnailData? value)) {
-                thumbnailLink = value.Art;
-            }
-            else {
-                try { thumbnailLink = await UploadImage(path!); }
-                catch (Exception e) {
-                    Console.WriteLine($"WARN: Unable to upload thumbnail for current session, using Plex Icon as thumbnail instead\n{e.Message} {e.InnerException}");
-                    return "https://raw.githubusercontent.com/Dyvinia/PlexampRPC/master/Resources/PlexIcon.png";
-                }
-                thumbnails.Add(path!, new() { Name = album ?? "Unknown", Art = thumbnailLink });
+        private async Task<string> GetThumbnail(SessionData session) {
+            string? path = !string.IsNullOrWhiteSpace(session.ArtPath) ? session.ArtPath : session.AlbumArtPath;
+            if (string.IsNullOrWhiteSpace(path)) {
+                Console.WriteLine("WARN: No track or album thumbnail was provided by Plex");
+                return DefaultArt;
             }
 
-            string newThumbnailsJson = JsonSerializer.Serialize(thumbnails, serializerOptions);
-            if (newThumbnailsJson != thumbnailsJson)
-                File.WriteAllText(cacheFile, newThumbnailsJson);
-
-            return thumbnailLink;
+            try {
+                Uri address = SelectedAddress ?? throw new InvalidOperationException("No Plex server address is selected");
+                string cacheFile = Path.Combine(Path.GetDirectoryName(Config.FilePath)!, "cache.json");
+                return await artworkService.GetThumbnailAsync(address, SelectedResource?.AccessToken, path,
+                    session.Album, Config.Settings.ArtResolution, cacheFile);
+            }
+            catch (Exception e) {
+                Console.WriteLine($"WARN: Unable to retrieve or upload thumbnail for current session, using Plex Icon instead\n{e.Message}");
+                return DefaultArt;
+            }
         }
 
         public async Task<PlexResourceData[]?> GetAccountResources() {
@@ -443,19 +429,6 @@ namespace PlexampRPC {
                     Console.WriteLine($"WARN: Unable to get resource: {e.Message} {e.InnerException}");
                 }
             }
-        }
-
-        private async Task<string> UploadImage(string thumb) {
-            HttpResponseMessage getResponse = await httpClient.GetAsync($"{SelectedAddress}photo/:/transcode?width={Config.Settings.ArtResolution}&height={Config.Settings.ArtResolution}&minSize=1&upscale=1&format=png&url={thumb}&X-Plex-Token={SelectedResource?.AccessToken}");
-
-            string dataString = Uri.EscapeDataString(Convert.ToBase64String(await getResponse.Content.ReadAsByteArrayAsync()));
-            HttpResponseMessage sendResponse = await httpClient.SendAsync(new() {
-                Method = HttpMethod.Post,
-                RequestUri = new("https://freeimage.host/api/1/upload"),
-                Content = new StringContent($"image={dataString}&key=6d207e02198a847aa98d0a2a901485a5", Encoding.UTF8, "application/x-www-form-urlencoded")
-            });
-            sendResponse.EnsureSuccessStatusCode();
-            return JsonDocument.Parse(await sendResponse.Content.ReadAsStringAsync()).RootElement.GetProperty("image").GetProperty("url").GetString()!;
         }
 
         private void Template_LostFocus(object sender, RoutedEventArgs e) => Config.Save();

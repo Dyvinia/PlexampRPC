@@ -34,6 +34,9 @@ namespace PlexampRPC.Data {
         [JsonPropertyName("thumb")]
         public string? ArtPath { get; set; }
 
+        [JsonPropertyName("parentThumb")]
+        public string? AlbumArtPath { get; set; }
+
         [JsonPropertyName("type")]
         public string? Type { get; set; }
 
